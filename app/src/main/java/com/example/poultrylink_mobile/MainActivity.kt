@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
     // text bagas test bagas amama hhhhh
+    //new fitur
 
     }
 }
