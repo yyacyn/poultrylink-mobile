@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-    // text bagas test bagas amama hhhhh
+    // text bagas test bagas amama lololol
 
     }
 }
