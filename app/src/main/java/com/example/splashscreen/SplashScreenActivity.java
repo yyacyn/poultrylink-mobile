@@ -16,6 +16,7 @@ import com.airbnb.lottie.LottieAnimationView;
 
 public class SplashScreenActivity extends AppCompatActivity {
     Integer t = 3000;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,16 +27,17 @@ public class SplashScreenActivity extends AppCompatActivity {
         // Memulai animasi
         lottieAnimationView.playAnimation();
 
-        //Pindah Halaman
+        // Pindah Halaman
         new Handler().postDelayed(new Runnable() {
-                                      @Override
-                                      public void run() {
-                                          Intent i = new Intent(SplashScreenActivity.this, PilihanLoginActivity.class); //dari mana ke halaman mana
-                                          startActivity(i);
-                                          finish();
-                                      }
-                                  },
-                t );
+            @Override
+            public void run() {
+                Intent i = new Intent(SplashScreenActivity.this, PilihanLoginActivity.class); // dari mana ke halaman
+                                                                                              // mana
+                startActivity(i);
+                finish();
+            }
+        },
+                t);
 
     };
 }
