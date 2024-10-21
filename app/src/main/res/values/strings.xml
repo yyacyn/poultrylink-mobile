@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">poultrylink_mobile</string>
+    <string name="app_name">Splash Screen</string>
+    <string-array name="country_codes">
+            <item>+62</item> <!-- Indonesia -->
+            <item>+1</item>  <!-- USA -->
+            <item>+44</item> <!-- UK -->
+            <!-- Tambahkan kode negara lainnya -->
+    </string-array>>
+
 </resources>

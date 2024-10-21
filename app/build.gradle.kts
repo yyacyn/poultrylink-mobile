@@ -4,11 +4,12 @@ plugins {
 }
 
 android {
-    namespace = "com.example.poultrylink_mobile"
+    namespace = "com.example.splashscreen"
     compileSdk = 34
 
+
     defaultConfig {
-        applicationId = "com.example.poultrylink_mobile"
+        applicationId = "com.example.splashscreen"
         minSdk = 28
         targetSdk = 34
         versionCode = 1
@@ -45,4 +46,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation("com.airbnb.android:lottie:6.5.1")
+    implementation ("com.google.android.material:material:1.8.0")
+
 }
