@@ -8,6 +8,7 @@
     android:background="@drawable/bglogin"
     tools:context=".SignInActivity">
     <!-- Bagas -->
+    <!-- yashin -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
