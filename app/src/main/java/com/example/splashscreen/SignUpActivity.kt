@@ -76,6 +76,8 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
+    // test
+
     private fun isNetworkAvailable(): Boolean {
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork = connectivityManager.activeNetworkInfo
@@ -106,6 +108,6 @@ class SignUpActivity : AppCompatActivity() {
             }
         } else {
             Toast.makeText(this, "No network connection. Please check your internet connection.", Toast.LENGTH_SHORT).show()
-        }
+        } 
     }
 }
