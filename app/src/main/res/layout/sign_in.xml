@@ -132,7 +132,8 @@
             android:backgroundTint="@color/orange"
             android:text="Sign In"
             android:textAlignment="center"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:id="@+id/btn_login"/>
 
 
     </LinearLayout>

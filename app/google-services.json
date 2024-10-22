@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "365662341100",
+    "project_id": "poultrylink-mobile-f4443",
+    "storage_bucket": "poultrylink-mobile-f4443.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:365662341100:android:e3de974f0d817d1ed0a2c9",
+        "android_client_info": {
+          "package_name": "com.example.splashscreen"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCauuG07LBGfuY569n36M1pkoS-4Lg8w_4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
