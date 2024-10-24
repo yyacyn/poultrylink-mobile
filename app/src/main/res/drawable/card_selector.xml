@@ -1,0 +1,21 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Shadow ketika dipilih -->
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/white" />
+            <stroke
+                android:width="2dp"
+                android:color="@color/orange" /> <!-- Warna shadow oranye -->
+        </shape>
+    </item>
+
+    <!-- Shadow ketika tidak dipilih -->
+    <item android:state_selected="false">
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/white" />
+            <stroke
+                android:width="2dp"
+                android:color="@color/gray" /> <!-- Warna shadow abu-abu -->
+        </shape>
+    </item>
+</selector>

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -42,6 +43,14 @@ class SignInActivity : AppCompatActivity() {
 
         val forgotPassword = findViewById<TextView>(R.id.forgotPassword)
 
+        val buttonSignIn = findViewById<Button>(R.id.signin_toDashboard)
+
+        buttonSignIn.setOnClickListener {
+            val intent = Intent(this, DashboardActivity::class.java)
+            startActivity(intent)
+        }
+
+
         auth = FirebaseAuth.getInstance()
 
         btn_login.setOnClickListener {
@@ -56,6 +65,7 @@ class SignInActivity : AppCompatActivity() {
             val intent = Intent(this, ForgotPasswordActivity::class.java)
             startActivity(intent)
         }
+        // pepe
     }
 
     private fun validateInput(email: String, password: String): Boolean {
