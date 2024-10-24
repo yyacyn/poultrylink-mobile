@@ -66,7 +66,7 @@
         android:textAlignment="center"
         android:textColor="@color/orange"
         android:text="Sign Up"
-        android:backgroundTint="@color/white"
+        android:backgroundTint="#00FFFFFF"
         android:id="@+id/buttonSignUp"
         app:strokeWidth="3dp"
         app:strokeColor="@color/orange" />

@@ -34,7 +34,13 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
 }
+
+
 
 dependencies {
 
@@ -46,6 +52,10 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    // Dependensi image slider
+    implementation ("androidx.viewpager2:viewpager2:1.0.0")
+    implementation ("com.github.denzcoskun:ImageSlideshow:0.1.0")
+    // Dependensi splash screen
     implementation("com.airbnb.android:lottie:6.5.1")
     implementation ("com.google.android.material:material:1.8.0")
 

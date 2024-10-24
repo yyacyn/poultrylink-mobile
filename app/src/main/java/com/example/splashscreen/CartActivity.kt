@@ -1,0 +1,37 @@
+package com.example.splashscreen
+
+import android.content.Intent
+import android.os.Bundle
+import android.widget.ImageButton
+import android.widget.TextView
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+
+class CartActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContentView(R.layout.cart)
+        val mycart = findViewById<TextView>(R.id.mycart)
+        val onprocess = findViewById<TextView>(R.id.onprocess)
+        val complete = findViewById<TextView>(R.id.complete)
+
+        mycart.setOnClickListener {
+            val intent = Intent(this, CartActivity::class.java)
+            startActivity(intent)
+        }
+
+        onprocess.setOnClickListener {
+            val intent = Intent(this, CartOnprogressActivity::class.java)
+            startActivity(intent)
+        }
+
+        complete.setOnClickListener {
+            val intent = Intent(this, CartCompleteActivity::class.java)
+            startActivity(intent)
+        }
+
+        }
+}

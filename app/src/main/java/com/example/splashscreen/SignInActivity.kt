@@ -3,6 +3,7 @@ package com.example.splashscreen
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import android.widget.EditText
 import android.widget.Toast
@@ -19,6 +20,14 @@ class SignInActivity : AppCompatActivity() {
         val emailInput = findViewById<EditText>(R.id.emailInput)
         val passwordInput = findViewById<EditText>(R.id.passwordInput)
         val forgotPassword = findViewById<TextView>(R.id.forgotPassword)
+
+        val buttonSignIn = findViewById<Button>(R.id.signin_toDashboard)
+
+        buttonSignIn.setOnClickListener {
+            val intent = Intent(this, DashboardActivity::class.java)
+            startActivity(intent)
+        }
+
 
         forgotPassword.setOnClickListener {
             val intent = Intent(this, ForgotPasswordActivity::class.java)

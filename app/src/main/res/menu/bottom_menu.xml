@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/home"
+        android:title="Home"
+        android:icon="@drawable/home"
+        android:enabled="true"/>
+    <item
+        android:id="@+id/lcoation"
+        android:title="location"
+        android:icon="@drawable/location"/>
+    <item
+        android:id="@+id/history"
+        android:title="history"
+        android:icon="@drawable/history"/>
+    <item
+        android:id="@+id/profil"
+        android:title="profil"
+        android:icon="@drawable/profil"/>
+</menu>

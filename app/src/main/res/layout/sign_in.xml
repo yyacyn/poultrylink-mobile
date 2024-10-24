@@ -7,10 +7,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/bglogin"
     tools:context=".SignInActivity">
-    <!-- Bagas -->
-    <!-- yashin -->
-    <!-- amabtuwin -->
-    <!-- Ambatukam -->
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -125,6 +122,7 @@
             android:textStyle="bold" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/signin_toDashboard"
             android:layout_width="350dp"
             android:layout_height="60dp"
             android:layout_marginLeft="30dp"

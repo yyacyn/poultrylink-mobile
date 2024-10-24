@@ -13,6 +13,21 @@
         android:theme="@style/Theme.Poultrylink_mobile"
         tools:targetApi="31">
         <activity
+            android:name=".CartCompleteActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CartOnprogressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CartActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProdukActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DashboardActivity"
+            android:exported="false" />
+        <activity
             android:name=".SignUpActivity"
             android:exported="false" />
         <activity
