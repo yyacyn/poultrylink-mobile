@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.homepage.HomeActivity
+import com.google.firebase.Timestamp
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
@@ -17,16 +18,11 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
+import java.time.format.DateTimeFormatter
 import kotlin.math.log
 
-private val supabase = createSupabaseClient(
-    supabaseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co",
-    supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhic3N5bHV1Y3J3c2JmenNweWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk2NTU4OTEsImV4cCI6MjA0NTIzMTg5MX0.o6fkro2tPKFoA9sxAp1nuseiHRGiDHs_HI4-ZoqOTfQ"
-) {
-    install(Auth)
-    install(Postgrest)
-}
 
 class SignUpActivity : AppCompatActivity() {
     private lateinit var buttonSignUp: Button
@@ -35,6 +31,14 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var passwordInput: EditText
     private lateinit var confirmPasswordInput: EditText
     private lateinit var buttonBack: ImageButton
+
+    private val supabase = createSupabaseClient(
+        supabaseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co",
+        supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhic3N5bHV1Y3J3c2JmenNweWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk2NTU4OTEsImV4cCI6MjA0NTIzMTg5MX0.o6fkro2tPKFoA9sxAp1nuseiHRGiDHs_HI4-ZoqOTfQ"
+    ) {
+        install(Auth)
+        install(Postgrest)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,16 +102,19 @@ class SignUpActivity : AppCompatActivity() {
 
                 // If sign-up is successful, get the user ID
                 val auth = supabase.auth
-
                 val userId = auth.retrieveUserForCurrentSession(updateSession = true).id
                 Log.d("MyTag", userId)
+//                val currentDateTime = LocalDateTime.Format {
+//                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+//                }
 
                 // Insert user details into the "users" table in Supabase
                 val userDetails = mapOf(
                     "uid" to userId,
-                    "name" to name,
+                    "username" to name,
                     "email" to email,
-                    "password" to password
+                    "password" to password,
+                    "created_at" to auth.retrieveUserForCurrentSession(updateSession = true).createdAt,
                 )
 
                 supabase.postgrest["users"]
@@ -116,7 +123,9 @@ class SignUpActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 handleSignUpError(e)
             }
+
         }
+        Toast.makeText(this, "Sign up successful", Toast.LENGTH_SHORT).show()
     }
 
     private fun handleSignUpError(error: Exception) {

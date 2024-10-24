@@ -17,6 +17,7 @@
         android:layout_marginTop="25dp"
         android:layout_marginLeft="20dp">
         <ImageButton
+            android:id="@+id/btn_back"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/arrowback"
@@ -130,9 +131,7 @@
             android:backgroundTint="@color/orange"
             android:text="Sign In"
             android:textAlignment="center"
-            android:textColor="@color/white"
-            android:id="@+id/btn_login"/>
-
+            android:textColor="@color/white" />
 
     </LinearLayout>
 
