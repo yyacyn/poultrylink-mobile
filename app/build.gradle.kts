@@ -72,10 +72,9 @@ dependencies {
     implementation("io.github.jan-tennert.supabase:realtime-kt")
     implementation("io.ktor:ktor-client-core:3.0.0")
     implementation("io.ktor:ktor-client-android:3.0.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
 //    implementation("io.supabase:supabase-android:0.0.1")
-
 
 
     implementation(platform("com.google.firebase:firebase-bom:32.2.3"))

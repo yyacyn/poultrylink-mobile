@@ -57,7 +57,7 @@ class DashboardActivity : AppCompatActivity() {
                 val charToDelete = '"'
 
                 // Update the TextView with the display name
-                greetUser.text = "Welcome, $displayName".replace(charToDelete.toString(),"").uppercase() // Correctly set the text
+                greetUser.text = "Welcome, $displayName".replace(charToDelete.toString(),"") // Correctly set the text
             } else {
                 Log.d("MyTag", "User not found")
                 greetUser.text = "Welcome, Guest" // Fallback if user is not found

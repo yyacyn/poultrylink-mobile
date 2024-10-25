@@ -20,7 +20,6 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
-import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
@@ -64,6 +63,7 @@ class SignUpActivity : AppCompatActivity() {
                 performSignUp(email, password, name)
             }
         }
+
     }
 
     private fun validateInputs(email: String, name: String, password: String, confirmPassword: String): Boolean {
@@ -109,35 +109,37 @@ class SignUpActivity : AppCompatActivity() {
 
                 // If sign-up is successful, get the user ID
                 val auth = supabase.auth
-                val userId = auth.retrieveUserForCurrentSession(updateSession = true).id
+                val session = auth.retrieveUserForCurrentSession(updateSession = true)
+                val userId = session.id
+                Log.d("MyTag", "User ID: $userId")
 
-                val updateUserResult = supabase.auth.updateUser {
+                // Now, update the user metadata to include 'display_name'
+                auth.updateUser {
                     data {
                         put("display_name", name)
                     }
                 }
 
-                Log.d("MyTag", userId)
-
-                // Create a new Users instance
+                // Create a new user entry in your 'users' table
                 val userDetails = mapOf(
-                    "uid" to  userId,
+                    "uid" to userId,
                     "username" to name,
                     "email" to email,
-                    "password" to password,
+                    "password" to password
                 )
 
                 supabase.postgrest["users"]
                     .insert(userDetails)
 
+                Toast.makeText(this@SignUpActivity, "Sign up successful", Toast.LENGTH_SHORT).show()
+                navigateToDashboard()
+
             } catch (e: Exception) {
                 handleSignUpError(e)
             }
         }
-
-        Toast.makeText(this, "Sign up successful", Toast.LENGTH_SHORT).show()
-        navigateToDashboard()
     }
+
 
 
     private fun handleSignUpError(error: Exception) {
