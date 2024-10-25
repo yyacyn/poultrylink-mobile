@@ -56,6 +56,11 @@ class SignInActivity : AppCompatActivity() {
         val buttonSignIn = findViewById<Button>(R.id.signin_toDashboard)
         val buttonBack = findViewById<ImageButton>(R.id.btn_back)
 
+        buttonBack.setOnClickListener{
+            val intent = Intent(this, PilihanLoginActivity::class.java)
+            startActivity(intent)
+        }
+
         buttonSignIn.setOnClickListener {
             val email = emailInput.text.toString()
             val password = passwordInput.text.toString()
@@ -107,7 +112,6 @@ class SignInActivity : AppCompatActivity() {
             passwordInput.requestFocus()
             return false
         }
-
         return true
     }
 

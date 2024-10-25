@@ -20,11 +20,13 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.put
 import java.time.format.DateTimeFormatter
 import kotlin.math.log
 
@@ -62,7 +64,6 @@ class SignUpActivity : AppCompatActivity() {
                 performSignUp(email, password, name)
             }
         }
-
     }
 
     private fun validateInputs(email: String, name: String, password: String, confirmPassword: String): Boolean {
@@ -109,9 +110,14 @@ class SignUpActivity : AppCompatActivity() {
                 // If sign-up is successful, get the user ID
                 val auth = supabase.auth
                 val userId = auth.retrieveUserForCurrentSession(updateSession = true).id
-                Log.d("MyTag", userId)
-                val userTime = auth.retrieveUserForCurrentSession(updateSession = true).createdAt.toString()
 
+                val updateUserResult = supabase.auth.updateUser {
+                    data {
+                        put("display_name", name)
+                    }
+                }
+
+                Log.d("MyTag", userId)
 
                 // Create a new Users instance
                 val userDetails = mapOf(
@@ -119,11 +125,10 @@ class SignUpActivity : AppCompatActivity() {
                     "username" to name,
                     "email" to email,
                     "password" to password,
-                    "created_at" to userTime
                 )
 
                 supabase.postgrest["users"]
-                    .insert(userDetails) // Assuming supabase
+                    .insert(userDetails)
 
             } catch (e: Exception) {
                 handleSignUpError(e)

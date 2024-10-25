@@ -1,5 +1,6 @@
 package com.example.splashscreen
 
+import Users
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -21,6 +22,8 @@ import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class DashboardActivity : AppCompatActivity() {
 
@@ -41,26 +44,25 @@ class DashboardActivity : AppCompatActivity() {
         val buttoncart = findViewById<ImageButton>(R.id.cart)
         val greetUser = findViewById<TextView>(R.id.greet)
 
+
         lifecycleScope.launch {
             val auth = supabase.auth
-            val userEmail =
-                auth.retrieveUserForCurrentSession(updateSession = true).email.toString()
-            Log.d("MyTag", userEmail)
+            val user = auth.retrieveUserForCurrentSession(updateSession = true)
 
-            val greetUserWithName =
-                supabase.postgrest["users"].select(columns = Columns.list("username")) {
-                    filter {
-                        eq("email", userEmail)
-                    }
-                }.toString()
+            // Check if the user is authenticated and retrieve their display name
+            if (user != null) {
+                val displayName = user.userMetadata?.get("display_name").toString() // Access display_name from userMetadata
+                Log.d("MyTag", "Display Name: $displayName")
 
+                val charToDelete = '"'
 
-            Log.d("MyTag", greetUserWithName)
-
-            greetUser.text = "Welcome, ${greetUserWithName}"
-
+                // Update the TextView with the display name
+                greetUser.text = "Welcome, $displayName".replace(charToDelete.toString(),"").uppercase() // Correctly set the text
+            } else {
+                Log.d("MyTag", "User not found")
+                greetUser.text = "Welcome, Guest" // Fallback if user is not found
+            }
         }
-
 
         buttonProduk.setOnClickListener {
             val intent = Intent(this, ProdukActivity::class.java)
@@ -71,32 +73,5 @@ class DashboardActivity : AppCompatActivity() {
             val intent = Intent(this, CartActivity::class.java)
             startActivity(intent)
         }
-
-
     }
-
-//    private suspend fun getUsernameByEmail(email: String): String? {
-//        // Query the users table for the specified email
-//        val greetUserWithName =
-//            supabase.postgrest["users"].select(columns = Columns.list("username")) {
-//                filter {
-//                    eq("email", email)
-//                }
-//            }.toString()
-//        // Log the result for debugging
-//        Log.d("UserResult", greetUserWithName.toString())
-//
-//        // Check for errors in the result
-//        if (greetUserWithName.error != null) {
-//            Log.e("UserQueryError", "Error fetching user: ${greetUserWithName.error.message}")
-//            return null // Return null if there was an error
-//        }
-//
-//        // Check if any user was found and return the username
-//        return if (greetUserWithName.data != null && greetUserWithName.data.isNotEmpty()) {
-//            greetUserWithName.data[0]["username"] as? String
-//        } else {
-//            null // No user found
-//        }
-//    }
 }
