@@ -1,5 +1,6 @@
 package com.example.splashscreen
 
+import Users
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider.NewInstanceFactory.Companion.instance
 import androidx.lifecycle.lifecycleScope
 import com.example.homepage.HomeActivity
 import com.google.firebase.Timestamp
@@ -16,10 +18,13 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.time.format.DateTimeFormatter
 import kotlin.math.log
 
@@ -57,6 +62,7 @@ class SignUpActivity : AppCompatActivity() {
                 performSignUp(email, password, name)
             }
         }
+
     }
 
     private fun validateInputs(email: String, name: String, password: String, confirmPassword: String): Boolean {
@@ -94,7 +100,7 @@ class SignUpActivity : AppCompatActivity() {
     private fun performSignUp(email: String, password: String, name: String) {
         lifecycleScope.launch {
             try {
-                // Attempt to sign up the user
+                // Attempt to sign up the user using Supabase authentication
                 val result = supabase.auth.signUpWith(Email) {
                     this.email = email
                     this.password = password
@@ -104,29 +110,30 @@ class SignUpActivity : AppCompatActivity() {
                 val auth = supabase.auth
                 val userId = auth.retrieveUserForCurrentSession(updateSession = true).id
                 Log.d("MyTag", userId)
-//                val currentDateTime = LocalDateTime.Format {
-//                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-//                }
+                val userTime = auth.retrieveUserForCurrentSession(updateSession = true).createdAt.toString()
 
-                // Insert user details into the "users" table in Supabase
+
+                // Create a new Users instance
                 val userDetails = mapOf(
-                    "uid" to userId,
+                    "uid" to  userId,
                     "username" to name,
                     "email" to email,
                     "password" to password,
-                    "created_at" to auth.retrieveUserForCurrentSession(updateSession = true).createdAt,
+                    "created_at" to userTime
                 )
 
                 supabase.postgrest["users"]
-                    .insert(userDetails)
+                    .insert(userDetails) // Assuming supabase
 
             } catch (e: Exception) {
                 handleSignUpError(e)
             }
-
         }
+
         Toast.makeText(this, "Sign up successful", Toast.LENGTH_SHORT).show()
+        navigateToDashboard()
     }
+
 
     private fun handleSignUpError(error: Exception) {
         showError("Sign up failed: ${error.message}")
@@ -140,8 +147,8 @@ class SignUpActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun navigateToHome() {
-        val intent = Intent(this, HomeActivity::class.java)
+    private fun navigateToDashboard() {
+        val intent = Intent(this, DashboardActivity::class.java)
         startActivity(intent)
         finish()
     }

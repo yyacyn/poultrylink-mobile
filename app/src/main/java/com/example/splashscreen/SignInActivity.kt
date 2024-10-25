@@ -126,14 +126,10 @@ class SignInActivity : AppCompatActivity() {
         }
 
         // Check Supabase Auth Result
-        if (supabase.auth.retrieveUserForCurrentSession(true) != null) {
-            // Navigate to HomeActivity upon successful sign-in.
-            val intent = Intent(this@SignInActivity, DashboardActivity::class.java)
-            startActivity(intent)
-            finish()
-        } else {
-            showError("Sign in failed. Please check your credentials.")
-        }
+        // Navigate to HomeActivity upon successful sign-in.
+        val intent = Intent(this@SignInActivity, DashboardActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     private fun showError(message: String) {
