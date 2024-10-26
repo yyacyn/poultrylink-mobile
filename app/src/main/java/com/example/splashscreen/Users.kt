@@ -1,17 +1,22 @@
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+package com.example.splashscreen
 
-@Serializable
+import kotlinx.serialization.Serializable
+
+//@Serializable
 data class Users(
     val uid: String,
     val username: String,
     val email: String,
-    val password: String,
+    val password: String
 )
 
-fun main() {
-    val user = Users(uid = "123", username = "JohnDoe", email = "john@example.com", password = "securePassword")
-    val jsonString = Json.encodeToString(user)
-    println(jsonString) // Output: {"uid":"123","username":"JohnDoe","email":"john@example.com","password":"securePassword"}
-}
+data class InsertUsers(
+    val p_email: String,
+    val p_password: String,
+    val p_uid: String,
+    val p_username: String,
+)
+
+data class GetUserByEmail(
+    val p_email: String,
+)

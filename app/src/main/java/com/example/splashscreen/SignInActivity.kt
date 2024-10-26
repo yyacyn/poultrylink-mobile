@@ -2,6 +2,7 @@ package com.example.splashscreen
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.Button
@@ -12,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.homepage.HomeActivity
+import com.yourapp.network.RetrofitClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
@@ -20,6 +22,7 @@ import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.launch
+import retrofit2.Response
 
 class SignInActivity : AppCompatActivity() {
     lateinit var btn_login: View
@@ -76,6 +79,7 @@ class SignInActivity : AppCompatActivity() {
                         }
                     } catch (e: Exception) {
                         Toast.makeText(this@SignInActivity, "Login failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                        e.message?.let { it1 -> Log.d("API Error", it1) }
                     }
                 }
             }
@@ -116,11 +120,26 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private suspend fun checkUserExists(email: String): Boolean {
-        val userResult = supabase.postgrest["users"]
-            .select(columns = Columns.list("email")) // Select only the 'email' column
+        val requestBody = mapOf("p_email" to email)
+        val response: Response<String> = RetrofitClient.instance.getUserByEmail(requestBody)
 
-        // Check if any user was found with the given email.
-        return userResult.data.isNotEmpty() // Return true if user exists, false otherwise.
+        return when {
+            response.isSuccessful -> {
+                val userEmail = response.body()
+                userEmail != null && userEmail.isNotEmpty() // Return true if user exists
+            }
+            response.errorBody() != null -> {
+                // Log the error response
+                val errorMessage = response.errorBody()?.string() ?: "Unknown error"
+                Log.e("API Error", "Error: ${response.code()} - $errorMessage")
+                false // If there's an error, return false
+            }
+            else -> {
+                // Log unexpected responses
+                Log.e("API Error", "Unexpected error: ${response.code()} ${response.message()}")
+                false // If the request fails for any other reason, return false
+            }
+        }
     }
 
     private suspend fun loginUser(txt_email: String, txt_password: String) {

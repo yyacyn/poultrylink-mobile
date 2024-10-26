@@ -1,6 +1,5 @@
 package com.example.splashscreen
 
-import Users
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +13,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.firestore.auth.User
+import com.yourapp.network.RetrofitClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.createSupabaseClient
@@ -24,6 +24,7 @@ import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import retrofit2.Response
 
 class DashboardActivity : AppCompatActivity() {
 
@@ -44,20 +45,27 @@ class DashboardActivity : AppCompatActivity() {
         val buttoncart = findViewById<ImageButton>(R.id.cart)
         val greetUser = findViewById<TextView>(R.id.greet)
 
-
         lifecycleScope.launch {
             val auth = supabase.auth
-            val user = auth.retrieveUserForCurrentSession(updateSession = true)
+            val userEmail = auth.retrieveUserForCurrentSession(updateSession = true).email
 
             // Check if the user is authenticated and retrieve their display name
-            if (user != null) {
-                val displayName = user.userMetadata?.get("display_name").toString() // Access display_name from userMetadata
-                Log.d("MyTag", "Display Name: $displayName")
+            if (userEmail != null) {
+                val requestBody = mapOf("p_email" to userEmail)
+                val response: Response<String> = RetrofitClient.instance.getUserByEmail(requestBody)
 
-                val charToDelete = '"'
+                // Check if the response is successful
+                if (response.isSuccessful) {
+                    // Extract the display name from the response body
+                    val displayName = response.body()?.removeSurrounding("\"") // Remove quotes if they are included
 
-                // Update the TextView with the display name
-                greetUser.text = "Welcome, $displayName".replace(charToDelete.toString(),"") // Correctly set the text
+                    // Update the TextView with the display name
+                    greetUser.text = "Welcome, ${displayName ?: "User"}" // Fallback if displayName is null
+                    Log.d("MyTag", "Display Name: $displayName")
+                } else {
+                    Log.e("MyTag", "Error retrieving display name: ${response.message()}")
+                    greetUser.text = "Welcome, User" // Fallback if user retrieval fails
+                }
             } else {
                 Log.d("MyTag", "User not found")
                 greetUser.text = "Welcome, Guest" // Fallback if user is not found

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
+    kotlin("plugin.serialization") version "1.6.0"
 }
 
 android {
@@ -72,7 +73,12 @@ dependencies {
     implementation("io.github.jan-tennert.supabase:realtime-kt")
     implementation("io.ktor:ktor-client-core:3.0.0")
     implementation("io.ktor:ktor-client-android:3.0.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation ("io.github.jan-tennert.supabase:supabase-kt:3.0.1")
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
+//    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
 //    implementation("io.supabase:supabase-android:0.0.1")
 

@@ -1,6 +1,5 @@
 package com.example.splashscreen
 
-import Users
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider.NewInstanceFactory.Companion.instanc
 import androidx.lifecycle.lifecycleScope
 import com.example.homepage.HomeActivity
 import com.google.firebase.Timestamp
+import com.yourapp.network.RetrofitClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
@@ -23,9 +23,13 @@ import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Serializer
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.put
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.time.format.DateTimeFormatter
 import kotlin.math.log
 
@@ -60,7 +64,7 @@ class SignUpActivity : AppCompatActivity() {
 
             // Call validateInputs function, and if true, proceed with signup
             if (validateInputs(email, name, password, confirmPassword)) {
-                performSignUp(email, password, name)
+                authSupabase(email, password, name)
             }
         }
 
@@ -97,51 +101,6 @@ class SignUpActivity : AppCompatActivity() {
         buttonBack.setOnClickListener { /* Navigate back */ }
     }
 
-
-    private fun performSignUp(email: String, password: String, name: String) {
-        lifecycleScope.launch {
-            try {
-                // Attempt to sign up the user using Supabase authentication
-                val result = supabase.auth.signUpWith(Email) {
-                    this.email = email
-                    this.password = password
-                }
-
-                // If sign-up is successful, get the user ID
-                val auth = supabase.auth
-                val session = auth.retrieveUserForCurrentSession(updateSession = true)
-                val userId = session.id
-                Log.d("MyTag", "User ID: $userId")
-
-                // Now, update the user metadata to include 'display_name'
-                auth.updateUser {
-                    data {
-                        put("display_name", name)
-                    }
-                }
-
-                // Create a new user entry in your 'users' table
-                val userDetails = mapOf(
-                    "uid" to userId,
-                    "username" to name,
-                    "email" to email,
-                    "password" to password
-                )
-
-                supabase.postgrest["users"]
-                    .insert(userDetails)
-
-                Toast.makeText(this@SignUpActivity, "Sign up successful", Toast.LENGTH_SHORT).show()
-                navigateToDashboard()
-
-            } catch (e: Exception) {
-                handleSignUpError(e)
-            }
-        }
-    }
-
-
-
     private fun handleSignUpError(error: Exception) {
         showError("Sign up failed: ${error.message}")
     }
@@ -158,5 +117,62 @@ class SignUpActivity : AppCompatActivity() {
         val intent = Intent(this, DashboardActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+
+    fun authSupabase(email: String, password: String, username: String) {
+        lifecycleScope.launch {
+
+            // Attempt to sign up the user using Supabase authentication
+            val result = supabase.auth.signUpWith(Email) {
+                this.email = email
+                this.password = password
+            }
+
+            // If sign-up is successful, get the user ID
+            val auth = supabase.auth
+            val session = auth.retrieveUserForCurrentSession(updateSession = true)
+            val userId = session.id
+            Log.d("MyTag", "User ID: $userId")
+
+            // Now, update the user metadata to include 'display_name'
+            auth.updateUser {
+                data {
+                    put("display_name", username)
+                }
+            }
+            insertUser(email, password, username, userId)
+        }
+    }
+
+    fun insertUser(email: String, password: String, username: String, userId: String) {
+
+        val request = InsertUsers(
+            p_uid =  userId,
+            p_username = username,
+            p_email = email,
+            p_password = password
+        )
+
+        RetrofitClient.instance.insertUser(request).enqueue(object : Callback<Boolean> {
+            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                if (response.isSuccessful) {
+                    val success = response.body()
+                    if (success == true) {
+                        Log.d("InsertUser", "User inserted successfully")
+                        Toast.makeText(this@SignUpActivity, "Sign up successful", Toast.LENGTH_SHORT).show()
+                        navigateToDashboard()
+                    } else {
+                        Log.d("InsertUser", "User insertion failed")
+                    }
+                } else {
+                    Log.d("InsertUser", "Server error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                Log.e("InsertUser", "Network error: ${t.message}")
+            }
+        })
     }
 }
