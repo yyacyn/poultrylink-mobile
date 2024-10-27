@@ -1,6 +1,8 @@
 package com.example.splashscreen
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -10,25 +12,28 @@ import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.yourapp.network.RetrofitClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.storage.Storage
 import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.launch
 import retrofit2.Response
+import java.io.ByteArrayOutputStream
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class DashboardActivity : AppCompatActivity() {
 
     private val supabase = createSupabaseClient(
         supabaseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co",
-        supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhic3N5bHV1Y3J3c2JmenNweWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk2NTU4OTEsImV4cCI6MjA0NTIzMTg5MX0.o6fkro2tPKFoA9sxAp1nuseiHRGiDHs_HI4-ZoqOTfQ" // Replace with your actual Supabase key
+        supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhic3N5bHV1Y3J3c2JmenNweWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk2NTU4OTEsImV4cCI6MjA0NTIzMTg5MX0.o6fkro2tPKFoA9sxAp1nuseiHRGiDHs_HI4-ZoqOTfQ"
     ) {
         install(Auth)
         install(Postgrest)
@@ -40,64 +45,91 @@ class DashboardActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.dashboard)
 
-        val buttonProduk = findViewById<CardView>(R.id.produk1)
-        val buttoncart = findViewById<ImageButton>(R.id.cart)
         val greetUser = findViewById<TextView>(R.id.greet)
         val userPfp = findViewById<ImageView>(R.id.user_pfp)
 
+        // Update user greeting and load avatar
         lifecycleScope.launch {
-            // Retrieve user info
-            val auth = supabase.auth
-            val userEmail = auth.retrieveUserForCurrentSession(updateSession = true).email
-
-            // Check if the user is authenticated
-            if (userEmail != null) {
-                val requestBody = mapOf("p_email" to userEmail)
-                val response: Response<String> = RetrofitClient.instance.getUserByEmail(requestBody)
-
-                // Check if the response is successful
-                if (response.isSuccessful) {
-                    val displayName = response.body()?.removeSurrounding("\"")
-                    greetUser.text = "Welcome, ${displayName ?: "User"}"
-                } else {
-                    greetUser.text = "Welcome, User"
-                }
-            } else {
-                greetUser.text = "Welcome, Guest"
-            }
+            updateUserGreeting(greetUser)
+            uploadAndDisplayAvatar("avatar.jpg", R.drawable.emiya)
         }
-
-        buttonProduk.setOnClickListener {
-            val intent = Intent(this, ProdukActivity::class.java)
-            startActivity(intent)
-        }
-
-        buttoncart.setOnClickListener {
-            val intent = Intent(this, CartActivity::class.java)
-            startActivity(intent)
-        }
-
-        // Load image from Supabase Storage
-        loadImageFromSupabase("sekar.jpg") // Specify your file path here
     }
 
-    private fun loadImageFromSupabase(filePath: String) {
-        lifecycleScope.launch {
-            try {
-                // Construct the public URL to the object in the storage bucket
-                val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath"
+    private suspend fun updateUserGreeting(greetUser: TextView) {
+        // Retrieve user info
+        val auth = supabase.auth
+        val userEmail = auth.retrieveUserForCurrentSession(updateSession = true).email
 
-                //local image url
-                val localImageUrl = "/drawable/$filePath"
-                // Use Glide to load the image into the ImageView
+        // Check if the user is authenticated
+        if (userEmail != null) {
+            val requestBody = mapOf("p_email" to userEmail)
+            val response: Response<String> = RetrofitClient.instance.getUserByEmail(requestBody)
+
+            // Check if the response is successful
+            if (response.isSuccessful) {
+                val displayName = response.body()?.removeSurrounding("\"")
+                greetUser.text = "Welcome, ${displayName ?: "User"}"
+            } else {
+                greetUser.text = "Welcome, User"
+            }
+        } else {
+            greetUser.text = "Welcome, Guest"
+        }
+    }
+
+    private fun getDrawableAsByteArray(drawableId: Int): ByteArray {
+        val drawable = resources.getDrawable(drawableId, null) as BitmapDrawable
+        val bitmap = drawable.bitmap
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        return outputStream.toByteArray()
+    }
+
+    private suspend fun updateUserAvatarPath(email: String, filePath: String) {
+        supabase.postgrest["users"].update(mapOf("avatar_path" to filePath)) {
+            filter { eq("email", email) }
+        }
+    }
+
+    private fun uploadAndDisplayAvatar(filename: String, drawableId: Int) {
+        lifecycleScope.launch {
+            val currentEmail = supabase.auth.retrieveUserForCurrentSession().email ?: return@launch
+            val avatarPath = "avatars/$currentEmail/$filename"
+
+            try {
+                // Switch to background thread for network operations
+                withContext(Dispatchers.IO) {
+                    // Check if the user already has an avatar
+                    val existingFiles = supabase.storage.from("avatar").list("avatars/$currentEmail")
+                    val imageData = getDrawableAsByteArray(drawableId)
+
+                    if (existingFiles.isNotEmpty()) {
+                        // Update the existing file
+                        supabase.storage.from("avatar").update(avatarPath, imageData)
+                        Log.d("Supabase", "Existing avatar updated: $avatarPath")
+                    } else {
+                        // Upload a new avatar
+                        supabase.storage.from("avatar").upload(avatarPath, imageData)
+                        Log.d("Supabase", "New avatar uploaded: $avatarPath")
+                    }
+
+                    // Update avatar path in user's database record
+                    updateUserAvatarPath(currentEmail, avatarPath)
+                }
+
+                // Load the image from Supabase Storage URL into ImageView with Glide
+                val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$avatarPath"
                 Glide.with(this@DashboardActivity)
                     .load(imageUrl)
-                    .into(findViewById<ImageView>(R.id.user_pfp)) // Load into your ImageView
+                    .skipMemoryCache(true) // skip memory cache
+                    .diskCacheStrategy(DiskCacheStrategy.NONE) // skip disk cache
+                    .into(findViewById(R.id.user_pfp))
+                Log.d("Supabase", "Avatar displayed successfully")
 
-                Log.d("ImageLoad", "Image loaded successfully from $imageUrl")
             } catch (e: Exception) {
-                Log.e("ImageLoadError", "Failed to load image: ${e.message}")
+                Log.e("SupabaseUploadError", "Failed to upload or display avatar: ${e.message}")
             }
         }
     }
+
 }
