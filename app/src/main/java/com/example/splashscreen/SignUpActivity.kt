@@ -68,6 +68,7 @@ class SignUpActivity : AppCompatActivity() {
             }
         }
 
+
     }
 
     private fun validateInputs(email: String, name: String, password: String, confirmPassword: String): Boolean {
@@ -98,7 +99,11 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun setupClickListeners() {
-        buttonBack.setOnClickListener { /* Navigate back */ }
+        buttonBack.setOnClickListener {
+            val intent = Intent(this, PilihanLoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 
     private fun handleSignUpError(error: Exception) {

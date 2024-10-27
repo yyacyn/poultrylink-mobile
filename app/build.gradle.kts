@@ -69,6 +69,7 @@ dependencies {
     implementation(platform("io.github.jan-tennert.supabase:bom:3.0.1"))
     implementation("io.github.jan-tennert.supabase:postgrest-kt")
     implementation("io.github.jan-tennert.supabase:auth-kt")
+    implementation("io.github.jan-tennert.supabase:storage-kt")
     implementation("io.github.jan-tennert.supabase:gotrue-kt:1.4.7")
     implementation("io.github.jan-tennert.supabase:realtime-kt")
     implementation("io.ktor:ktor-client-core:3.0.0")
@@ -77,7 +78,8 @@ dependencies {
     implementation ("io.github.jan-tennert.supabase:supabase-kt:3.0.1")
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-
+    implementation ("com.github.bumptech.glide:glide:4.14.2")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.14.2")
 //    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
 //    implementation("io.supabase:supabase-android:0.0.1")
