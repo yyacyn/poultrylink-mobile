@@ -6,6 +6,7 @@ import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
+import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -15,6 +16,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.gson.Gson
@@ -48,6 +51,9 @@ class DashboardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.dashboard)
+
+//        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+//        recyclerView.layoutManager = GridLayoutManager(this, 2)
 
         val greetUser = findViewById<TextView>(R.id.greet)
         val userPfp = findViewById<ImageView>(R.id.user_pfp)
@@ -198,12 +204,12 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     private fun displayProducts(products: List<Products>) {
-        val gridLayout = findViewById<GridLayout>(R.id.gridLayout) // Use the ID defined in dashboard.xml
-        gridLayout.removeAllViews() // Clear any existing views
+        val gridLayout = findViewById<GridLayout>(R.id.gridLayout)
+        gridLayout.removeAllViews() // Clear existing views
 
-        for (product in products) {
+        for ((index, product) in products.withIndex()) {
             // Inflate the existing CardView layout from XML
-            val cardView = layoutInflater.inflate(R.layout.product_card, gridLayout, false) // Assume your CardView XML layout is named card_product.xml
+            val cardView = layoutInflater.inflate(R.layout.product_card, gridLayout, false)
 
             // Bind the product data to the views
             val productImage = cardView.findViewById<ImageView>(R.id.productImage)
@@ -221,14 +227,26 @@ class DashboardActivity : AppCompatActivity() {
                 .error(R.drawable.sekar)
                 .into(productImage)
 
-            // Set product name, rating, and price
+            // Set product details
             productName.text = product.nama_produk
             productRating.text = product.rating.toString()
             productAmountRating.text = "(${product.reviews} Reviews)"
             productPrice.text = "Rp ${product.harga}"
 
+            // Adjust margin for the second product (index 1)
+            val params = cardView.layoutParams as ViewGroup.MarginLayoutParams
+            if (index % 2 == 0) {
+                params.setMargins(30, 20, 10, 20) // Example: reduced left margin to 5dp
+            } else {
+                params.setMargins(20, 20, 10, 20) // Normal margin for other products
+            }
+
+            // Apply the layout parameters
+            cardView.layoutParams = params
+
             // Add the inflated CardView to the GridLayout
             gridLayout.addView(cardView)
         }
     }
+
 }
