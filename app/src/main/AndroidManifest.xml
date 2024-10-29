@@ -18,6 +18,33 @@
         android:theme="@style/Theme.Poultrylink_mobile"
         tools:targetApi="31">
         <activity
+            android:name=".SearchPemasokActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SearchProdukActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EditProfilActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MyProfilActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProfilActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CompletePaymentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MethodPaymentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PaymentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".NotificationActivity"
+            android:exported="false" />
+        <activity
             android:name=".PilihanLoginActivity"
             android:exported="false" />
         <activity
