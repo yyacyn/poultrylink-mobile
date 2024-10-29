@@ -55,6 +55,10 @@ dependencies {
     // Dependensi image slider
     implementation ("androidx.viewpager2:viewpager2:1.0.0")
     implementation ("com.github.denzcoskun:ImageSlideshow:0.1.0")
+
+    // Image circle
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
+
     // Dependensi splash screen
     implementation("com.airbnb.android:lottie:6.5.1")
     implementation ("com.google.android.material:material:1.8.0")
