@@ -32,6 +32,5 @@ class CartActivity : AppCompatActivity() {
             val intent = Intent(this, CartCompleteActivity::class.java)
             startActivity(intent)
         }
-
-        }
+    }
 }

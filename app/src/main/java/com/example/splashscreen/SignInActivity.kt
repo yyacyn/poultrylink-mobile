@@ -120,43 +120,40 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private suspend fun checkUserExists(email: String): Boolean {
-        val requestBody = mapOf("p_email" to email)
-        val response: Response<String> = RetrofitClient.instance.getUserByEmail(requestBody)
-
-        return when {
-            response.isSuccessful -> {
-                val userEmail = response.body()
-                userEmail != null && userEmail.isNotEmpty() // Return true if user exists
-            }
-            response.errorBody() != null -> {
-                // Log the error response
-                val errorMessage = response.errorBody()?.string() ?: "Unknown error"
-                Log.e("API Error", "Error: ${response.code()} - $errorMessage")
-                false // If there's an error, return false
-            }
-            else -> {
-                // Log unexpected responses
-                Log.e("API Error", "Unexpected error: ${response.code()} ${response.message()}")
-                false // If the request fails for any other reason, return false
-            }
-        }
+        val response: Response<String> = RetrofitClient.instance.getUserByEmail(mapOf("p_email" to email))
+        return response.isSuccessful && response.body()?.isNotEmpty() == true
     }
 
-    private suspend fun loginUser(txt_email: String, txt_password: String) {
-        val authResponse = supabase.auth.signInWith(Email) {
-            email = txt_email
-            password = txt_password
+    private suspend fun loginUser(email: String, password: String) {
+        try {
+            // Attempt to sign in with Supabase Auth
+            supabase.auth.signInWith(Email) {
+                this.email = email
+                this.password = password
+            }
+            navigateToDashboard()
+        } catch (e: Exception) {
+            // If sign-in fails because the user does not exist in Auth, show an error
+            if (e.message?.contains("User not found") == true) {
+                // Attempt to sign in with Supabase Auth
+                supabase.auth.signUpWith(Email) {
+                    this.email = email
+                    this.password = password
+                }
+            } else {
+                showError("Login failed: ${e.message}")
+            }
         }
-
-        // Check Supabase Auth Result
-        // Navigate to HomeActivity upon successful sign-in.
-        val intent = Intent(this@SignInActivity, DashboardActivity::class.java)
-        startActivity(intent)
-        finish()
     }
 
     private fun showError(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun navigateToDashboard() {
+        val intent = Intent(this, DashboardActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
 

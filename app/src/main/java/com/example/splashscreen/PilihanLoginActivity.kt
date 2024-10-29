@@ -35,9 +35,7 @@ val supabase = createSupabaseClient(
 
 class PilihanLoginActivity : AppCompatActivity() {
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
-
 
         super.onCreate(savedInstanceState)
         FirebaseApp.initializeApp(this)
@@ -61,6 +59,5 @@ class PilihanLoginActivity : AppCompatActivity() {
             val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
         }
-
     }
 }

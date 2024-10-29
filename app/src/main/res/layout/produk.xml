@@ -47,8 +47,6 @@
             </androidx.cardview.widget.CardView>
             </RelativeLayout>
 
-
-
             <!-- Tombol Back -->
             <ImageButton
                 android:id="@+id/btn_back"

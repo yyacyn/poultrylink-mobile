@@ -1,6 +1,8 @@
 package com.example.splashscreen
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -10,6 +12,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider.NewInstanceFactory.Companion.instance
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.homepage.HomeActivity
 import com.google.firebase.Timestamp
 import com.yourapp.network.RetrofitClient
@@ -20,7 +24,11 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.storage.Storage
+import io.github.jan.supabase.storage.storage
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Serializer
@@ -30,11 +38,12 @@ import kotlinx.serialization.json.put
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.ByteArrayOutputStream
 import java.time.format.DateTimeFormatter
 import kotlin.math.log
 
 
-class SignUpActivity : AppCompatActivity() {
+class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
     private lateinit var buttonSignUp: Button
     private lateinit var emailInput: EditText
     private lateinit var nameInput: EditText
@@ -48,6 +57,7 @@ class SignUpActivity : AppCompatActivity() {
     ) {
         install(Auth)
         install(Postgrest)
+        install(Storage)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,8 +77,6 @@ class SignUpActivity : AppCompatActivity() {
                 authSupabase(email, password, name)
             }
         }
-
-
     }
 
     private fun validateInputs(email: String, name: String, password: String, confirmPassword: String): Boolean {
@@ -124,29 +132,24 @@ class SignUpActivity : AppCompatActivity() {
         finish()
     }
 
-
-    fun authSupabase(email: String, password: String, username: String) {
+    private fun authSupabase(email: String, password: String, username: String) {
         lifecycleScope.launch {
-
-            // Attempt to sign up the user using Supabase authentication
-            val result = supabase.auth.signUpWith(Email) {
-                this.email = email
-                this.password = password
-            }
-
-            // If sign-up is successful, get the user ID
-            val auth = supabase.auth
-            val session = auth.retrieveUserForCurrentSession(updateSession = true)
-            val userId = session.id
-            Log.d("MyTag", "User ID: $userId")
-
-            // Now, update the user metadata to include 'display_name'
-            auth.updateUser {
-                data {
-                    put("display_name", username)
+            try {
+                val result = supabase.auth.signUpWith(Email) {
+                    this.email = email
+                    this.password = password
                 }
+
+                val session = supabase.auth.retrieveUserForCurrentSession()
+                val userId = session.id
+                val userEmail = session.email
+                insertUser(email, password, username, userId)
+
+                // Upload default profile picture
+                uploadDefaultAvatar(userEmail.toString())
+            } catch (e: Exception) {
+                handleSignUpError(e)
             }
-            insertUser(email, password, username, userId)
         }
     }
 
@@ -174,10 +177,82 @@ class SignUpActivity : AppCompatActivity() {
                     Log.d("InsertUser", "Server error: ${response.errorBody()?.string()}")
                 }
             }
-
             override fun onFailure(call: Call<Boolean>, t: Throwable) {
                 Log.e("InsertUser", "Network error: ${t.message}")
             }
         })
+    }
+
+    private fun uploadDefaultAvatar(userEmail: String) {
+        lifecycleScope.launch {
+            val defaultAvatar = R.drawable.fotoprofil  // Assuming 'fotoprofil.png' is added as a drawable resource
+            val avatarPath = "avatars/$userEmail/avatar.jpg"
+            val imageData = getDrawableAsByteArray(defaultAvatar)
+
+            withContext(Dispatchers.IO) {
+                try {
+                    supabase.storage.from("avatar").upload(avatarPath, imageData)
+                    updateUserAvatarPath(userEmail, avatarPath)
+                    Log.d("Supabase", "Default avatar uploaded: $avatarPath")
+                } catch (e: Exception) {
+                    Log.e("SupabaseUploadError", "Failed to upload avatar: ${e.message}")
+                }
+            }
+        }
+    }
+
+    private fun getDrawableAsByteArray(drawableId: Int): ByteArray {
+        val drawable = resources.getDrawable(drawableId, null) as android.graphics.drawable.BitmapDrawable
+        val bitmap = drawable.bitmap
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        return outputStream.toByteArray()
+    }
+
+    private suspend fun updateUserAvatarPath(email: String, filePath: String) {
+        supabase.postgrest["users"].update(mapOf("avatar_path" to filePath)) {
+            filter { eq("email", email) }
+        }
+    }
+
+    private fun uploadAndDisplayAvatar(filename: String, drawableId: Int) {
+        lifecycleScope.launch {
+            val currentEmail = supabase.auth.retrieveUserForCurrentSession().email ?: return@launch
+            val avatarPath = "avatars/$currentEmail/$filename"
+
+            try {
+                // Switch to background thread for network operations
+                withContext(Dispatchers.IO) {
+                    // Check if the user already has an avatar
+                    val existingFiles = supabase.storage.from("avatar").list("avatars/$currentEmail")
+                    val imageData = getDrawableAsByteArray(drawableId)
+
+                    if (existingFiles.isNotEmpty()) {
+                        // Update the existing file
+                        supabase.storage.from("avatar").update(avatarPath, imageData)
+                        Log.d("Supabase", "Existing avatar updated: $avatarPath")
+                    } else {
+                        // Upload a new avatar
+                        supabase.storage.from("avatar").upload(avatarPath, imageData)
+                        Log.d("Supabase", "New avatar uploaded: $avatarPath")
+                    }
+
+                    // Update avatar path in user's database record
+                    updateUserAvatarPath(currentEmail, avatarPath)
+                }
+
+                // Load the image from Supabase Storage URL into ImageView with Glide
+                val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$avatarPath"
+                Glide.with(this@SignUpActivity)
+                    .load(imageUrl)
+                    .skipMemoryCache(true) // skip memory cache
+                    .diskCacheStrategy(DiskCacheStrategy.NONE) // skip disk cache
+                    .into(findViewById(R.id.user_pfp))
+                Log.d("Supabase", "Avatar displayed successfully")
+
+            } catch (e: Exception) {
+                Log.e("SupabaseUploadError", "Failed to upload or display avatar: ${e.message}")
+            }
+        }
     }
 }

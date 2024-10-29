@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 //@Serializable
 data class Users(
+    val id: String? = null,
     val uid: String,
     val username: String,
     val email: String,
@@ -20,3 +21,4 @@ data class InsertUsers(
 data class GetUserByEmail(
     val p_email: String,
 )
+
