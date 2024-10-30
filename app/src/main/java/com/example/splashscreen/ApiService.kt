@@ -30,5 +30,8 @@ interface ApiService {
     @Headers("Content-Type: application/json")
     @POST("rpc/get_supplier_by_id")
     suspend fun getSupplierById(@Body request: Map<String, Long>): Response<List<Supplier>>
+
+    @POST("rpc/get_user_id_by_email") // Replace with your actual endpoint
+    suspend fun getUserIdByEmail(@Body requestBody: Map<String, String>): Response<Int>
 }
 

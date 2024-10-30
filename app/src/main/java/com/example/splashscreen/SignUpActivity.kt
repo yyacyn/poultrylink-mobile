@@ -185,21 +185,27 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
 
     private fun uploadDefaultAvatar(userEmail: String) {
         lifecycleScope.launch {
-            val defaultAvatar = R.drawable.fotoprofil  // Assuming 'fotoprofil.png' is added as a drawable resource
-            val avatarPath = "avatars/$userEmail/avatar.jpg"
-            val imageData = getDrawableAsByteArray(defaultAvatar)
+            val userId = getUserIdByEmail(userEmail)
+            if (userId != null) {
+                val defaultAvatar = R.drawable.fotoprofil  // Your drawable resource
+                val avatarPath = "avatars/$userId/avatar.jpg"  // Use user ID for folder
+                val imageData = getDrawableAsByteArray(defaultAvatar)
 
-            withContext(Dispatchers.IO) {
-                try {
-                    supabase.storage.from("avatar").upload(avatarPath, imageData)
-                    updateUserAvatarPath(userEmail, avatarPath)
-                    Log.d("Supabase", "Default avatar uploaded: $avatarPath")
-                } catch (e: Exception) {
-                    Log.e("SupabaseUploadError", "Failed to upload avatar: ${e.message}")
+                withContext(Dispatchers.IO) {
+                    try {
+                        supabase.storage.from("avatar").upload(avatarPath, imageData)
+                        updateUserAvatarPath(userEmail, avatarPath)
+                        Log.d("Supabase", "Default avatar uploaded: $avatarPath")
+                    } catch (e: Exception) {
+                        Log.e("SupabaseUploadError", "Failed to upload avatar: ${e.message}")
+                    }
                 }
+            } else {
+                Log.e("AvatarUploadError", "User ID not found for email: $userEmail")
             }
         }
     }
+
 
     private fun getDrawableAsByteArray(drawableId: Int): ByteArray {
         val drawable = resources.getDrawable(drawableId, null) as android.graphics.drawable.BitmapDrawable
@@ -253,6 +259,20 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
             } catch (e: Exception) {
                 Log.e("SupabaseUploadError", "Failed to upload or display avatar: ${e.message}")
             }
+        }
+    }
+
+    private suspend fun getUserIdByEmail(email: String): Int? {
+        val requestBody = mapOf("p_email" to email)
+        val response: Response<Int> = RetrofitClient.instance.getUserIdByEmail(requestBody)
+
+        if (response.isSuccessful) {
+            // Log the raw response to see if you are receiving the correct ID
+            Log.d("APIResponse", "User ID retrieved: ${response.body()}")
+            return response.body() // This will be the user ID directly
+        } else {
+            Log.e("APIError", "Failed to retrieve user ID: ${response.errorBody()?.string()}")
+            return null
         }
     }
 }
