@@ -3,6 +3,7 @@ import com.example.splashscreen.Users
 import com.example.splashscreen.GetUserByEmail
 import com.example.splashscreen.ProductResponse
 import com.example.splashscreen.Products
+import com.example.splashscreen.Supplier
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
@@ -25,5 +26,9 @@ interface ApiService {
 
     @GET("rpc/get_all_products")
     suspend fun getProducts(): Response<ProductResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST("rpc/get_supplier_by_id")
+    suspend fun getSupplierById(@Body request: Map<String, Long>): Response<List<Supplier>>
 }
 

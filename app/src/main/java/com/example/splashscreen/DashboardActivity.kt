@@ -52,13 +52,10 @@ class DashboardActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.dashboard)
 
-//        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-//        recyclerView.layoutManager = GridLayoutManager(this, 2)
-
         val greetUser = findViewById<TextView>(R.id.greet)
         val userPfp = findViewById<ImageView>(R.id.user_pfp)
-        val buttonProduk = findViewById<CardView>(R.id.produkcard)
         val buttoncart = findViewById<ImageButton>(R.id.cart)
+        val buttonProduk = findViewById<CardView>(R.id.produkcard)
 
         // Load products into the grid
         loadProducts()
@@ -71,13 +68,14 @@ class DashboardActivity : AppCompatActivity() {
             loadImageFromSupabase("/avatars/$currentEmail/avatar.jpg")
         }
 
-        buttonProduk.setOnClickListener {
-            val intent = Intent(this, ProdukActivity::class.java)
-            startActivity(intent)
-        }
-
         buttoncart.setOnClickListener {
             val intent = Intent(this, CartActivity::class.java)
+            startActivity(intent)
+
+        }
+
+        buttonProduk.setOnClickListener {
+            val intent = Intent(this, ProdukActivity::class.java)
             startActivity(intent)
         }
     }
@@ -220,7 +218,7 @@ class DashboardActivity : AppCompatActivity() {
             val productLocation = cardView.findViewById<TextView>(R.id.productLocation)
 
             // Load product image with Glide
-            val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/${product.image}"
+            val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/${product.image}/1.jpg"
             Glide.with(this)
                 .load(imageUrl)
                 .placeholder(R.drawable.emiya)
@@ -241,6 +239,22 @@ class DashboardActivity : AppCompatActivity() {
                 params.setMargins(20, 20, 10, 20) // Normal margin for other products
             }
 
+            // Set OnClickListener to handle card click events
+            cardView.setOnClickListener {
+                // Start a new activity or perform any action for the clicked product
+                val intent = Intent(this, ProdukActivity::class.java).apply {
+                    putExtra("product_id", product.id) // Pass product data as needed
+                }
+                intent.putExtra("productName", product.nama_produk)
+                intent.putExtra("productImage", product.image) // If you need to pass the image URL or ID
+                intent.putExtra("productRating", product.rating)
+                intent.putExtra("productPrice", product.harga)
+                intent.putExtra("productDesc", product.deskripsi)
+                intent.putExtra("supplierId", product.supplier_id)
+                startActivity(intent)
+            }
+
+
             // Apply the layout parameters
             cardView.layoutParams = params
 
@@ -248,5 +262,4 @@ class DashboardActivity : AppCompatActivity() {
             gridLayout.addView(cardView)
         }
     }
-
 }
