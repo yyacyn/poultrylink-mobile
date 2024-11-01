@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FaqActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="25dp"
+            android:layout_marginRight="25dp"
+            android:layout_marginLeft="25dp">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/arrowbackblack"
+                android:background="#00FFFFFF"
+                />
+
+            <!-- Judul "FAQ" -->
+            <TextView
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:text="FAQ"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:textColor="@color/orange" />
+
+            <!--   FAQ 1  -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@android:color/white"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Header -->
+                    <LinearLayout
+                        android:id="@+id/headerLayout1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <!-- Question -->
+                        <TextView
+                            android:id="@+id/titleTextView1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Apa itu Poultrylink?"
+                            android:textColor="#000"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <!-- Arrow -->
+                        <ImageView
+                            android:id="@+id/arrowImageView1"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/arrow_down" />
+                    </LinearLayout>
+
+                    <!-- Isi Konten -->
+                    <TextView
+                        android:id="@+id/contentTextView1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Aplikasi ini adalah platform yang menghubungkan peternak atau supplier ayam dengan konsumen, baik individu maupun bisnis. Peternak dapat membuat profil, mengunggah produk seperti ayam potong, telur, ayam hidup, atau pakan ayam, dan menentukan harga serta informasi lain. Konsumen dapat mencari produk yang mereka butuhkan, melakukan pemesanan, dan mengatur pengiriman atau pengambilan. Aplikasi ini memudahkan proses transaksi antara peternak dan konsumen, mengoptimalkan distribusi produk."
+                        android:visibility="gone" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+            <!--   FAQ 2  -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@android:color/white"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Header -->
+                    <LinearLayout
+                        android:id="@+id/headerLayout2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <!-- Question -->
+                        <TextView
+                            android:id="@+id/titleTextView2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Apakah ada biaya menggunakan aplikasi ini?"
+                            android:textColor="#000"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <!-- Arrow -->
+                        <ImageView
+                            android:id="@+id/arrowImageView2"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/arrow_down" />
+                    </LinearLayout>
+
+                    <!-- Isi Konten -->
+                    <TextView
+                        android:id="@+id/contentTextView2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Aplikasi ini adalah platform yang menghubungkan peternak atau supplier ayam dengan konsumen, baik individu maupun bisnis. Peternak dapat membuat profil, mengunggah produk seperti ayam potong, telur, ayam hidup, atau pakan ayam, dan menentukan harga serta informasi lain. Konsumen dapat mencari produk yang mereka butuhkan, melakukan pemesanan, dan mengatur pengiriman atau pengambilan. Aplikasi ini memudahkan proses transaksi antara peternak dan konsumen, mengoptimalkan distribusi produk."
+                        android:visibility="gone" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+
+            <!--   FAQ 3  -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@android:color/white"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Header -->
+                    <LinearLayout
+                        android:id="@+id/headerLayout3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <!-- Question -->
+                        <TextView
+                            android:id="@+id/titleTextView3"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Bagaimana jika terjadi masalah dengan produk yang diterima oleh konsumen ?"
+                            android:textColor="#000"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <!-- Arrow -->
+                        <ImageView
+                            android:id="@+id/arrowImageView3"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/arrow_down" />
+                    </LinearLayout>
+
+                    <!-- Isi Konten -->
+                    <TextView
+                        android:id="@+id/contentTextView3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Jika konsumen mengalami masalah dengan produk yang diterima, seperti kualitas produk yang tidak sesuai atau kerusakan saat pengiriman, mereka dapat menghubungi tim dukungan aplikasi melalui fitur bantuan atau layanan pelanggan. Aplikasi ini menyediakan kebijakan pengembalian atau penyelesaian masalah untuk melindungi konsumen dan menjaga kepercayaan. Setelah laporan diterima, tim dukungan akan memediasi antara peternak dan konsumen untuk mencari solusi terbaik, baik itu penggantian produk, pengembalian dana, atau solusi lainnya sesuai kebijakan aplikasi."
+                        android:visibility="gone" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+        </LinearLayout>
+    </LinearLayout>
+    </ScrollView>
+
+
+
+
+
+    <!-- Bottom Navbar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        >
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            app:cardBackgroundColor="@color/white"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:cardElevation="6dp"
+            app:cardCornerRadius="0dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:text="Still Stuck? Go to Customer Service"
+                android:layout_marginTop="20dp"
+                android:gravity="center"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="match_parent"
+                android:layout_marginTop="50dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginBottom="25dp"
+                android:layout_height="60dp"
+                android:text="Live Chat"
+                android:textSize="20dp"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/orange"
+                app:cornerRadius="10dp"
+                />
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
