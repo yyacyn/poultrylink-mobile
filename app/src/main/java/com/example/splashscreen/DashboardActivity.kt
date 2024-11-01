@@ -35,6 +35,8 @@ import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.text.NumberFormat
+import java.util.Locale
 
 class DashboardActivity : AppCompatActivity() {
 
@@ -156,6 +158,11 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
+    private fun formatWithDots(amount: Long): String {
+        val format = NumberFormat.getNumberInstance(Locale("in", "ID"))
+        return format.format(amount) // This will automatically add dots without "Rp" symbol
+    }
+
     private fun displayProducts(products: List<Products>) {
         val gridLayout = findViewById<GridLayout>(R.id.gridLayout)
         gridLayout.removeAllViews() // Clear existing views
@@ -169,7 +176,7 @@ class DashboardActivity : AppCompatActivity() {
             val productPrice = cardView.findViewById<TextView>(R.id.productPrice)
             val productLocation = cardView.findViewById<TextView>(R.id.productLocation)
 
-            // Load product image with Glide
+            // Load the first image for the product
             val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/${product.image}/1.jpg"
             Glide.with(this)
                 .load(imageUrl)
@@ -180,7 +187,10 @@ class DashboardActivity : AppCompatActivity() {
             productName.text = product.nama_produk
             productRating.text = product.rating.toString()
             productAmountRating.text = "(${product.reviews} Reviews)"
-            productPrice.text = "Rp ${product.harga}"
+
+            // Use formatWithDots to format the price
+            val value = formatWithDots(product.harga)
+            productPrice.text = "Rp. $value"
 
             val params = cardView.layoutParams as ViewGroup.MarginLayoutParams
             if (index % 2 == 0) {
@@ -193,7 +203,7 @@ class DashboardActivity : AppCompatActivity() {
                 val intent = Intent(this, ProdukActivity::class.java).apply {
                     putExtra("product_id", product.id)
                     putExtra("productName", product.nama_produk)
-                    putExtra("productImage", product.image)
+                    putExtra("productImage", product.image) // Pass the image base name
                     putExtra("productRating", product.rating)
                     putExtra("productPrice", product.harga)
                     putExtra("productDesc", product.deskripsi)
@@ -204,6 +214,28 @@ class DashboardActivity : AppCompatActivity() {
 
             cardView.layoutParams = params
             gridLayout.addView(cardView)
+        }
+    }
+
+    private suspend fun loadFirstImageFromSupabase(folderPath: String): String? {
+        return withContext(Dispatchers.IO) {
+            try {
+                // List all files in the specified folder
+                val files = supabase.storage.from("products").list(folderPath)
+
+                // Check if files are retrieved and get the first file
+                if (files.isNotEmpty()) {
+                    val firstFile = files[0].name // Get the name of the first file
+                    // Construct the public URL to the first file
+                    return@withContext "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/$folderPath/$firstFile"
+                } else {
+                    Log.e("ImageLoadError", "No images found in the folder: $folderPath")
+                    return@withContext null
+                }
+            } catch (e: Exception) {
+                Log.e("ImageLoadError", "Failed to load images: ${e.message}")
+                return@withContext null
+            }
         }
     }
 }

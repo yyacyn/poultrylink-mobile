@@ -25,6 +25,8 @@ import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.storage.Storage
 import kotlinx.coroutines.launch
 import retrofit2.Response
+import java.text.NumberFormat
+import java.util.Locale
 
 
 class ProdukActivity : AppCompatActivity() {
@@ -51,7 +53,8 @@ class ProdukActivity : AppCompatActivity() {
 
         // Set the data to views
         findViewById<TextView>(R.id.product_name).text = productName
-        findViewById<TextView>(R.id.product_price).text = "Rp $productPrice"
+        val value = formatWithDots(productPrice)
+        findViewById<TextView>(R.id.product_price).text = "Rp. $value"
         findViewById<TextView>(R.id.product_rating).text = productRating.toString()
         findViewById<TextView>(R.id.product_desc).text = productDesc
 
@@ -62,7 +65,7 @@ class ProdukActivity : AppCompatActivity() {
             SlideModel("https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/$productImage/2.jpg", ScaleTypes.FIT),
             SlideModel("https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/$productImage/3.jpg", ScaleTypes.FIT)
         )
-        imageSlider.setImageList(slideModels, ScaleTypes.FIT)
+        imageSlider.setImageList(slideModels, ScaleTypes.CENTER_CROP)
 
         // Fetch and display supplier name
         lifecycleScope.launch {
@@ -73,6 +76,11 @@ class ProdukActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.btn_back).setOnClickListener {
             finish()
         }
+    }
+
+    private fun formatWithDots(amount: Long): String {
+        val format = NumberFormat.getNumberInstance(Locale("in", "ID"))
+        return format.format(amount) // This will automatically add dots without "Rp" symbol
     }
 
     private suspend fun fetchSupplierName(supplierId: Long, supplierNameTextView: TextView, supplierLocationTextView: TextView) {
