@@ -6,6 +6,7 @@ import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
+import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -15,6 +16,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.gson.Gson
@@ -51,8 +54,8 @@ class DashboardActivity : AppCompatActivity() {
 
         val greetUser = findViewById<TextView>(R.id.greet)
         val userPfp = findViewById<ImageView>(R.id.user_pfp)
-        val buttonProduk = findViewById<CardView>(R.id.produkcard)
         val buttoncart = findViewById<ImageButton>(R.id.cart)
+        val buttonProduk = findViewById<CardView>(R.id.produkcard)
 
         // Load products into the grid
         loadProducts()
@@ -60,33 +63,31 @@ class DashboardActivity : AppCompatActivity() {
         // Update user greeting and load avatar
         lifecycleScope.launch {
             updateUserGreeting(greetUser)
-//            uploadAndDisplayAvatar("avatar.jpg", R.drawable.emiya)
-            val currentEmail = supabase.auth.retrieveUserForCurrentSession().email ?: return@launch
-            loadImageFromSupabase("/avatars/$currentEmail/avatar.jpg")
-        }
 
-        buttonProduk.setOnClickListener {
-            val intent = Intent(this, ProdukActivity::class.java)
-            startActivity(intent)
+            // Get user ID from email and load avatar
+            val userId = getUserIdByEmail(supabase.auth.retrieveUserForCurrentSession().email ?: return@launch)
+            if (userId != null) {
+                loadImageFromSupabase("/avatars/$userId/avatar.jpg")
+            }
         }
 
         buttoncart.setOnClickListener {
-            val intent = Intent(this, CartActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, CartActivity::class.java))
+        }
+
+        buttonProduk.setOnClickListener {
+            startActivity(Intent(this, ProdukActivity::class.java))
         }
     }
 
     private suspend fun updateUserGreeting(greetUser: TextView) {
-        // Retrieve user info
         val auth = supabase.auth
         val userEmail = auth.retrieveUserForCurrentSession(updateSession = true).email
 
-        // Check if the user is authenticated
         if (userEmail != null) {
             val requestBody = mapOf("p_email" to userEmail)
             val response: Response<String> = RetrofitClient.instance.getUserByEmail(requestBody)
 
-            // Check if the response is successful
             if (response.isSuccessful) {
                 val displayName = response.body()?.removeSurrounding("\"")
                 greetUser.text = "Welcome, ${displayName ?: "User"}"
@@ -98,58 +99,16 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
-    private fun getDrawableAsByteArray(drawableId: Int): ByteArray {
-        val drawable = resources.getDrawable(drawableId, null) as BitmapDrawable
-        val bitmap = drawable.bitmap
-        val outputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-        return outputStream.toByteArray()
-    }
+    private suspend fun getUserIdByEmail(email: String): Int? {
+        val requestBody = mapOf("p_email" to email)
+        val response: Response<Int> = RetrofitClient.instance.getUserIdByEmail(requestBody)
 
-    private suspend fun updateUserAvatarPath(email: String, filePath: String) {
-        supabase.postgrest["users"].update(mapOf("avatar_path" to filePath)) {
-            filter { eq("email", email) }
-        }
-    }
-
-    private fun uploadAndDisplayAvatar(filename: String, drawableId: Int) {
-        lifecycleScope.launch {
-            val currentEmail = supabase.auth.retrieveUserForCurrentSession().email ?: return@launch
-            val avatarPath = "avatars/$currentEmail/$filename"
-
-            try {
-                // Switch to background thread for network operations
-                withContext(Dispatchers.IO) {
-                    // Check if the user already has an avatar
-                    val existingFiles = supabase.storage.from("avatar").list("avatars/$currentEmail")
-                    val imageData = getDrawableAsByteArray(drawableId)
-
-                    if (existingFiles.isNotEmpty()) {
-                        // Update the existing file
-                        supabase.storage.from("avatar").update(avatarPath, imageData)
-                        Log.d("Supabase", "Existing avatar updated: $avatarPath")
-                    } else {
-                        // Upload a new avatar
-                        supabase.storage.from("avatar").upload(avatarPath, imageData)
-                        Log.d("Supabase", "New avatar uploaded: $avatarPath")
-                    }
-
-                    // Update avatar path in user's database record
-                    updateUserAvatarPath(currentEmail, avatarPath)
-                }
-
-                // Load the image from Supabase Storage URL into ImageView with Glide
-                val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$avatarPath"
-                Glide.with(this@DashboardActivity)
-                    .load(imageUrl)
-                    .skipMemoryCache(true) // skip memory cache
-                    .diskCacheStrategy(DiskCacheStrategy.NONE) // skip disk cache
-                    .into(findViewById(R.id.user_pfp))
-                Log.d("Supabase", "Avatar displayed successfully")
-
-            } catch (e: Exception) {
-                Log.e("SupabaseUploadError", "Failed to upload or display avatar: ${e.message}")
-            }
+        if (response.isSuccessful) {
+            Log.d("APIResponse", "User ID retrieved: ${response.body()}")
+            return response.body() // Return the user ID directly
+        } else {
+            Log.e("APIError", "Failed to retrieve user ID: ${response.errorBody()?.string()}")
+            return null
         }
     }
 
@@ -158,12 +117,13 @@ class DashboardActivity : AppCompatActivity() {
             try {
                 // Construct the public URL to the object in the storage bucket
                 val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath"
-                //local image url
-                val localImageUrl = "/drawable/$filePath"
+
                 // Use Glide to load the image into the ImageView
                 Glide.with(this@DashboardActivity)
                     .load(imageUrl)
-                    .into(findViewById<ImageView>(R.id.user_pfp)) // Load into your ImageView
+                    .placeholder(R.drawable.fotoprofil) // Add a placeholder image
+                    .error(R.drawable.fotoprofil) // Add an error image
+                    .into(findViewById<ImageView>(R.id.user_pfp))
                 Log.d("ImageLoad", "Image loaded successfully from $imageUrl")
             } catch (e: Exception) {
                 Log.e("ImageLoadError", "Failed to load image: ${e.message}")
@@ -177,7 +137,6 @@ class DashboardActivity : AppCompatActivity() {
                 val response = supabase.postgrest["produk"].select()
                 if (response.data is String) {
                     Log.d("ProductLoad", "productformat: ${response.data}")
-                    // If the response data is a JSON string
                     val productsJson = response.data
                     val gson = Gson()
                     val productType = object : TypeToken<Array<Products>>() {}.type
@@ -198,14 +157,11 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     private fun displayProducts(products: List<Products>) {
-        val gridLayout = findViewById<GridLayout>(R.id.gridLayout) // Use the ID defined in dashboard.xml
-        gridLayout.removeAllViews() // Clear any existing views
+        val gridLayout = findViewById<GridLayout>(R.id.gridLayout)
+        gridLayout.removeAllViews() // Clear existing views
 
-        for (product in products) {
-            // Inflate the existing CardView layout from XML
-            val cardView = layoutInflater.inflate(R.layout.product_card, gridLayout, false) // Assume your CardView XML layout is named card_product.xml
-
-            // Bind the product data to the views
+        for ((index, product) in products.withIndex()) {
+            val cardView = layoutInflater.inflate(R.layout.product_card, gridLayout, false)
             val productImage = cardView.findViewById<ImageView>(R.id.productImage)
             val productName = cardView.findViewById<TextView>(R.id.productName)
             val productRating = cardView.findViewById<TextView>(R.id.productRating)
@@ -214,20 +170,39 @@ class DashboardActivity : AppCompatActivity() {
             val productLocation = cardView.findViewById<TextView>(R.id.productLocation)
 
             // Load product image with Glide
-            val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/${product.image}"
+            val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/${product.image}/1.jpg"
             Glide.with(this)
                 .load(imageUrl)
                 .placeholder(R.drawable.emiya)
                 .error(R.drawable.sekar)
                 .into(productImage)
 
-            // Set product name, rating, and price
             productName.text = product.nama_produk
             productRating.text = product.rating.toString()
             productAmountRating.text = "(${product.reviews} Reviews)"
             productPrice.text = "Rp ${product.harga}"
 
-            // Add the inflated CardView to the GridLayout
+            val params = cardView.layoutParams as ViewGroup.MarginLayoutParams
+            if (index % 2 == 0) {
+                params.setMargins(30, 20, 10, 20)
+            } else {
+                params.setMargins(20, 20, 10, 20)
+            }
+
+            cardView.setOnClickListener {
+                val intent = Intent(this, ProdukActivity::class.java).apply {
+                    putExtra("product_id", product.id)
+                    putExtra("productName", product.nama_produk)
+                    putExtra("productImage", product.image)
+                    putExtra("productRating", product.rating)
+                    putExtra("productPrice", product.harga)
+                    putExtra("productDesc", product.deskripsi)
+                    putExtra("supplierId", product.supplier_id)
+                }
+                startActivity(intent)
+            }
+
+            cardView.layoutParams = params
             gridLayout.addView(cardView)
         }
     }
