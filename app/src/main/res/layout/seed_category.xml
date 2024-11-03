@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EggCategoryActivity">
+    tools:context=".SeedCategoryActivity">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -70,13 +70,13 @@
                         android:layout_width="50dp"
                         android:layout_height="match_parent"
                         android:layout_marginEnd="10dp"
-                        android:src="@drawable/kategori_egg_transparent" />
+                        android:src="@drawable/kategori_chicken_transparent" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center_vertical"
-                        android:text="Egg"
+                        android:text="Seeds"
                         android:textSize="20dp"
                         android:textStyle="bold" />
                 </LinearLayout>
