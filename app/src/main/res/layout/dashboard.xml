@@ -386,6 +386,7 @@
             />
 
         <ImageButton
+            android:id="@+id/btnmarket"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:scaleType="centerCrop"
@@ -395,6 +396,7 @@
             />
 
         <ImageButton
+            android:id="@+id/btnhistory"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:scaleType="centerCrop"
@@ -404,6 +406,7 @@
             />
 
         <ImageButton
+            android:id="@+id/btnprofil"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:scaleType="centerCrop"
@@ -411,8 +414,6 @@
             android:src="@drawable/profil"
             android:background="@android:color/transparent"
             />
-
-
     </LinearLayout>
 
 

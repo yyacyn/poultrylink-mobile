@@ -17,9 +17,9 @@ class EditProfilActivity : AppCompatActivity() {
         setContentView(R.layout.edit_profil)
         }
 
-    fun onRadioButtonClick(view: View) {
-        val radioGroup = findViewById<RadioGroup>(R.id.radioGroup)
-        val selectedRadioButton = findViewById<RadioButton>(radioGroup.checkedRadioButtonId)
-        Toast.makeText(this, "${selectedRadioButton.text} is selected", Toast.LENGTH_SHORT).show()
-    }
+//    fun onRadioButtonClick(view: View) {
+//        val radioGroup = findViewById<RadioGroup>(R.id.radioGroup)
+//        val selectedRadioButton = findViewById<RadioButton>(radioGroup.checkedRadioButtonId)
+//        Toast.makeText(this, "${selectedRadioButton.text} is selected", Toast.LENGTH_SHORT).show()
+//    }
 }

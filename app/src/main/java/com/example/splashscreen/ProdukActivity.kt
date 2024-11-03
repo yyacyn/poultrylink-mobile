@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +25,8 @@ import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.storage.Storage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.text.NumberFormat
@@ -45,8 +49,10 @@ class ProdukActivity : AppCompatActivity() {
 
         // Retrieve passed product data
         val productName = intent.getStringExtra("productName")
+        val productId = intent.getLongExtra("product_id", 0)
         val productImage = intent.getStringExtra("productImage")
         val productRating = intent.getFloatExtra("productRating", 0.0F)
+        val productTotalReviews = intent.getIntExtra("productTotalReviews", 0)
         val productPrice = intent.getLongExtra("productPrice", 0)
         val productDesc = intent.getStringExtra("productDesc")
         val productSupplierId = intent.getLongExtra("supplierId", 0)
@@ -56,6 +62,7 @@ class ProdukActivity : AppCompatActivity() {
         val value = formatWithDots(productPrice)
         findViewById<TextView>(R.id.product_price).text = "Rp. $value"
         findViewById<TextView>(R.id.product_rating).text = productRating.toString()
+//        findViewById<TextView>(R.id.product_total_reviews).text = "($productTotalReviews Reviews)"
         findViewById<TextView>(R.id.product_desc).text = productDesc
 
         // Set up ImageSlider for multiple images
@@ -70,6 +77,11 @@ class ProdukActivity : AppCompatActivity() {
         // Fetch and display supplier name
         lifecycleScope.launch {
             fetchSupplierName(productSupplierId, findViewById(R.id.seller_name), findViewById(R.id.seller_location))
+        }
+
+        // Fetch and display product reviews
+        lifecycleScope.launch {
+            fetchProductReviews(productId)
         }
 
         // Back button functionality
@@ -113,6 +125,59 @@ class ProdukActivity : AppCompatActivity() {
         } else {
             Log.d("suppliercheck", "Response error: ${response.code()} ${response.message()}")
             supplierNameTextView.text = "Error fetching supplier: ${response.message()}"
+        }
+    }
+
+    private suspend fun fetchProductReviews(productId: Long) {
+        try {
+            val response = RetrofitClient.instance.getProductReviews(productId)
+            if (response.isSuccessful && response.body() != null) {
+                val reviews = response.body()!!
+                displayReviews(reviews)
+            } else {
+                Log.e("ReviewFetchError", "Error fetching reviews: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            Log.e("ReviewFetchError", "Exception: ${e.message}")
+        }
+    }
+
+    private fun displayReviews(reviews: List<Map<String, Any>>) {
+        val reviewContainer = findViewById<LinearLayout>(R.id.review_container) // LinearLayout to hold review cards
+        reviewContainer.removeAllViews() // Clear any existing reviews
+
+        for (review in reviews.take(2)) { // Get only the two most recent reviews
+            val reviewView = layoutInflater.inflate(R.layout.review_card, reviewContainer, false)
+
+            // Extract data from the review map
+            val username = review["username"] as String
+            val ulasan = review["ulasan"] as String
+            val rating = (review["rating"] as Number).toInt() // Use integer for rating
+
+            // Set username and review text
+            reviewView.findViewById<TextView>(R.id.username).text = username
+            reviewView.findViewById<TextView>(R.id.ulasan).text = ulasan
+
+            // Set rating stars
+            val ratingLayout = reviewView.findViewById<LinearLayout>(R.id.rating_layout)
+            ratingLayout.removeAllViews() // Clear any existing stars
+
+            for (i in 1..5) {
+                val star = ImageView(this)
+                star.layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                star.setImageResource(R.drawable.star) // Use your star drawable
+
+                // Show star based on the user rating
+                if (i <= rating) {
+                    ratingLayout.addView(star) // Add star to layout if within rating
+                }
+            }
+
+            // Add the review card to the review container
+            reviewContainer.addView(reviewView)
         }
     }
 }

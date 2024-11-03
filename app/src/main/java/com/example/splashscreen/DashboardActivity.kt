@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
+import android.media.Image
 import android.os.Bundle
 import android.util.Log
 import android.view.ViewGroup
@@ -30,6 +31,7 @@ import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.storage.Storage
 import io.github.jan.supabase.storage.storage
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.ByteArrayOutputStream
@@ -56,11 +58,10 @@ class DashboardActivity : AppCompatActivity() {
 
         val greetUser = findViewById<TextView>(R.id.greet)
         val userPfp = findViewById<ImageView>(R.id.user_pfp)
-        val buttoncart = findViewById<ImageButton>(R.id.cart)
-        val buttonProduk = findViewById<CardView>(R.id.produkcard)
 
         // Load products into the grid
         loadProducts()
+        Navigation()
 
         // Update user greeting and load avatar
         lifecycleScope.launch {
@@ -73,12 +74,25 @@ class DashboardActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    private fun Navigation() {
+        val buttoncart = findViewById<ImageButton>(R.id.cart)
+        val buttonProduk = findViewById<CardView>(R.id.produkcard)
+        val buttonMarket = findViewById<ImageButton>(R.id.btnmarket)
+        val buttonHistory = findViewById<ImageButton>(R.id.btnhistory)
+        val buttonProfile = findViewById<ImageButton>(R.id.btnprofil)
+
         buttoncart.setOnClickListener {
             startActivity(Intent(this, CartActivity::class.java))
         }
 
         buttonProduk.setOnClickListener {
             startActivity(Intent(this, ProdukActivity::class.java))
+        }
+
+        buttonHistory.setOnClickListener {
+//            startActivity(this,H)
         }
     }
 
@@ -185,8 +199,25 @@ class DashboardActivity : AppCompatActivity() {
                 .into(productImage)
 
             productName.text = product.nama_produk
-            productRating.text = product.rating.toString()
-            productAmountRating.text = "(${product.reviews} Reviews)"
+
+            // Fetch product rating and review count asynchronously
+            CoroutineScope(Dispatchers.Main).launch {
+                try {
+                    val ratingData = fetchProductRating(product.id)
+                    if (ratingData != null) {
+                        val (averageRating, totalReviews) = ratingData
+                        productRating.text = averageRating.toString()
+                        productAmountRating.text = "($totalReviews Reviews)"
+                    } else {
+                        productRating.text = "0.0"
+                        productAmountRating.text = "(0 Reviews)"
+                    }
+                } catch (e: Exception) {
+                    Log.e("displayProducts", "Error fetching rating: ${e.message}")
+                    productRating.text = "N/A"
+                    productAmountRating.text = "(N/A Reviews)"
+                }
+            }
 
             // Use formatWithDots to format the price
             val value = formatWithDots(product.harga)
@@ -200,22 +231,71 @@ class DashboardActivity : AppCompatActivity() {
             }
 
             cardView.setOnClickListener {
-                val intent = Intent(this, ProdukActivity::class.java).apply {
-                    putExtra("product_id", product.id)
-                    putExtra("productName", product.nama_produk)
-                    putExtra("productImage", product.image) // Pass the image base name
-                    putExtra("productRating", product.rating)
-                    putExtra("productPrice", product.harga)
-                    putExtra("productDesc", product.deskripsi)
-                    putExtra("supplierId", product.supplier_id)
+                CoroutineScope(Dispatchers.Main).launch {
+                    try {
+                        // Fetch the rating data for this product
+                        val ratingData = fetchProductRating(product.id)
+                        val averageRating = ratingData?.first ?: 0.0
+                        val totalReviews = ratingData?.second ?: 0
+
+                        // Start ProdukActivity with the additional rating data
+                        val intent = Intent(this@DashboardActivity, ProdukActivity::class.java).apply {
+                            putExtra("product_id", product.id)
+                            putExtra("productName", product.nama_produk)
+                            putExtra("productImage", product.image) // Pass the image base name
+                            putExtra("productRating", averageRating.toFloat()) // Convert to Float for intent
+                            putExtra("productTotalReviews", totalReviews) // Pass the total reviews
+                            putExtra("productPrice", product.harga)
+                            putExtra("productDesc", product.deskripsi)
+                            putExtra("supplierId", product.supplier_id)
+                        }
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        Log.e("displayProducts", "Error passing data: ${e.message}")
+                    }
                 }
-                startActivity(intent)
             }
+
 
             cardView.layoutParams = params
             gridLayout.addView(cardView)
         }
     }
+
+    suspend fun fetchProductRating(productId: Long): Pair<Double, Int>? {
+        return try {
+            val response = RetrofitClient.instance.getProductRating(mapOf("product_id" to productId))
+
+            // Log the raw JSON response for debugging
+            Log.d("fetchProductRating", "Response body: ${response.body()}")
+
+            if (response.isSuccessful) {
+                val data = response.body()
+
+                // Check if data is an array and has at least one element
+                if (data != null && data is List<*>) {
+                    val firstItem = data.firstOrNull() as? Map<String, Any>
+                    if (firstItem != null) {
+                        val averageRating = (firstItem["average_rating"] as? Double) ?: 0.0
+                        // Adjust totalReviews to be an Int from Double
+                        val totalReviews = (firstItem["total_reviews"] as? Double)?.toInt() ?: 0
+                        return Pair(averageRating, totalReviews)
+                    }
+                }
+                // If there's no valid data, return default values
+                Pair(0.0, 0)
+            } else {
+                Log.e("fetchProductRating", "Response not successful: ${response.code()}")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("fetchProductRating", "Error fetching rating: ${e.message}")
+            null
+        }
+    }
+
+
+
 
     private suspend fun loadFirstImageFromSupabase(folderPath: String): String? {
         return withContext(Dispatchers.IO) {
@@ -238,4 +318,6 @@ class DashboardActivity : AppCompatActivity() {
             }
         }
     }
+
+
 }

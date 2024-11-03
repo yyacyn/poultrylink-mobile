@@ -33,5 +33,12 @@ interface ApiService {
 
     @POST("rpc/get_user_id_by_email") // Replace with your actual endpoint
     suspend fun getUserIdByEmail(@Body requestBody: Map<String, String>): Response<Int>
+
+    @POST("rpc/get_product_rating")
+    suspend fun getProductRating(@Body request: Map<String, Long>): Response<List<Map<String, Any>>>
+
+    @GET("rpc/get_product_reviews")
+    suspend fun getProductReviews(@Query("product_id") productId: Long): Response<List<Map<String, Any>>>
+
 }
 

@@ -479,8 +479,9 @@
 
 
 
-        <!-- Comment  -->
+        <!-- Reviews  -->
         <LinearLayout
+            android:id="@+id/review_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="10dp"
@@ -497,139 +498,7 @@
                 android:layout_marginTop="10dp"
                 />
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginTop="10dp"
-                app:cardElevation="6dp"
-                android:radius="15dp"
-                app:cardCornerRadius="10dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-
-                        <!-- Profile  -->
-                        <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:src="@drawable/fotoprofil"
-                            android:scaleType="centerCrop"
-                            android:layout_marginEnd="8dp" />
-
-                        <!-- Nama dan rating -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Jenny"
-                                android:textStyle="bold"
-                                android:textSize="16sp"/>
-
-                            <!-- Rating -->
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
-                                <ImageView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:src="@drawable/star" /> <!-- Ganti dengan icon bintang -->
-                                <ImageView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:src="@drawable/star" />
-                                <ImageView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:src="@drawable/star" />
-                                <ImageView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:src="@drawable/star" />
-                                <ImageView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:src="@drawable/star" /> <!-- Ganti dengan setengah bintang jika ada -->
-                            </LinearLayout>
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Elit mollis sit tristique tempus metus tincidunt mollis. Ad erat dictum imperdiet varius bibendum velit quisque tempus."
-                        android:textColor="@android:color/darker_gray"
-                        android:textSize="14sp"/>
-
-                    <!-- Reply Layout -->
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        app:cardElevation="2dp"
-                        app:cardCornerRadius="4dp"
-                        app:backgroundTint="#F0F8FF">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="12dp">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical">
-
-                                <!-- Profile -->
-                                <ImageView
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:layout_marginEnd="8dp"
-                                    android:src="@drawable/fotoprofil"
-                                    android:scaleType="centerCrop" />
-
-                                <!-- Nama -->
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Yashin"
-                                    android:textStyle="bold"
-                                    android:textSize="14sp"/>
-
-                            </LinearLayout>
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Elit mollis sit tristique tempus metus tincidunt mollis."
-                                android:textColor="@android:color/darker_gray"
-                                android:textSize="14sp"/>
-
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            <include layout="@layout/review_card" />
 
             <!-- Lihat semua -->
             <TextView
@@ -643,12 +512,6 @@
                 android:textColor="@color/orange"
                 android:textStyle="bold" />
         </LinearLayout>
-
-
-
-
-
-
 
         <!-- For you -->
         <LinearLayout
@@ -1035,11 +898,6 @@
             </androidx.cardview.widget.CardView>
 
         </GridLayout>
-
-
-
-
-
 
     </LinearLayout>
     </ScrollView>
