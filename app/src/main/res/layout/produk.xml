@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".ProdukActivity">
 
     <ScrollView
@@ -578,55 +579,79 @@
                         android:textColor="@android:color/darker_gray"
                         android:textSize="14sp"/>
 
-                    <!-- Reply Layout -->
-                    <androidx.cardview.widget.CardView
+                    <View
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        app:cardElevation="2dp"
-                        app:cardCornerRadius="4dp"
-                        app:backgroundTint="#F0F8FF">
+                        android:layout_height="1dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_weight="1"
+                        android:background="@color/gray" />
 
+                    <!-- comment 2 -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="12dp">
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
 
+                            <!-- Profile  -->
+                            <ImageView
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:src="@drawable/fotoprofil"
+                                android:scaleType="centerCrop"
+                                android:layout_marginEnd="8dp" />
+
+                            <!-- Nama dan rating -->
                             <LinearLayout
-                                android:layout_width="match_parent"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical">
+                                android:layout_weight="1"
+                                android:orientation="vertical">
 
-                                <!-- Profile -->
-                                <ImageView
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:layout_marginEnd="8dp"
-                                    android:src="@drawable/fotoprofil"
-                                    android:scaleType="centerCrop" />
-
-                                <!-- Nama -->
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Yashin"
                                     android:textStyle="bold"
-                                    android:textSize="14sp"/>
+                                    android:textSize="16sp"/>
 
+                                <!-- Rating -->
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+                                    <ImageView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:src="@drawable/star" /> <!-- Ganti dengan icon bintang -->
+                                    <ImageView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:src="@drawable/star" />
+                                    <ImageView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:src="@drawable/star" />
+                                    <ImageView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:src="@drawable/star" />
+                                    <ImageView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:src="@drawable/star" /> <!-- Ganti dengan setengah bintang jika ada -->
+                                </LinearLayout>
                             </LinearLayout>
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Elit mollis sit tristique tempus metus tincidunt mollis."
-                                android:textColor="@android:color/darker_gray"
-                                android:textSize="14sp"/>
-
                         </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Elit mollis sit tristique tempus metus tincidunt mollis. Ad erat dictum imperdiet varius bibendum velit quisque tempus."
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="14sp"/>
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -1037,11 +1062,57 @@
         </GridLayout>
 
 
+    </LinearLayout>
+    </ScrollView>
 
+    <LinearLayout
+        android:id="@+id/fixedLayout"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/orange"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <Button
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:paddingHorizontal="10dp"
+            android:text="Chat"
+            android:backgroundTint="@android:color/transparent"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/white"
+            app:cornerRadius="10dp"/>
+
+        <ImageButton
+            android:id="@+id/cart"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="20dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/cart"
+            android:scaleType="centerCrop" />
+
+        <Button
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:layout_marginLeft="20dp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:paddingHorizontal="10dp"
+            android:text="Buy Now"
+            android:backgroundTint="@android:color/transparent"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/white"
+            app:cornerRadius="10dp"/>
 
 
     </LinearLayout>
-    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
