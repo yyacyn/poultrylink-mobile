@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/white"
     tools:context=".ForgotPasswordActivity">
 
     <!-- LinearLayout Profil -->
@@ -272,7 +273,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="Chicken" />
+                        android:text="Poultry" />
                 </LinearLayout>
 
                 <!-- Kategori 3 -->
@@ -363,6 +364,56 @@
     </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/fixedLayout"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/navbar_home"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <ImageButton
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="54dp"
+            android:layout_marginBottom="15dp"
+            android:src="@drawable/home"
+            android:background="@android:color/transparent"
+            />
+
+        <ImageButton
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="70dp"
+            android:src="@drawable/location"
+            android:background="@android:color/transparent"
+            />
+
+        <ImageButton
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="70dp"
+            android:src="@drawable/history"
+            android:background="@android:color/transparent"
+            />
+
+        <ImageButton
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="70dp"
+            android:src="@drawable/profil"
+            android:background="@android:color/transparent"
+            />
+
+
+    </LinearLayout>
 
 
 

@@ -258,222 +258,222 @@
 
 
 
-        <!-- Rating  -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="10dp"
-            app:cardElevation="6dp"
-            android:radius="15dp"
-            app:cardCornerRadius="10dp">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="10dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="10dp">
+<!--        &lt;!&ndash; Rating  &ndash;&gt;-->
+<!--        <androidx.cardview.widget.CardView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="20dp"-->
+<!--            android:layout_marginEnd="20dp"-->
+<!--            android:layout_marginTop="10dp"-->
+<!--            app:cardElevation="6dp"-->
+<!--            android:radius="15dp"-->
+<!--            app:cardCornerRadius="10dp">-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical"-->
+<!--            android:padding="10dp"-->
+<!--            android:layout_marginStart="20dp"-->
+<!--            android:layout_marginEnd="20dp"-->
+<!--            android:layout_marginTop="10dp">-->
 
-            <!-- Rating Title -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Rating"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_marginBottom="8dp"/>
+<!--            &lt;!&ndash; Rating Title &ndash;&gt;-->
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Rating"-->
+<!--                android:textStyle="bold"-->
+<!--                android:textSize="18sp"-->
+<!--                android:layout_marginBottom="8dp"/>-->
 
-            <!-- Overall Rating Section -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+<!--            &lt;!&ndash; Overall Rating Section &ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="horizontal"-->
+<!--                android:gravity="center_vertical">-->
 
-                <!-- Rating Number -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="4.9"
-                    android:textSize="40sp"
-                    android:textStyle="bold"
-                    android:layout_marginEnd="16dp"/>
+<!--                &lt;!&ndash; Rating Number &ndash;&gt;-->
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="4.9"-->
+<!--                    android:textSize="40sp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:layout_marginEnd="16dp"/>-->
 
-                <!-- Star and Ratings Count Section -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+<!--                &lt;!&ndash; Star and Ratings Count Section &ndash;&gt;-->
+<!--                <LinearLayout-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical">-->
 
-                    <!-- Star Rating -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+<!--                    &lt;!&ndash; Star Rating &ndash;&gt;-->
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:orientation="horizontal">-->
 
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/star" />
+<!--                        <ImageView-->
+<!--                            android:layout_width="20dp"-->
+<!--                            android:layout_height="20dp"-->
+<!--                            android:src="@drawable/star" />-->
 
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/star" />
+<!--                        <ImageView-->
+<!--                            android:layout_width="20dp"-->
+<!--                            android:layout_height="20dp"-->
+<!--                            android:src="@drawable/star" />-->
 
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/star" />
+<!--                        <ImageView-->
+<!--                            android:layout_width="20dp"-->
+<!--                            android:layout_height="20dp"-->
+<!--                            android:src="@drawable/star" />-->
 
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/star" />
+<!--                        <ImageView-->
+<!--                            android:layout_width="20dp"-->
+<!--                            android:layout_height="20dp"-->
+<!--                            android:src="@drawable/star" />-->
 
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/star" />
-                    </LinearLayout>
+<!--                        <ImageView-->
+<!--                            android:layout_width="20dp"-->
+<!--                            android:layout_height="20dp"-->
+<!--                            android:src="@drawable/star" />-->
+<!--                    </LinearLayout>-->
 
-                    <!-- Number of Ratings -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Based on 565 ratings"
-                        android:textSize="11sp"
-                        android:textColor="@android:color/darker_gray"/>
-                </LinearLayout>
-            </LinearLayout>
+<!--                    &lt;!&ndash; Number of Ratings &ndash;&gt;-->
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Based on 565 ratings"-->
+<!--                        android:textSize="11sp"-->
+<!--                        android:textColor="@android:color/darker_gray"/>-->
+<!--                </LinearLayout>-->
+<!--            </LinearLayout>-->
 
-            <!-- Bar Rating Section -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="16dp">
+<!--            &lt;!&ndash; Bar Rating Section &ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="vertical"-->
+<!--                android:layout_marginTop="16dp">-->
 
-                <!-- Rating 5 Star -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="8dp">
+<!--                &lt;!&ndash; Rating 5 Star &ndash;&gt;-->
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:gravity="center_vertical"-->
+<!--                    android:layout_marginBottom="8dp">-->
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="5 star"
-                        android:layout_weight="1"/>
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="5 star"-->
+<!--                        android:layout_weight="1"/>-->
 
-                    <ProgressBar
-                        android:layout_width="0dp"
-                        android:layout_height="8dp"
-                        android:layout_weight="4"
-                        android:progress="80"
-                        style="@android:style/Widget.ProgressBar.Horizontal"
-                        android:progressDrawable="@xml/bar_rating"/>
-                </LinearLayout>
+<!--                    <ProgressBar-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="8dp"-->
+<!--                        android:layout_weight="4"-->
+<!--                        android:progress="80"-->
+<!--                        style="@android:style/Widget.ProgressBar.Horizontal"-->
+<!--                        android:progressDrawable="@xml/bar_rating"/>-->
+<!--                </LinearLayout>-->
 
-                <!-- Rating 4 Star -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="8dp">
+<!--                &lt;!&ndash; Rating 4 Star &ndash;&gt;-->
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:gravity="center_vertical"-->
+<!--                    android:layout_marginBottom="8dp">-->
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="4 star"
-                        android:layout_weight="1"/>
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="4 star"-->
+<!--                        android:layout_weight="1"/>-->
 
-                    <ProgressBar
-                        android:layout_width="0dp"
-                        android:layout_height="8dp"
-                        android:layout_weight="4"
-                        android:progress="60"
-                        style="@android:style/Widget.ProgressBar.Horizontal"
-                        android:progressDrawable="@xml/bar_rating"/>
-                </LinearLayout>
+<!--                    <ProgressBar-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="8dp"-->
+<!--                        android:layout_weight="4"-->
+<!--                        android:progress="60"-->
+<!--                        style="@android:style/Widget.ProgressBar.Horizontal"-->
+<!--                        android:progressDrawable="@xml/bar_rating"/>-->
+<!--                </LinearLayout>-->
 
-                <!-- Rating 3 Star -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="8dp">
+<!--                &lt;!&ndash; Rating 3 Star &ndash;&gt;-->
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:gravity="center_vertical"-->
+<!--                    android:layout_marginBottom="8dp">-->
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="3 star"
-                        android:layout_weight="1"/>
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="3 star"-->
+<!--                        android:layout_weight="1"/>-->
 
-                    <ProgressBar
-                        android:layout_width="0dp"
-                        android:layout_height="8dp"
-                        android:layout_weight="4"
-                        android:progress="40"
-                        style="@android:style/Widget.ProgressBar.Horizontal"
-                        android:progressDrawable="@xml/bar_rating"/>
-                </LinearLayout>
+<!--                    <ProgressBar-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="8dp"-->
+<!--                        android:layout_weight="4"-->
+<!--                        android:progress="40"-->
+<!--                        style="@android:style/Widget.ProgressBar.Horizontal"-->
+<!--                        android:progressDrawable="@xml/bar_rating"/>-->
+<!--                </LinearLayout>-->
 
-                <!-- Rating 2 Star -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="8dp">
+<!--                &lt;!&ndash; Rating 2 Star &ndash;&gt;-->
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:gravity="center_vertical"-->
+<!--                    android:layout_marginBottom="8dp">-->
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2 star"
-                        android:layout_weight="1"/>
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="2 star"-->
+<!--                        android:layout_weight="1"/>-->
 
-                    <ProgressBar
-                        android:layout_width="0dp"
-                        android:layout_height="8dp"
-                        android:layout_weight="4"
-                        android:progress="20"
-                        style="@android:style/Widget.ProgressBar.Horizontal"
-                        android:progressDrawable="@xml/bar_rating"/>
-                </LinearLayout>
+<!--                    <ProgressBar-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="8dp"-->
+<!--                        android:layout_weight="4"-->
+<!--                        android:progress="20"-->
+<!--                        style="@android:style/Widget.ProgressBar.Horizontal"-->
+<!--                        android:progressDrawable="@xml/bar_rating"/>-->
+<!--                </LinearLayout>-->
 
-                <!-- Rating 1 Star -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
+<!--                &lt;!&ndash; Rating 1 Star &ndash;&gt;-->
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:gravity="center_vertical">-->
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="1 star"
-                        android:layout_weight="1"/>
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="1 star"-->
+<!--                        android:layout_weight="1"/>-->
 
-                    <ProgressBar
-                        android:layout_width="0dp"
-                        android:layout_height="8dp"
-                        android:layout_weight="4"
-                        android:progress="10"
-                        style="@android:style/Widget.ProgressBar.Horizontal"
-                        android:progressDrawable="@xml/bar_rating"/>
-                </LinearLayout>
-            </LinearLayout>
+<!--                    <ProgressBar-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="8dp"-->
+<!--                        android:layout_weight="4"-->
+<!--                        android:progress="10"-->
+<!--                        style="@android:style/Widget.ProgressBar.Horizontal"-->
+<!--                        android:progressDrawable="@xml/bar_rating"/>-->
+<!--                </LinearLayout>-->
+<!--            </LinearLayout>-->
 
-        </LinearLayout>
-        </androidx.cardview.widget.CardView>
+<!--        </LinearLayout>-->
+<!--        </androidx.cardview.widget.CardView>-->
 
 
 

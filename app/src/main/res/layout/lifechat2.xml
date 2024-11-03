@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/orange"
+    tools:context=".Lifechat2Activity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+        <!-- Profile Layout and Text Name -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentTop="true">
+        <LinearLayout
+            android:id="@+id/profil"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="25dp"
+            android:layout_marginLeft="25dp"
+            android:layout_alignParentTop="true">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/arrowback2"
+                android:background="@android:color/transparent" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginStart="-10dp"
+                android:layout_marginEnd="16dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/fotoprofil"
+                android:contentDescription="Profile Picture" />
+        </LinearLayout>
+        </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="80dp"
+        android:background="@drawable/bg_chat">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <!-- Nama Profil -->
+            <TextView
+                android:id="@+id/todayText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="100dp"
+                android:layout_marginEnd="100dp"
+                android:text="Jenny Alkatiri"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:background="@drawable/rounded_bg_profil"
+                android:layout_marginTop="-10dp"
+                android:padding="4dp"
+                android:gravity="center_horizontal"
+                android:elevation="0.1dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+                <!-- Chat -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_marginTop="1dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginLeft="30dp">
+
+                        <!-- Chat bubble untuk pesan dari pengirim -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:padding="12dp"
+                            android:text="Lorem ipsum dolor sit, consectetur elit, sed do eiusmod temp ut labore et ..."
+                            android:textColor="@android:color/white"
+                            android:background="@drawable/right_chat"
+                            android:layout_marginTop="7.5dp"
+                            android:layout_marginBottom="10dp"/>
+
+                        <!-- Chat bubble untuk pesan dari penerima -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start"
+                            android:padding="12dp"
+                            android:text="Lorem ipsum dolor sit, consectetur elit, sed do eiusmod temp ut labore et ..."
+                            android:textColor="@android:color/black"
+                            android:background="@drawable/left_chat"
+                            android:layout_marginTop="7.5dp"
+                            android:layout_marginBottom="10dp"/>
+
+                        <!-- Chat bubble untuk pesan dari pengirim -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:padding="12dp"
+                            android:text="Lorem ipsum dolor sit, consectetur elit, sed do eiusmod temp ut labore et ..."
+                            android:textColor="@android:color/white"
+                            android:background="@drawable/right_chat"
+                            android:layout_marginTop="7.5dp"
+                            android:layout_marginBottom="10dp"/>
+
+                        <!-- Chat bubble untuk pesan dari penerima -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start"
+                            android:padding="12dp"
+                            android:text="Lorem ipsum dolor sit, consectetur elit, sed do eiusmod temp ut labore et ..."
+                            android:textColor="@android:color/black"
+                            android:background="@drawable/left_chat"
+                            android:layout_marginTop="7.5dp"
+                            android:layout_marginBottom="10dp"/>
+
+                        <!-- Chat bubble untuk pesan dari pengirim -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:padding="12dp"
+                            android:text="Lorem ipsum dolor sit, consectetur elit, sed do eiusmod temp ut labore et ..."
+                            android:textColor="@android:color/white"
+                            android:background="@drawable/right_chat"
+                            android:layout_marginTop="7.5dp"
+                            android:layout_marginBottom="10dp"/>
+
+                        <!-- Chat bubble untuk pesan dari penerima -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start"
+                            android:padding="12dp"
+                            android:text="Lorem ipsum dolor sit, consectetur elit, sed do eiusmod temp ut labore et ..."
+                            android:textColor="@android:color/black"
+                            android:background="@drawable/left_chat"
+                            android:layout_marginTop="7.5dp"
+                            android:layout_marginBottom="10dp"/>
+
+                        <!-- Chat bubble untuk pesan dari pengirim -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:padding="12dp"
+                            android:text="Lorem ipsum dolor sit, consectetur elit, sed do eiusmod temp ut labore et ..."
+                            android:textColor="@android:color/white"
+                            android:background="@drawable/right_chat"
+                            android:layout_marginTop="7.5dp"
+                            android:layout_marginBottom="10dp"/>
+
+                        <!-- Chat bubble untuk pesan dari penerima -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start"
+                            android:padding="12dp"
+                            android:text="Lorem ipsum dolor sit, consectetur elit, sed do eiusmod temp ut labore et ..."
+                            android:textColor="@android:color/black"
+                            android:background="@drawable/left_chat"
+                            android:layout_marginTop="7.5dp"
+                            android:layout_marginBottom="10dp"/>
+
+                        <!-- Chat bubble untuk pesan dari pengirim -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:padding="12dp"
+                            android:text="Lorem ipsum dolor sit, consectetur elit, sed do eiusmod temp ut labore et ..."
+                            android:textColor="@android:color/white"
+                            android:background="@drawable/right_chat"
+                            android:layout_marginTop="7.5dp"
+                            android:layout_marginBottom="10dp"/>
+
+                        <!-- Chat bubble untuk pesan dari penerima -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start"
+                            android:padding="12dp"
+                            android:text="Lorem ipsum dolor sit, consectetur elit, sed do eiusmod temp ut labore et ..."
+                            android:textColor="@android:color/black"
+                            android:background="@drawable/left_chat"
+                            android:layout_marginTop="7.5dp"
+                            android:layout_marginBottom="10dp"/>
+
+                    </LinearLayout>
+                </LinearLayout>
+
+            </ScrollView>
+        </RelativeLayout>
+    </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:layout_marginTop="650dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+        <!-- Container untuk input bubble -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:background="@drawable/bubble_input_chat"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <!-- Tombol "+" di kiri -->
+            <ImageButton
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/addfile_icon"
+                android:contentDescription="Add"
+                android:layout_gravity="center_vertical"/>
+
+            <!-- EditText untuk input teks -->
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Type a message"
+                android:background="@android:color/transparent"
+                android:padding="8dp"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"/>
+
+            <!-- Tombol "Send" di kanan -->
+            <ImageButton
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:backgroundTint="@color/orange"
+                android:background="@drawable/send_icon"
+                android:contentDescription="Send"
+                android:layout_gravity="center_vertical"/>
+        </LinearLayout>
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
