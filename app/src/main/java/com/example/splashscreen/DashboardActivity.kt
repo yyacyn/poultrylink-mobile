@@ -24,6 +24,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.yourapp.network.RetrofitClient
+import de.hdodenhof.circleimageview.CircleImageView
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.createSupabaseClient
@@ -68,9 +69,9 @@ class DashboardActivity : AppCompatActivity() {
             updateUserGreeting(greetUser)
 
             // Get user ID from email and load avatar
-            val userId = getUserIdByEmail(supabase.auth.retrieveUserForCurrentSession().email ?: return@launch)
-            if (userId != null) {
-                loadImageFromSupabase("/avatars/$userId/avatar.jpg")
+            val userEmail = getUserIdByEmail(supabase.auth.retrieveUserForCurrentSession().email ?: return@launch)
+            if (userEmail != null) {
+                loadImageFromSupabase("$userEmail/1.jpg")
             }
         }
 
@@ -94,6 +95,14 @@ class DashboardActivity : AppCompatActivity() {
         buttonHistory.setOnClickListener {
 //            startActivity(this,H)
         }
+
+        buttonProfile.setOnClickListener {
+            startActivity(Intent(this, ProfilActivity::class.java))
+        }
+
+//        buttonMarket.setOnClickListener {
+//            startActivity(Intent(this, MarketActivity::class.java))
+//        }
     }
 
     private suspend fun updateUserGreeting(greetUser: TextView) {
@@ -116,7 +125,7 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     private suspend fun getUserIdByEmail(email: String): Int? {
-        val requestBody = mapOf("p_email" to email)
+        val requestBody = mapOf("user_email" to email)
         val response: Response<Int> = RetrofitClient.instance.getUserIdByEmail(requestBody)
 
         if (response.isSuccessful) {
@@ -139,7 +148,7 @@ class DashboardActivity : AppCompatActivity() {
                     .load(imageUrl)
                     .placeholder(R.drawable.fotoprofil) // Add a placeholder image
                     .error(R.drawable.fotoprofil) // Add an error image
-                    .into(findViewById<ImageView>(R.id.user_pfp))
+                    .into(findViewById<CircleImageView>(R.id.user_pfp))
                 Log.d("ImageLoad", "Image loaded successfully from $imageUrl")
             } catch (e: Exception) {
                 Log.e("ImageLoadError", "Failed to load image: ${e.message}")
@@ -276,7 +285,10 @@ class DashboardActivity : AppCompatActivity() {
                 if (data != null && data is List<*>) {
                     val firstItem = data.firstOrNull() as? Map<String, Any>
                     if (firstItem != null) {
-                        val averageRating = (firstItem["average_rating"] as? Double) ?: 0.0
+                        var averageRating = (firstItem["average_rating"] as? Double) ?: 0.0
+                        // Format averageRating to two decimal places
+                        averageRating = String.format("%.2f", averageRating).toDouble()
+
                         // Adjust totalReviews to be an Int from Double
                         val totalReviews = (firstItem["total_reviews"] as? Double)?.toInt() ?: 0
                         return Pair(averageRating, totalReviews)
@@ -293,9 +305,6 @@ class DashboardActivity : AppCompatActivity() {
             null
         }
     }
-
-
-
 
     private suspend fun loadFirstImageFromSupabase(folderPath: String): String? {
         return withContext(Dispatchers.IO) {

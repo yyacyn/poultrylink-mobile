@@ -40,5 +40,10 @@ interface ApiService {
     @GET("rpc/get_product_reviews")
     suspend fun getProductReviews(@Query("product_id") productId: Long): Response<List<Map<String, Any>>>
 
+    @Headers("Content-Type: application/json")
+    @POST("rpc/get_same_category_products")
+    suspend fun getSameCategoryProducts(@Body request: Map<String, Long>): Response<List<Products>>
+
+
 }
 

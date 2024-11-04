@@ -186,9 +186,10 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
     private fun uploadDefaultAvatar(userEmail: String) {
         lifecycleScope.launch {
             val userId = getUserIdByEmail(userEmail)
+            Log.d("userId", userId.toString())
             if (userId != null) {
                 val defaultAvatar = R.drawable.fotoprofil  // Your drawable resource
-                val avatarPath = "avatars/$userId/avatar.jpg"  // Use user ID for folder
+                val avatarPath = "$userId/1.jpg"  // Use user ID for folder
                 val imageData = getDrawableAsByteArray(defaultAvatar)
 
                 withContext(Dispatchers.IO) {
@@ -263,7 +264,7 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
     }
 
     private suspend fun getUserIdByEmail(email: String): Int? {
-        val requestBody = mapOf("p_email" to email)
+        val requestBody = mapOf("user_email" to email)
         val response: Response<Int> = RetrofitClient.instance.getUserIdByEmail(requestBody)
 
         if (response.isSuccessful) {

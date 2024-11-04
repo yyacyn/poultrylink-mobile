@@ -4,6 +4,8 @@ import ApiService
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.ViewGroup
+import android.widget.GridLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -82,6 +84,11 @@ class ProdukActivity : AppCompatActivity() {
         // Fetch and display product reviews
         lifecycleScope.launch {
             fetchProductReviews(productId)
+        }
+
+        // Fetch and display products with the same category
+        lifecycleScope.launch {
+            fetchSameCategoryProducts(productId)
         }
 
         // Back button functionality
@@ -175,9 +182,140 @@ class ProdukActivity : AppCompatActivity() {
                     ratingLayout.addView(star) // Add star to layout if within rating
                 }
             }
-
             // Add the review card to the review container
             reviewContainer.addView(reviewView)
+        }
+    }
+
+
+    private suspend fun fetchSameCategoryProducts(productId: Long) {
+        val response: Response<List<Products>> = RetrofitClient.instance.getSameCategoryProducts(
+            mapOf("product_id" to productId)
+        )
+
+        if (response.isSuccessful && response.body() != null) {
+            displayProductsInGrid(response.body()!!)
+        } else {
+            Log.e("SameCategoryProducts", "Error fetching products: ${response.message()}")
+        }
+    }
+
+    // display recommended products grid
+    private fun displayProductsInGrid(products: List<Products>) {
+        val gridLayout = findViewById<GridLayout>(R.id.gridLayout)
+        gridLayout.removeAllViews() // Clear existing views
+
+        // Shuffle the list and take only four products
+        val randomProducts = products.shuffled().take(4)
+
+        for ((index, product) in randomProducts.withIndex()) {
+            val cardView = layoutInflater.inflate(R.layout.product_card, gridLayout, false)
+            val productImage = cardView.findViewById<ImageView>(R.id.productImage)
+            val productName = cardView.findViewById<TextView>(R.id.productName)
+            val productRating = cardView.findViewById<TextView>(R.id.productRating)
+            val productAmountRating = cardView.findViewById<TextView>(R.id.productAmountRating)
+            val productPrice = cardView.findViewById<TextView>(R.id.productPrice)
+            val productLocation = cardView.findViewById<TextView>(R.id.productLocation)
+
+            // Load the first image for the product
+            val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/${product.image}/1.jpg"
+            Glide.with(this)
+                .load(imageUrl)
+                .placeholder(R.drawable.emiya)
+                .error(R.drawable.sekar)
+                .into(productImage)
+
+            productName.text = product.nama_produk
+
+            // Fetch product rating and review count asynchronously
+            CoroutineScope(Dispatchers.Main).launch {
+                try {
+                    val ratingData = fetchProductRating(product.id)
+                    if (ratingData != null) {
+                        val (averageRating, totalReviews) = ratingData
+                        productRating.text = averageRating.toString()
+                        productAmountRating.text = "($totalReviews Reviews)"
+                    } else {
+                        productRating.text = "0.0"
+                        productAmountRating.text = "(0 Reviews)"
+                    }
+                } catch (e: Exception) {
+                    Log.e("displayProducts", "Error fetching rating: ${e.message}")
+                    productRating.text = "N/A"
+                    productAmountRating.text = "(N/A Reviews)"
+                }
+            }
+
+            // Format the price
+            val value = formatWithDots(product.harga)
+            productPrice.text = "Rp. $value"
+
+            // Adjust margins for layout spacing
+            val params = cardView.layoutParams as ViewGroup.MarginLayoutParams
+            params.setMargins(if (index % 2 == 0) 30 else 20, 20, 10, 20)
+
+            // Set onClickListener to navigate to ProdukActivity with additional data
+            cardView.setOnClickListener {
+                CoroutineScope(Dispatchers.Main).launch {
+                    try {
+                        val ratingData = fetchProductRating(product.id)
+                        val averageRating = ratingData?.first ?: 0.0
+                        val totalReviews = ratingData?.second ?: 0
+
+                        val intent = Intent(this@ProdukActivity, ProdukActivity::class.java).apply {
+                            putExtra("product_id", product.id)
+                            putExtra("productName", product.nama_produk)
+                            putExtra("productImage", product.image) // Pass the image base name
+                            putExtra("productRating", averageRating.toFloat()) // Convert to Float for intent
+                            putExtra("productTotalReviews", totalReviews) // Pass the total reviews
+                            putExtra("productPrice", product.harga)
+                            putExtra("productDesc", product.deskripsi)
+                            putExtra("supplierId", product.supplier_id)
+                        }
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        Log.e("displayProducts", "Error passing data: ${e.message}")
+                    }
+                }
+            }
+            cardView.layoutParams = params
+            gridLayout.addView(cardView)
+        }
+    }
+
+
+    suspend fun fetchProductRating(productId: Long): Pair<Double, Int>? {
+        return try {
+            val response = RetrofitClient.instance.getProductRating(mapOf("product_id" to productId))
+
+            // Log the raw JSON response for debugging
+            Log.d("fetchProductRating", "Response body: ${response.body()}")
+
+            if (response.isSuccessful) {
+                val data = response.body()
+
+                // Check if data is an array and has at least one element
+                if (data != null && data is List<*>) {
+                    val firstItem = data.firstOrNull() as? Map<String, Any>
+                    if (firstItem != null) {
+                        var averageRating = (firstItem["average_rating"] as? Double) ?: 0.0
+                        // Format averageRating to two decimal places
+                        averageRating = String.format("%.2f", averageRating).toDouble()
+
+                        // Adjust totalReviews to be an Int from Double
+                        val totalReviews = (firstItem["total_reviews"] as? Double)?.toInt() ?: 0
+                        return Pair(averageRating, totalReviews)
+                    }
+                }
+                // If there's no valid data, return default values
+                Pair(0.0, 0)
+            } else {
+                Log.e("fetchProductRating", "Response not successful: ${response.code()}")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("fetchProductRating", "Error fetching rating: ${e.message}")
+            null
         }
     }
 }
