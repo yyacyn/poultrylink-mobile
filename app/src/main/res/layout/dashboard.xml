@@ -67,14 +67,46 @@
                     android:drawablePadding="4dp"/>
             </LinearLayout>
 
-            <!-- Notification Icon -->
-            <ImageButton
-                android:id="@+id/notification"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="@drawable/notif"
-                android:padding="8dp"
-                android:scaleType="center"/>
+            <!-- Notification -->
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageButton
+                    android:id="@+id/notification"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/notif"
+                    android:padding="8dp"
+                    android:scaleType="center" />
+
+                <!-- unread notifications -->
+                <TextView
+                    android:id="@+id/notification_badge"
+                    android:layout_width="17dp"
+                    android:layout_height="17dp"
+                    android:layout_gravity="end"
+                    android:background="@drawable/badge_bg"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textColor="@android:color/white"
+                    android:textSize="10sp" />
+
+<!--                <TextView-->
+<!--                    android:id="@+id/notification_badge"-->
+<!--                    android:layout_width="9dp"-->
+<!--                    android:layout_height="9dp"-->
+<!--                    android:layout_gravity="end"-->
+<!--                    android:layout_marginTop="13dp"-->
+<!--                    android:layout_marginRight="13dp"-->
+<!--                    android:background="@drawable/badge_bg"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text="1"-->
+<!--                    android:textColor="@android:color/white"-->
+<!--                    android:textSize="6sp" />-->
+
+            </FrameLayout>
+
         </LinearLayout>
 
         <!-- Search dan Cart -->
