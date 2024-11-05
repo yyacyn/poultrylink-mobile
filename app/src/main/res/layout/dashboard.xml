@@ -269,6 +269,7 @@
                 android:orientation="horizontal">
                 <!-- Kategori 1 -->
                 <LinearLayout
+                    android:id="@+id/egg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -289,6 +290,7 @@
 
                 <!-- Kategori 2 -->
                 <LinearLayout
+                    android:id="@+id/poultry"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -310,6 +312,7 @@
 
                 <!-- Kategori 3 -->
                 <LinearLayout
+                    android:id="@+id/meat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -331,6 +334,7 @@
 
                 <!-- Kategori 4 -->
                 <LinearLayout
+                    android:id="@+id/seed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -360,6 +364,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_marginBottom="80dp"
             app:layout_constraintStart_toStartOf="@id/kategoriLayout"
             app:layout_constraintTop_toBottomOf="@id/kategoriLayout"
             android:layout_marginTop="15dp">
@@ -447,10 +452,6 @@
             android:background="@android:color/transparent"
             />
     </LinearLayout>
-
-
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -44,6 +44,8 @@ interface ApiService {
     @POST("rpc/get_same_category_products")
     suspend fun getSameCategoryProducts(@Body request: Map<String, Long>): Response<List<Products>>
 
+    @POST("rpc/get_products_by_category")
+    suspend fun getProductsByCategory(@Body requestBody: Map<String, String>): Response<List<Products>>
 
 }
 

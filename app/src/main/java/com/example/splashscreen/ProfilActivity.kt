@@ -4,8 +4,10 @@ import android.content.Intent
 import android.media.Image
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -49,53 +51,77 @@ class ProfilActivity : AppCompatActivity() {
         val greetUser = findViewById<TextView>(R.id.username)
         val userPfp = findViewById<ImageView>(R.id.profile_image)
 
-//        Navigation()
+        Navigation()
 
-        // Update user greeting and load avatar
+        // user greeting
         lifecycleScope.launch {
             updateUserGreeting(greetUser)
 
-            // Get user ID from email and load avatar
+            // get user id from auth email and load avatar
             val userEmail = getUserIdByEmail(supabase.auth.retrieveUserForCurrentSession().email ?: return@launch)
             if (userEmail != null) {
+                val email = supabase.auth.retrieveUserForCurrentSession().email ?: return@launch
+                findViewById<TextView>(R.id.user_email).text = email
                 loadImageFromSupabase("$userEmail/1.jpg")
             }
         }
     }
 
-//    private fun Navigation() {
-//        val buttoncart = findViewById<ImageButton>(R.id.cart)
-//        val buttonProduk = findViewById<CardView>(R.id.produkcard)
-//        val buttonHome = findViewById<ImageButton>(R.id.btnhome)
-//        val buttonMarket = findViewById<ImageButton>(R.id.btnmarket)
-//        val buttonHistory = findViewById<ImageButton>(R.id.btnhistory)
-//        val buttonProfile = findViewById<ImageButton>(R.id.btnprofil)
-//
-//        buttoncart.setOnClickListener {
-//            startActivity(Intent(this, CartActivity::class.java))
-//        }
-//
-//        buttonProduk.setOnClickListener {
-//            startActivity(Intent(this, ProdukActivity::class.java))
-//        }
-//
-//        buttonHistory.setOnClickListener {
-////            startActivity(this,H)
-//        }
-//
-//        buttonProfile.setOnClickListener {
-//            startActivity(Intent(this, ProfilActivity::class.java))
-//        }
-//
-//        buttonHome.setOnClickListener {
-//            startActivity(Intent(this, DashboardActivity::class.java))
-//        }
-//
-////        buttonMarket.setOnClickListener {
-////            startActivity(Intent(this, MarketActivity::class.java))
-////        }
-//    }
+    // nav
+    private fun Navigation(){
+        val btnHome = findViewById<ImageButton>(R.id.btnhome)
+        val btnMarket = findViewById<ImageButton>(R.id.btnmarket)
+        val btnHistory = findViewById<ImageButton>(R.id.btnhistory)
+        val btnProfil = findViewById<ImageButton>(R.id.btnprofil)
+        val btnEditProfil = findViewById<LinearLayout>(R.id.editProfile)
+        val btnOpenStore = findViewById<Button>(R.id.open_store_button)
+        val btnNotif = findViewById<LinearLayout>(R.id.notif)
+        val btnTransaction = findViewById<LinearLayout>(R.id.transactionHistory)
+        val btnFaq = findViewById<LinearLayout>(R.id.faq)
+        val btnLifechat = findViewById<LinearLayout>(R.id.lifeChat)
 
+        btnHome.setOnClickListener {
+            startActivity(Intent(this, DashboardActivity::class.java))
+        }
+
+//        btnMarket.setOnClickListener {
+//            startActivity(Intent(this, MarketActivity::class.java))
+//        }
+
+        btnHistory.setOnClickListener {
+            startActivity(Intent(this, CompletePaymentActivity::class.java))
+        }
+
+        btnProfil.setOnClickListener {
+            startActivity(Intent(this, ProfilActivity::class.java))
+        }
+
+        btnEditProfil.setOnClickListener {
+            startActivity(Intent(this, EditProfilActivity::class.java))
+        }
+
+        btnLifechat.setOnClickListener {
+            startActivity(Intent(this, LifechatActivity::class.java))
+        }
+
+        btnNotif.setOnClickListener {
+            startActivity(Intent(this, NotificationActivity::class.java))
+        }
+
+        btnOpenStore.setOnClickListener {
+            startActivity(Intent(this, TokoActivity::class.java))
+        }
+
+        btnFaq.setOnClickListener {
+            startActivity(Intent(this, FaqActivity::class.java))
+        }
+
+        btnTransaction.setOnClickListener {
+            startActivity(Intent(this, PaymentActivity::class.java))
+        }
+    }
+
+    // func to get username by email to greet them
     private suspend fun updateUserGreeting(greetUser: TextView) {
         val auth = supabase.auth
         val userEmail = auth.retrieveUserForCurrentSession(updateSession = true).email
@@ -115,6 +141,7 @@ class ProfilActivity : AppCompatActivity() {
         }
     }
 
+    // get user's id by email to get their avatar's path
     private suspend fun getUserIdByEmail(email: String): Int? {
         val requestBody = mapOf("user_email" to email)
         val response: Response<Int> = RetrofitClient.instance.getUserIdByEmail(requestBody)
@@ -128,6 +155,7 @@ class ProfilActivity : AppCompatActivity() {
         }
     }
 
+    // load user's avatar from supabase
     private fun loadImageFromSupabase(filePath: String) {
         lifecycleScope.launch {
             try {

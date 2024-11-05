@@ -12,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
@@ -49,7 +50,7 @@ class ProdukActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.produk)
 
-        // Retrieve passed product data
+        // retrieve passed product data
         val productName = intent.getStringExtra("productName")
         val productId = intent.getLongExtra("product_id", 0)
         val productImage = intent.getStringExtra("productImage")
@@ -59,7 +60,8 @@ class ProdukActivity : AppCompatActivity() {
         val productDesc = intent.getStringExtra("productDesc")
         val productSupplierId = intent.getLongExtra("supplierId", 0)
 
-        // Set the data to views
+        Navigation(productId)
+
         findViewById<TextView>(R.id.product_name).text = productName
         val value = formatWithDots(productPrice)
         findViewById<TextView>(R.id.product_price).text = "Rp. $value"
@@ -67,7 +69,7 @@ class ProdukActivity : AppCompatActivity() {
 //        findViewById<TextView>(R.id.product_total_reviews).text = "($productTotalReviews Reviews)"
         findViewById<TextView>(R.id.product_desc).text = productDesc
 
-        // Set up ImageSlider for multiple images
+        // set up ImageSlider for multiple images
         val imageSlider = findViewById<ImageSlider>(R.id.imageSlider)
         val slideModels = arrayListOf(
             SlideModel("https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/$productImage/1.jpg", ScaleTypes.FIT),
@@ -76,51 +78,52 @@ class ProdukActivity : AppCompatActivity() {
         )
         imageSlider.setImageList(slideModels, ScaleTypes.CENTER_CROP)
 
-        // Fetch and display supplier name
+        // get and display supplier name, get products with the same category, get product reviews
         lifecycleScope.launch {
             fetchSupplierName(productSupplierId, findViewById(R.id.seller_name), findViewById(R.id.seller_location))
-        }
-
-        // Fetch and display product reviews
-        lifecycleScope.launch {
-            fetchProductReviews(productId)
-        }
-
-        // Fetch and display products with the same category
-        lifecycleScope.launch {
             fetchSameCategoryProducts(productId)
-        }
-
-        // Back button functionality
-        findViewById<ImageButton>(R.id.btn_back).setOnClickListener {
-            finish()
+            fetchProductReviews(productId)
         }
     }
 
+    // nav
+    private fun Navigation(product_id: Long) {
+
+        findViewById<ImageButton>(R.id.btn_back).setOnClickListener {
+            finish()
+        }
+
+        findViewById<TextView>(R.id.lihatsemua).setOnClickListener {
+            val intent = Intent(this@ProdukActivity, AllCommentActivity::class.java).apply {
+                putExtra("product_id", product_id)
+            }
+            startActivity(intent)
+
+        }
+    }
+
+    // price formatting
     private fun formatWithDots(amount: Long): String {
         val format = NumberFormat.getNumberInstance(Locale("in", "ID"))
         return format.format(amount) // This will automatically add dots without "Rp" symbol
     }
 
+    // get suppplier name from supabase rest api
     private suspend fun fetchSupplierName(supplierId: Long, supplierNameTextView: TextView, supplierLocationTextView: TextView) {
-        // Log the supplierId being sent
         Log.d("suppliercheck", "Fetching supplier for ID: $supplierId")
 
-        // Create a request map for the supplier ID
         val requestBody = mapOf("supplier_id" to supplierId)
         Log.d("suppliercheck", "Request body: $requestBody")
 
-        // Make the API call using the ApiService from RetrofitClient
         val response: Response<List<Supplier>> = RetrofitClient.instance.getSupplierById(requestBody)
 
-        // Check if the response is successful
         if (response.isSuccessful) {
             val supplierData = response.body()
             Log.d("suppliercheck", "Response data: $supplierData")
             if (!supplierData.isNullOrEmpty()) {
                 val supplierName = supplierData[0].nama_toko
                 val supplierCity = supplierData[0].kota
-                val supplierCountry = supplierData[0].negara// Access the supplier name
+                val supplierCountry = supplierData[0].negara
 
                 val supplierLocation = "$supplierCity, $supplierCountry"
 
@@ -135,6 +138,7 @@ class ProdukActivity : AppCompatActivity() {
         }
     }
 
+    // get product reviews
     private suspend fun fetchProductReviews(productId: Long) {
         try {
             val response = RetrofitClient.instance.getProductReviews(productId)
@@ -149,25 +153,29 @@ class ProdukActivity : AppCompatActivity() {
         }
     }
 
+    //display the two most recent reviews
     private fun displayReviews(reviews: List<Map<String, Any>>) {
-        val reviewContainer = findViewById<LinearLayout>(R.id.review_container) // LinearLayout to hold review cards
-        reviewContainer.removeAllViews() // Clear any existing reviews
+        val reviewContainer = findViewById<LinearLayout>(R.id.review_container)
+        reviewContainer.removeAllViews()
 
-        for (review in reviews.take(2)) { // Get only the two most recent reviews
+        for (review in reviews.take(2)) {
             val reviewView = layoutInflater.inflate(R.layout.review_card, reviewContainer, false)
 
-            // Extract data from the review map
             val username = review["username"] as String
             val ulasan = review["ulasan"] as String
-            val rating = (review["rating"] as Number).toInt() // Use integer for rating
+            val rating = (review["rating"] as Number).toInt()
+            val avatar_path = review["avatar_path"] as String
 
-            // Set username and review text
             reviewView.findViewById<TextView>(R.id.username).text = username
             reviewView.findViewById<TextView>(R.id.ulasan).text = ulasan
 
-            // Set rating stars
+            if (!avatar_path.isNullOrEmpty()) {
+                val avatarImageView = reviewView.findViewById<ImageView>(R.id.user_pfp)
+                loadUserAvatar(avatar_path, avatarImageView)
+            }
+
             val ratingLayout = reviewView.findViewById<LinearLayout>(R.id.rating_layout)
-            ratingLayout.removeAllViews() // Clear any existing stars
+            ratingLayout.removeAllViews()
 
             for (i in 1..5) {
                 val star = ImageView(this)
@@ -175,19 +183,29 @@ class ProdukActivity : AppCompatActivity() {
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
-                star.setImageResource(R.drawable.star) // Use your star drawable
+                star.setImageResource(R.drawable.star)
 
-                // Show star based on the user rating
                 if (i <= rating) {
-                    ratingLayout.addView(star) // Add star to layout if within rating
+                    ratingLayout.addView(star)
                 }
             }
-            // Add the review card to the review container
             reviewContainer.addView(reviewView)
         }
     }
 
+    // load user's avatar to show in their review
+    private fun loadUserAvatar(filePath: String, imageView: ImageView) {
+        val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath"
 
+        Glide.with(this)
+            .load(imageUrl)
+            .placeholder(R.drawable.fotoprofil)
+            .error(R.drawable.fotoprofil)
+            .into(imageView)
+    }
+
+
+    // get products with the same category as the current one
     private suspend fun fetchSameCategoryProducts(productId: Long) {
         val response: Response<List<Products>> = RetrofitClient.instance.getSameCategoryProducts(
             mapOf("product_id" to productId)
@@ -200,12 +218,11 @@ class ProdukActivity : AppCompatActivity() {
         }
     }
 
-    // display recommended products grid
+    // display four recommended products grid randomly
     private fun displayProductsInGrid(products: List<Products>) {
         val gridLayout = findViewById<GridLayout>(R.id.gridLayout)
-        gridLayout.removeAllViews() // Clear existing views
+        gridLayout.removeAllViews()
 
-        // Shuffle the list and take only four products
         val randomProducts = products.shuffled().take(4)
 
         for ((index, product) in randomProducts.withIndex()) {
@@ -217,7 +234,6 @@ class ProdukActivity : AppCompatActivity() {
             val productPrice = cardView.findViewById<TextView>(R.id.productPrice)
             val productLocation = cardView.findViewById<TextView>(R.id.productLocation)
 
-            // Load the first image for the product
             val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/${product.image}/1.jpg"
             Glide.with(this)
                 .load(imageUrl)
@@ -227,7 +243,6 @@ class ProdukActivity : AppCompatActivity() {
 
             productName.text = product.nama_produk
 
-            // Fetch product rating and review count asynchronously
             CoroutineScope(Dispatchers.Main).launch {
                 try {
                     val ratingData = fetchProductRating(product.id)
@@ -246,15 +261,12 @@ class ProdukActivity : AppCompatActivity() {
                 }
             }
 
-            // Format the price
             val value = formatWithDots(product.harga)
             productPrice.text = "Rp. $value"
 
-            // Adjust margins for layout spacing
             val params = cardView.layoutParams as ViewGroup.MarginLayoutParams
             params.setMargins(if (index % 2 == 0) 30 else 20, 20, 10, 20)
 
-            // Set onClickListener to navigate to ProdukActivity with additional data
             cardView.setOnClickListener {
                 CoroutineScope(Dispatchers.Main).launch {
                     try {
@@ -265,9 +277,9 @@ class ProdukActivity : AppCompatActivity() {
                         val intent = Intent(this@ProdukActivity, ProdukActivity::class.java).apply {
                             putExtra("product_id", product.id)
                             putExtra("productName", product.nama_produk)
-                            putExtra("productImage", product.image) // Pass the image base name
-                            putExtra("productRating", averageRating.toFloat()) // Convert to Float for intent
-                            putExtra("productTotalReviews", totalReviews) // Pass the total reviews
+                            putExtra("productImage", product.image)
+                            putExtra("productRating", averageRating.toFloat())
+                            putExtra("productTotalReviews", totalReviews)
                             putExtra("productPrice", product.harga)
                             putExtra("productDesc", product.deskripsi)
                             putExtra("supplierId", product.supplier_id)
@@ -284,30 +296,26 @@ class ProdukActivity : AppCompatActivity() {
     }
 
 
+    // get each products avg rating and total review
     suspend fun fetchProductRating(productId: Long): Pair<Double, Int>? {
         return try {
             val response = RetrofitClient.instance.getProductRating(mapOf("product_id" to productId))
 
-            // Log the raw JSON response for debugging
             Log.d("fetchProductRating", "Response body: ${response.body()}")
 
             if (response.isSuccessful) {
                 val data = response.body()
 
-                // Check if data is an array and has at least one element
                 if (data != null && data is List<*>) {
                     val firstItem = data.firstOrNull() as? Map<String, Any>
                     if (firstItem != null) {
                         var averageRating = (firstItem["average_rating"] as? Double) ?: 0.0
-                        // Format averageRating to two decimal places
                         averageRating = String.format("%.2f", averageRating).toDouble()
 
-                        // Adjust totalReviews to be an Int from Double
                         val totalReviews = (firstItem["total_reviews"] as? Double)?.toInt() ?: 0
                         return Pair(averageRating, totalReviews)
                     }
                 }
-                // If there's no valid data, return default values
                 Pair(0.0, 0)
             } else {
                 Log.e("fetchProductRating", "Response not successful: ${response.code()}")

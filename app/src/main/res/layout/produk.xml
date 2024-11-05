@@ -15,557 +15,385 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- LinearLayout Scroll -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <FrameLayout
+        <!-- LinearLayout Scroll -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <RelativeLayout
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-             <!--Image Slider -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                app:cardElevation="20dp"
-                >
-                <com.denzcoskun.imageslider.ImageSlider
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                 <!--Image Slider -->
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
-                    android:id="@+id/imageSlider"
-                    app:iss_period="1000"
-                    app:iss_auto_cycle="true"
-                    app:iss_delay="3000"
+                    app:cardElevation="20dp"
                     >
+                    <com.denzcoskun.imageslider.ImageSlider
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:id="@+id/imageSlider"
+                        app:iss_period="1000"
+                        app:iss_auto_cycle="true"
+                        app:iss_delay="3000"
+                        >
 
-                </com.denzcoskun.imageslider.ImageSlider>
+                    </com.denzcoskun.imageslider.ImageSlider>
 
-            </androidx.cardview.widget.CardView>
-            </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+                </RelativeLayout>
 
-            <!-- Tombol Back -->
-            <ImageButton
-                android:id="@+id/btn_back"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_margin="16dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/arrowback2"
-                android:contentDescription="Back"
-                android:layout_gravity="start|top" />
+                <!-- Tombol Back -->
+                <ImageButton
+                    android:id="@+id/btn_back"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="16dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/arrowback2"
+                    android:contentDescription="Back"
+                    android:layout_gravity="start|top" />
 
-            <!-- Tombol Share -->
-            <ImageButton
-                android:id="@+id/btn_share"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_margin="16dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/share"
-                android:contentDescription="Share"
-                android:layout_gravity="end|top" />
-        </FrameLayout>
+                <!-- Tombol Share -->
+                <ImageButton
+                    android:id="@+id/btn_share"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="16dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/share"
+                    android:contentDescription="Share"
+                    android:layout_gravity="end|top" />
+            </FrameLayout>
 
 
 
-        <!-- Price and Rating Container -->
-        <LinearLayout
-            android:id="@+id/price_rating"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@+id/product_image"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="20dp">
-
-            <!-- Price TextView -->
-            <TextView
-                android:id="@+id/product_price"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Rp 149.000"
-                android:textSize="25dp"
-                android:textStyle="bold"
-                android:textColor="@android:color/black"
-                android:layout_marginStart="20dp"
-                />
-
-            <!-- Rating TextView and Icon -->
+            <!-- Price and Rating Container -->
             <LinearLayout
-                android:id="@+id/rating_container"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:layout_alignParentEnd="true"
-                android:gravity="center"
-                android:layout_marginEnd="20dp">
-
-                <!-- Star Icon -->
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:src="@drawable/star"
-                    android:layout_marginEnd="4dp"
-                    />
-
-                <!-- Rating Text -->
-                <TextView
-                    android:id="@+id/product_rating"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="4.9"
-                    android:textSize="25dp"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/black" />
-            </LinearLayout>
-        </LinearLayout>
-
-
-
-
-
-        <!-- Linear Layout Description -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp">
-            <!-- Product Description TextView -->
-            <TextView
-                android:id="@+id/product_name"
+                android:id="@+id/price_rating"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/price_rating_container"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@+id/product_image"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:text="Jual Ayam Cemani Premium Asli - Ayam Hitam Langka Berkualitas Terbaik"
-                android:textSize="16sp"
-                android:textColor="@android:color/black"
-                android:layout_marginTop="8dp" />
-        </LinearLayout>
+                android:layout_marginTop="20dp">
 
-
-
-
-        <!-- Linear Layout Toko -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="20dp">
-
-            <!-- Seller Profile Image -->
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/seller_image"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:scaleType="centerCrop"
-                android:layout_marginEnd="8dp"
-                android:src="@drawable/fotoprofil"
-                android:contentDescription="Profile Picture" />
-
-            <!-- Seller Name and Location -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginStart="10dp">
-
-                <!-- Seller Name -->
+                <!-- Price TextView -->
                 <TextView
-                    android:id="@+id/seller_name"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/product_price"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Poultrylink Store"
-                    android:textSize="16sp"
+                    android:layout_weight="1"
+                    android:text="Rp 149.000"
+                    android:textSize="25dp"
                     android:textStyle="bold"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:layout_marginStart="20dp"
+                    />
 
-                <!-- Seller Location -->
-                <TextView
-                    android:id="@+id/seller_location"
+                <!-- Rating TextView and Icon -->
+                <LinearLayout
+                    android:id="@+id/rating_container"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Bogor, Indonesia"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/darker_gray" />
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_alignParentEnd="true"
+                    android:gravity="center"
+                    android:layout_marginEnd="20dp">
 
+                    <!-- Star Icon -->
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:src="@drawable/star"
+                        android:layout_marginEnd="4dp"
+                        />
+
+                    <!-- Rating Text -->
+                    <TextView
+                        android:id="@+id/product_rating"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="4.9"
+                        android:textSize="25dp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/black" />
+                </LinearLayout>
             </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/follow_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/follow" />
-        </LinearLayout>
-
-        <!-- Linear Layout line -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                android:background="@color/orange" />
-        </LinearLayout>
 
 
 
 
-
-
-        <!-- Description  -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Description"
-                android:textStyle="bold"
-                android:textSize="20dp"
-                android:textColor="@color/black"
-                android:layout_marginBottom="10dp"/>
-
-            <TextView
-                android:id="@+id/product_desc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:text="Lorem ipsum odor amet, consectetuer adipiscing elit. Elit mollis sit tristique tempor metus tincidunt mollis. Ad erat dictum imperdiet varius bibendum velit quisque tempus. Eu molestie sed tincidunt, hac morbi malesuada? Sit class ligula auctor hendrerit nascetur semper nec aliquam potenti. Tellus vitae gravida diam augue, penatibus enim neque. Faucibus ullamcorper tincidunt torquent arcu odio et. Habitant nam rutrum facilisi pellentesque dignissim risus. Varius conubia consectetur pharetra sem penatibus fringilla.\n\nMagna varius primis eget fames bibendum litora integer. Magnis efficitur nibh; sem nullam dictumst scelerisque. Massa fringilla sollicitudin class; sodales id sociosqu convallis inceptos sit. Fringilla inceptos et curae vestibulum enim vivamus dictum euismod. Mi suscipit tincidunt porta nullam fringilla sem a nostra. Blandit blandit interdum mollis enim porttitor. Vestibulum sociosqu natoque habitasse, malesuada bibendum luctus."
-                />
-        </LinearLayout>
-
-
-
-
-
-<!--        &lt;!&ndash; Rating  &ndash;&gt;-->
-<!--        <androidx.cardview.widget.CardView-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="20dp"-->
-<!--            android:layout_marginEnd="20dp"-->
-<!--            android:layout_marginTop="10dp"-->
-<!--            app:cardElevation="6dp"-->
-<!--            android:radius="15dp"-->
-<!--            app:cardCornerRadius="10dp">-->
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="vertical"-->
-<!--            android:padding="10dp"-->
-<!--            android:layout_marginStart="20dp"-->
-<!--            android:layout_marginEnd="20dp"-->
-<!--            android:layout_marginTop="10dp">-->
-
-<!--            &lt;!&ndash; Rating Title &ndash;&gt;-->
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Rating"-->
-<!--                android:textStyle="bold"-->
-<!--                android:textSize="18sp"-->
-<!--                android:layout_marginBottom="8dp"/>-->
-
-<!--            &lt;!&ndash; Overall Rating Section &ndash;&gt;-->
-<!--            <LinearLayout-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="horizontal"-->
-<!--                android:gravity="center_vertical">-->
-
-<!--                &lt;!&ndash; Rating Number &ndash;&gt;-->
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="4.9"-->
-<!--                    android:textSize="40sp"-->
-<!--                    android:textStyle="bold"-->
-<!--                    android:layout_marginEnd="16dp"/>-->
-
-<!--                &lt;!&ndash; Star and Ratings Count Section &ndash;&gt;-->
-<!--                <LinearLayout-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:orientation="vertical">-->
-
-<!--                    &lt;!&ndash; Star Rating &ndash;&gt;-->
-<!--                    <LinearLayout-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:orientation="horizontal">-->
-
-<!--                        <ImageView-->
-<!--                            android:layout_width="20dp"-->
-<!--                            android:layout_height="20dp"-->
-<!--                            android:src="@drawable/star" />-->
-
-<!--                        <ImageView-->
-<!--                            android:layout_width="20dp"-->
-<!--                            android:layout_height="20dp"-->
-<!--                            android:src="@drawable/star" />-->
-
-<!--                        <ImageView-->
-<!--                            android:layout_width="20dp"-->
-<!--                            android:layout_height="20dp"-->
-<!--                            android:src="@drawable/star" />-->
-
-<!--                        <ImageView-->
-<!--                            android:layout_width="20dp"-->
-<!--                            android:layout_height="20dp"-->
-<!--                            android:src="@drawable/star" />-->
-
-<!--                        <ImageView-->
-<!--                            android:layout_width="20dp"-->
-<!--                            android:layout_height="20dp"-->
-<!--                            android:src="@drawable/star" />-->
-<!--                    </LinearLayout>-->
-
-<!--                    &lt;!&ndash; Number of Ratings &ndash;&gt;-->
-<!--                    <TextView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="Based on 565 ratings"-->
-<!--                        android:textSize="11sp"-->
-<!--                        android:textColor="@android:color/darker_gray"/>-->
-<!--                </LinearLayout>-->
-<!--            </LinearLayout>-->
-
-<!--            &lt;!&ndash; Bar Rating Section &ndash;&gt;-->
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="vertical"-->
-<!--                android:layout_marginTop="16dp">-->
-
-<!--                &lt;!&ndash; Rating 5 Star &ndash;&gt;-->
-<!--                <LinearLayout-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:orientation="horizontal"-->
-<!--                    android:gravity="center_vertical"-->
-<!--                    android:layout_marginBottom="8dp">-->
-
-<!--                    <TextView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="5 star"-->
-<!--                        android:layout_weight="1"/>-->
-
-<!--                    <ProgressBar-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="8dp"-->
-<!--                        android:layout_weight="4"-->
-<!--                        android:progress="80"-->
-<!--                        style="@android:style/Widget.ProgressBar.Horizontal"-->
-<!--                        android:progressDrawable="@xml/bar_rating"/>-->
-<!--                </LinearLayout>-->
-
-<!--                &lt;!&ndash; Rating 4 Star &ndash;&gt;-->
-<!--                <LinearLayout-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:orientation="horizontal"-->
-<!--                    android:gravity="center_vertical"-->
-<!--                    android:layout_marginBottom="8dp">-->
-
-<!--                    <TextView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="4 star"-->
-<!--                        android:layout_weight="1"/>-->
-
-<!--                    <ProgressBar-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="8dp"-->
-<!--                        android:layout_weight="4"-->
-<!--                        android:progress="60"-->
-<!--                        style="@android:style/Widget.ProgressBar.Horizontal"-->
-<!--                        android:progressDrawable="@xml/bar_rating"/>-->
-<!--                </LinearLayout>-->
-
-<!--                &lt;!&ndash; Rating 3 Star &ndash;&gt;-->
-<!--                <LinearLayout-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:orientation="horizontal"-->
-<!--                    android:gravity="center_vertical"-->
-<!--                    android:layout_marginBottom="8dp">-->
-
-<!--                    <TextView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="3 star"-->
-<!--                        android:layout_weight="1"/>-->
-
-<!--                    <ProgressBar-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="8dp"-->
-<!--                        android:layout_weight="4"-->
-<!--                        android:progress="40"-->
-<!--                        style="@android:style/Widget.ProgressBar.Horizontal"-->
-<!--                        android:progressDrawable="@xml/bar_rating"/>-->
-<!--                </LinearLayout>-->
-
-<!--                &lt;!&ndash; Rating 2 Star &ndash;&gt;-->
-<!--                <LinearLayout-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:orientation="horizontal"-->
-<!--                    android:gravity="center_vertical"-->
-<!--                    android:layout_marginBottom="8dp">-->
-
-<!--                    <TextView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="2 star"-->
-<!--                        android:layout_weight="1"/>-->
-
-<!--                    <ProgressBar-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="8dp"-->
-<!--                        android:layout_weight="4"-->
-<!--                        android:progress="20"-->
-<!--                        style="@android:style/Widget.ProgressBar.Horizontal"-->
-<!--                        android:progressDrawable="@xml/bar_rating"/>-->
-<!--                </LinearLayout>-->
-
-<!--                &lt;!&ndash; Rating 1 Star &ndash;&gt;-->
-<!--                <LinearLayout-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:orientation="horizontal"-->
-<!--                    android:gravity="center_vertical">-->
-
-<!--                    <TextView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="1 star"-->
-<!--                        android:layout_weight="1"/>-->
-
-<!--                    <ProgressBar-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="8dp"-->
-<!--                        android:layout_weight="4"-->
-<!--                        android:progress="10"-->
-<!--                        style="@android:style/Widget.ProgressBar.Horizontal"-->
-<!--                        android:progressDrawable="@xml/bar_rating"/>-->
-<!--                </LinearLayout>-->
-<!--            </LinearLayout>-->
-
-<!--        </LinearLayout>-->
-<!--        </androidx.cardview.widget.CardView>-->
-
-
-
-
-
-        <!-- Reviews  -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Review"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_marginTop="10dp"
-                />
-
+            <!-- Linear Layout Description -->
             <LinearLayout
-                android:id="@+id/review_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp">
+                <!-- Product Description TextView -->
+                <TextView
+                    android:id="@+id/product_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/price_rating_container"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:text="Jual Ayam Cemani Premium Asli - Ayam Hitam Langka Berkualitas Terbaik"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
+
+
+
+
+            <!-- Linear Layout Toko -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="20dp">
+
+                <!-- Seller Profile Image -->
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/seller_image"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:scaleType="centerCrop"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/fotoprofil"
+                    android:contentDescription="Profile Picture" />
+
+                <!-- Seller Name and Location -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="10dp">
+
+                    <!-- Seller Name -->
+                    <TextView
+                        android:id="@+id/seller_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Poultrylink Store"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/black" />
+
+                    <!-- Seller Location -->
+                    <TextView
+                        android:id="@+id/seller_location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Bogor, Indonesia"
+                        android:textSize="14sp"
+                        android:textColor="@android:color/darker_gray" />
+
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/follow_button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/follow" />
+            </LinearLayout>
+
+            <!-- Linear Layout line -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:background="@color/orange" />
+            </LinearLayout>
+
+
+
+
+
+
+            <!-- Description  -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Description"
+                    android:textStyle="bold"
+                    android:textSize="20dp"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="10dp"/>
+
+                <TextView
+                    android:id="@+id/product_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:text="Lorem ipsum odor amet, consectetuer adipiscing elit. Elit mollis sit tristique tempor metus tincidunt mollis. Ad erat dictum imperdiet varius bibendum velit quisque tempus. Eu molestie sed tincidunt, hac morbi malesuada? Sit class ligula auctor hendrerit nascetur semper nec aliquam potenti. Tellus vitae gravida diam augue, penatibus enim neque. Faucibus ullamcorper tincidunt torquent arcu odio et. Habitant nam rutrum facilisi pellentesque dignissim risus. Varius conubia consectetur pharetra sem penatibus fringilla.\n\nMagna varius primis eget fames bibendum litora integer. Magnis efficitur nibh; sem nullam dictumst scelerisque. Massa fringilla sollicitudin class; sodales id sociosqu convallis inceptos sit. Fringilla inceptos et curae vestibulum enim vivamus dictum euismod. Mi suscipit tincidunt porta nullam fringilla sem a nostra. Blandit blandit interdum mollis enim porttitor. Vestibulum sociosqu natoque habitasse, malesuada bibendum luctus."
+                    />
+            </LinearLayout>
+
+
+            <!-- Reviews  -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="10dp"
                 android:orientation="vertical">
-                <include layout="@layout/review_card" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Review"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:layout_marginTop="10dp"
+                    />
+
+                <!-- Lihat semua -->
+                <LinearLayout
+                    android:id="@+id/review_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <include layout="@layout/review_card" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/lihatsemua"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="20dp"
+                    android:clickable="true"
+                    android:text="Lihat semua"
+                    android:onClick="lihatsemua"
+                    android:textColor="@color/orange"
+                    android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- Lihat semua -->
-            <TextView
+            <!-- For you -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="20dp"
-                android:clickable="true"
-                android:text="Lihat semua"
-                android:onClick="lihatsemua"
-                android:textColor="@color/orange"
-                android:textStyle="bold" />
-        </LinearLayout>
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="20dp">
 
-        <!-- For you -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="20dp">
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/orange" />
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="@color/orange" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:text="For You"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/orange" />
+            </LinearLayout>
+
+            <GridLayout
+                android:id="@+id/gridLayout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:text="For You"
-                android:textStyle="bold"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
+                android:columnCount="2"
+                android:orientation="horizontal"
+                android:layout_marginBottom="70dp"
+                app:layout_constraintTop_toBottomOf="@id/textforyou"
+                android:layout_marginLeft="10dp">
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="@color/orange" />
+                <!-- Produk 1 -->
+                <include layout="@layout/product_card" />
+            </GridLayout>
+
         </LinearLayout>
+    </ScrollView>
+    <LinearLayout
+        android:id="@+id/fixedLayout"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/orange"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <GridLayout
-            android:id="@+id/gridLayout"
-            android:layout_width="match_parent"
+        <Button
+            android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:orientation="horizontal"
-            android:layout_marginBottom="30dp"
-            app:layout_constraintTop_toBottomOf="@id/textforyou"
-            android:layout_marginLeft="10dp">
+            android:padding="15dp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:paddingHorizontal="10dp"
+            android:text="Chat"
+            android:backgroundTint="@android:color/transparent"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/white"
+            app:cornerRadius="10dp"/>
 
-            <!-- Produk 1 -->
-            <include layout="@layout/product_card" />
-        </GridLayout>
+        <ImageButton
+            android:id="@+id/cart"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="20dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/cart"
+            android:scaleType="centerCrop" />
+
+        <Button
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:layout_marginLeft="20dp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:paddingHorizontal="10dp"
+            android:text="Buy Now"
+            android:backgroundTint="@android:color/transparent"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/white"
+            app:cornerRadius="10dp"/>
+
 
     </LinearLayout>
 

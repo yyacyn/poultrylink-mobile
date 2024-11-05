@@ -15,8 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_marginBottom="20dp">
-
+        android:layout_marginBottom="0dp">
         <!--   Layout Top Menu  -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -31,6 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
+
                 android:layout_marginTop="25dp"
                 android:layout_marginBottom="25dp"
                 android:layout_marginRight="25dp"
@@ -41,406 +41,31 @@
                     android:src="@drawable/arrowbackblack"
                     android:background="#00FFFFFF"
                     />
+
+                <TextView
+                    android:layout_marginTop="1dp"
+                    android:layout_marginStart="20dp"
+                    android:textStyle="bold"
+                    android:textSize="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Reviews"
+                    />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <!-- Comment 1  -->
         <LinearLayout
+            android:id="@+id/review_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp">
-                <!-- Profile  -->
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/fotoprofil"
-                    android:scaleType="centerCrop"
-                    android:layout_marginEnd="8dp" />
-
-                <!-- Nama dan rating -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Jenny"
-                        android:textStyle="bold"
-                        android:textSize="16sp"/>
-
-                    <!-- Rating -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/star" /> <!-- Ganti dengan icon bintang -->
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/star" />
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/star" />
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/star" />
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/star" /> <!-- Ganti dengan setengah bintang jika ada -->
-                    </LinearLayout>
-                </LinearLayout>
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp"
-                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Elit mollis sit tristique tempus metus tincidunt mollis. Ad erat dictum imperdiet varius bibendum velit quisque tempus."
-                android:textColor="@android:color/darker_gray"
-                android:textSize="14sp"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp"
-                android:layout_weight="1"
-                android:background="@color/gray" />
-
-        <!-- Comment 1  -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp">
-            <!-- Profile  -->
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/fotoprofil"
-                android:scaleType="centerCrop"
-                android:layout_marginEnd="8dp" />
-
-            <!-- Nama dan rating -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Jenny"
-                    android:textStyle="bold"
-                    android:textSize="16sp"/>
-
-                <!-- Rating -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" /> <!-- Ganti dengan icon bintang -->
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" />
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" />
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" />
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" /> <!-- Ganti dengan setengah bintang jika ada -->
-                </LinearLayout>
-            </LinearLayout>
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginBottom="20dp">
+            <include layout="@layout/review" />
         </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Elit mollis sit tristique tempus metus tincidunt mollis. Ad erat dictum imperdiet varius bibendum velit quisque tempus."
-            android:textColor="@android:color/darker_gray"
-            android:textSize="14sp"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:layout_weight="1"
-            android:background="@color/gray" />
-
-
-        <!-- Comment 1  -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp">
-            <!-- Profile  -->
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/fotoprofil"
-                android:scaleType="centerCrop"
-                android:layout_marginEnd="8dp" />
-
-            <!-- Nama dan rating -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Jenny"
-                    android:textStyle="bold"
-                    android:textSize="16sp"/>
-
-                <!-- Rating -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" /> <!-- Ganti dengan icon bintang -->
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" />
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" />
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" />
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" /> <!-- Ganti dengan setengah bintang jika ada -->
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Elit mollis sit tristique tempus metus tincidunt mollis. Ad erat dictum imperdiet varius bibendum velit quisque tempus."
-            android:textColor="@android:color/darker_gray"
-            android:textSize="14sp"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:layout_weight="1"
-            android:background="@color/gray" />
-
-
-        <!-- Comment 1  -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp">
-            <!-- Profile  -->
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/fotoprofil"
-                android:scaleType="centerCrop"
-                android:layout_marginEnd="8dp" />
-
-            <!-- Nama dan rating -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Jenny"
-                    android:textStyle="bold"
-                    android:textSize="16sp"/>
-
-                <!-- Rating -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" /> <!-- Ganti dengan icon bintang -->
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" />
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" />
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" />
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" /> <!-- Ganti dengan setengah bintang jika ada -->
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Elit mollis sit tristique tempus metus tincidunt mollis. Ad erat dictum imperdiet varius bibendum velit quisque tempus."
-            android:textColor="@android:color/darker_gray"
-            android:textSize="14sp"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:layout_weight="1"
-            android:background="@color/gray" />
-
-
-        <!-- Comment 1  -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp">
-            <!-- Profile  -->
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/fotoprofil"
-                android:scaleType="centerCrop"
-                android:layout_marginEnd="8dp" />
-
-            <!-- Nama dan rating -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Jenny"
-                    android:textStyle="bold"
-                    android:textSize="16sp"/>
-
-                <!-- Rating -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" /> <!-- Ganti dengan icon bintang -->
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" />
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" />
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" />
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" /> <!-- Ganti dengan setengah bintang jika ada -->
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Elit mollis sit tristique tempus metus tincidunt mollis. Ad erat dictum imperdiet varius bibendum velit quisque tempus."
-            android:textColor="@android:color/darker_gray"
-            android:textSize="14sp"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:layout_weight="1"
-            android:background="@color/gray" />
-
-
-
-
     </LinearLayout>
+
     </ScrollView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

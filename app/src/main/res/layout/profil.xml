@@ -48,7 +48,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:text="Jenny Alkatiri"
                     android:textColor="#FFFFFF"
                     android:textStyle="bold"
                     android:textSize="18sp"
@@ -60,7 +59,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:text="Jenny123@gmail.com"
                     android:textColor="#FFFFFF"
                     android:gravity="center"
                     android:layout_marginTop="25dp" />
@@ -70,7 +68,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:text="Bogor, Indonesia"
                     android:textColor="#FFFFFF"
                     android:gravity="center"
                     android:layout_marginTop="2dp" />
@@ -113,6 +110,7 @@
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground">
                 <LinearLayout
+                    android:id="@+id/editProfile"
                     android:layout_marginTop="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -152,6 +150,7 @@
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground">
                 <LinearLayout
+                    android:id="@+id/notif"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
@@ -191,6 +190,7 @@
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground">
                 <LinearLayout
+                    android:id="@+id/transactionHistory"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
@@ -230,6 +230,7 @@
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground">
                 <LinearLayout
+                    android:id="@+id/faq"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
@@ -269,6 +270,7 @@
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground">
                 <LinearLayout
+                    android:id="@+id/lifeChat"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
@@ -403,8 +405,6 @@
             android:src="@drawable/profil"
             android:background="@android:color/transparent"
             />
-
-
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

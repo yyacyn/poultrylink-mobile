@@ -52,6 +52,7 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
     private lateinit var buttonBack: ImageButton
 
     private val supabase = createSupabaseClient(
+
         supabaseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co",
         supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhic3N5bHV1Y3J3c2JmenNweWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk2NTU4OTEsImV4cCI6MjA0NTIzMTg5MX0.o6fkro2tPKFoA9sxAp1nuseiHRGiDHs_HI4-ZoqOTfQ"
     ) {
@@ -72,13 +73,13 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
             val password = passwordInput.text.toString().trim()
             val confirmPassword = confirmPasswordInput.text.toString().trim()
 
-            // Call validateInputs function, and if true, proceed with signup
             if (validateInputs(email, name, password, confirmPassword)) {
                 authSupabase(email, password, name)
             }
         }
     }
 
+    // validate input
     private fun validateInputs(email: String, name: String, password: String, confirmPassword: String): Boolean {
         return when {
             email.isEmpty() || name.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() -> {
@@ -132,6 +133,7 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
         finish()
     }
 
+    // sign up into supabase auth
     private fun authSupabase(email: String, password: String, username: String) {
         lifecycleScope.launch {
             try {
@@ -145,7 +147,6 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
                 val userEmail = session.email
                 insertUser(email, password, username, userId)
 
-                // Upload default profile picture
                 uploadDefaultAvatar(userEmail.toString())
             } catch (e: Exception) {
                 handleSignUpError(e)
@@ -153,6 +154,7 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
         }
     }
 
+    // isnert user into database using supabase rest api
     fun insertUser(email: String, password: String, username: String, userId: String) {
 
         val request = InsertUsers(
@@ -183,13 +185,14 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
         })
     }
 
+    // upload user's default avatar by their email
     private fun uploadDefaultAvatar(userEmail: String) {
         lifecycleScope.launch {
             val userId = getUserIdByEmail(userEmail)
             Log.d("userId", userId.toString())
             if (userId != null) {
-                val defaultAvatar = R.drawable.fotoprofil  // Your drawable resource
-                val avatarPath = "$userId/1.jpg"  // Use user ID for folder
+                val defaultAvatar = R.drawable.fotoprofil
+                val avatarPath = "$userId/1.jpg"
                 val imageData = getDrawableAsByteArray(defaultAvatar)
 
                 withContext(Dispatchers.IO) {
@@ -208,6 +211,7 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
     }
 
 
+    // converts image into bytearray to store it into supabase storage
     private fun getDrawableAsByteArray(drawableId: Int): ByteArray {
         val drawable = resources.getDrawable(drawableId, null) as android.graphics.drawable.BitmapDrawable
         val bitmap = drawable.bitmap
@@ -222,55 +226,14 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
         }
     }
 
-    private fun uploadAndDisplayAvatar(filename: String, drawableId: Int) {
-        lifecycleScope.launch {
-            val currentEmail = supabase.auth.retrieveUserForCurrentSession().email ?: return@launch
-            val avatarPath = "avatars/$currentEmail/$filename"
-
-            try {
-                // Switch to background thread for network operations
-                withContext(Dispatchers.IO) {
-                    // Check if the user already has an avatar
-                    val existingFiles = supabase.storage.from("avatar").list("avatars/$currentEmail")
-                    val imageData = getDrawableAsByteArray(drawableId)
-
-                    if (existingFiles.isNotEmpty()) {
-                        // Update the existing file
-                        supabase.storage.from("avatar").update(avatarPath, imageData)
-                        Log.d("Supabase", "Existing avatar updated: $avatarPath")
-                    } else {
-                        // Upload a new avatar
-                        supabase.storage.from("avatar").upload(avatarPath, imageData)
-                        Log.d("Supabase", "New avatar uploaded: $avatarPath")
-                    }
-
-                    // Update avatar path in user's database record
-                    updateUserAvatarPath(currentEmail, avatarPath)
-                }
-
-                // Load the image from Supabase Storage URL into ImageView with Glide
-                val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$avatarPath"
-                Glide.with(this@SignUpActivity)
-                    .load(imageUrl)
-                    .skipMemoryCache(true) // skip memory cache
-                    .diskCacheStrategy(DiskCacheStrategy.NONE) // skip disk cache
-                    .into(findViewById(R.id.user_pfp))
-                Log.d("Supabase", "Avatar displayed successfully")
-
-            } catch (e: Exception) {
-                Log.e("SupabaseUploadError", "Failed to upload or display avatar: ${e.message}")
-            }
-        }
-    }
-
+    // get user id by email to upload the avatar with user id as the folder name
     private suspend fun getUserIdByEmail(email: String): Int? {
         val requestBody = mapOf("user_email" to email)
         val response: Response<Int> = RetrofitClient.instance.getUserIdByEmail(requestBody)
 
         if (response.isSuccessful) {
-            // Log the raw response to see if you are receiving the correct ID
             Log.d("APIResponse", "User ID retrieved: ${response.body()}")
-            return response.body() // This will be the user ID directly
+            return response.body()
         } else {
             Log.e("APIError", "Failed to retrieve user ID: ${response.errorBody()?.string()}")
             return null

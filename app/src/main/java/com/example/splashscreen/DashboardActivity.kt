@@ -52,6 +52,9 @@ class DashboardActivity : AppCompatActivity() {
         install(Storage)
     }
 
+    // store list of all products to be filtered
+    private var allProducts: List<Products> = listOf()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -60,15 +63,14 @@ class DashboardActivity : AppCompatActivity() {
         val greetUser = findViewById<TextView>(R.id.greet)
         val userPfp = findViewById<ImageView>(R.id.user_pfp)
 
-        // Load products into the grid
         loadProducts()
         Navigation()
 
-        // Update user greeting and load avatar
+        // user greeting
         lifecycleScope.launch {
             updateUserGreeting(greetUser)
 
-            // Get user ID from email and load avatar
+            // get user id from auth email and load avatar
             val userEmail = getUserIdByEmail(supabase.auth.retrieveUserForCurrentSession().email ?: return@launch)
             if (userEmail != null) {
                 loadImageFromSupabase("$userEmail/1.jpg")
@@ -77,12 +79,17 @@ class DashboardActivity : AppCompatActivity() {
 
     }
 
+    // nav
     private fun Navigation() {
         val buttoncart = findViewById<ImageButton>(R.id.cart)
         val buttonProduk = findViewById<CardView>(R.id.produkcard)
         val buttonMarket = findViewById<ImageButton>(R.id.btnmarket)
         val buttonHistory = findViewById<ImageButton>(R.id.btnhistory)
         val buttonProfile = findViewById<ImageButton>(R.id.btnprofil)
+        val buttonEgg = findViewById<LinearLayout>(R.id.egg)
+        val buttonPoultry = findViewById<LinearLayout>(R.id.poultry)
+        val buttonMeat = findViewById<LinearLayout>(R.id.meat)
+        val buttonSeed = findViewById<LinearLayout>(R.id.seed)
 
         buttoncart.setOnClickListener {
             startActivity(Intent(this, CartActivity::class.java))
@@ -103,8 +110,42 @@ class DashboardActivity : AppCompatActivity() {
 //        buttonMarket.setOnClickListener {
 //            startActivity(Intent(this, MarketActivity::class.java))
 //        }
+
+        buttonEgg.setOnClickListener {
+            val categoryIds = "5,6"
+            val intent = Intent(this@DashboardActivity, EggCategoryActivity::class.java).apply {
+                putExtra("categoryIds", categoryIds)
+            }
+            startActivity(intent)
+        }
+
+        buttonMeat.setOnClickListener {
+            val categoryIds = "3,4"
+            val intent = Intent(this@DashboardActivity, MeatCategoryActivity::class.java).apply {
+                putExtra("categoryIds", categoryIds)
+            }
+            startActivity(intent)
+        }
+
+        buttonPoultry.setOnClickListener {
+            val categoryIds = "1,2"
+            val intent = Intent(this@DashboardActivity, PoultryCategoryActivity::class.java).apply {
+                putExtra("categoryIds", categoryIds)
+            }
+            startActivity(intent)
+        }
+
+        buttonSeed.setOnClickListener {
+            val categoryIds = "7"
+            val intent = Intent(this@DashboardActivity, SeedCategoryActivity::class.java).apply {
+                putExtra("categoryIds", categoryIds)
+            }
+            startActivity(intent)
+        }
+
     }
 
+    // func to get username by email to greet them
     private suspend fun updateUserGreeting(greetUser: TextView) {
         val auth = supabase.auth
         val userEmail = auth.retrieveUserForCurrentSession(updateSession = true).email
@@ -124,30 +165,30 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
+    // get user's id by email to get their avatar's path
     private suspend fun getUserIdByEmail(email: String): Int? {
         val requestBody = mapOf("user_email" to email)
         val response: Response<Int> = RetrofitClient.instance.getUserIdByEmail(requestBody)
 
         if (response.isSuccessful) {
             Log.d("APIResponse", "User ID retrieved: ${response.body()}")
-            return response.body() // Return the user ID directly
+            return response.body()
         } else {
             Log.e("APIError", "Failed to retrieve user ID: ${response.errorBody()?.string()}")
             return null
         }
     }
 
+    // load user's avatar from supabase
     private fun loadImageFromSupabase(filePath: String) {
         lifecycleScope.launch {
             try {
-                // Construct the public URL to the object in the storage bucket
                 val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath"
 
-                // Use Glide to load the image into the ImageView
                 Glide.with(this@DashboardActivity)
                     .load(imageUrl)
-                    .placeholder(R.drawable.fotoprofil) // Add a placeholder image
-                    .error(R.drawable.fotoprofil) // Add an error image
+                    .placeholder(R.drawable.fotoprofil)
+                    .error(R.drawable.fotoprofil)
                     .into(findViewById<CircleImageView>(R.id.user_pfp))
                 Log.d("ImageLoad", "Image loaded successfully from $imageUrl")
             } catch (e: Exception) {
@@ -156,6 +197,7 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
+    // load products from table produk
     private fun loadProducts() {
         lifecycleScope.launch {
             try {
@@ -166,11 +208,9 @@ class DashboardActivity : AppCompatActivity() {
                     val gson = Gson()
                     val productType = object : TypeToken<Array<Products>>() {}.type
 
-                    // Convert JSON string to an Array of Products
                     val products: Array<Products> = gson.fromJson(productsJson, productType)
                     Log.d("ProductLoad", "products: ${products.toList()}")
 
-                    // Convert Array to a mutable list if needed
                     displayProducts(products.toList())
                 } else {
                     Log.e("ProductLoadError", "Unexpected response format: ${response.data}")
@@ -181,14 +221,16 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
+    // price formatting
     private fun formatWithDots(amount: Long): String {
         val format = NumberFormat.getNumberInstance(Locale("in", "ID"))
-        return format.format(amount) // This will automatically add dots without "Rp" symbol
+        return format.format(amount)
     }
 
+    // display loaded products into grid
     private fun displayProducts(products: List<Products>) {
         val gridLayout = findViewById<GridLayout>(R.id.gridLayout)
-        gridLayout.removeAllViews() // Clear existing views
+        gridLayout.removeAllViews()
 
         for ((index, product) in products.withIndex()) {
             val cardView = layoutInflater.inflate(R.layout.product_card, gridLayout, false)
@@ -199,7 +241,6 @@ class DashboardActivity : AppCompatActivity() {
             val productPrice = cardView.findViewById<TextView>(R.id.productPrice)
             val productLocation = cardView.findViewById<TextView>(R.id.productLocation)
 
-            // Load the first image for the product
             val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/${product.image}/1.jpg"
             Glide.with(this)
                 .load(imageUrl)
@@ -209,7 +250,6 @@ class DashboardActivity : AppCompatActivity() {
 
             productName.text = product.nama_produk
 
-            // Fetch product rating and review count asynchronously
             CoroutineScope(Dispatchers.Main).launch {
                 try {
                     val ratingData = fetchProductRating(product.id)
@@ -228,7 +268,6 @@ class DashboardActivity : AppCompatActivity() {
                 }
             }
 
-            // Use formatWithDots to format the price
             val value = formatWithDots(product.harga)
             productPrice.text = "Rp. $value"
 
@@ -242,18 +281,16 @@ class DashboardActivity : AppCompatActivity() {
             cardView.setOnClickListener {
                 CoroutineScope(Dispatchers.Main).launch {
                     try {
-                        // Fetch the rating data for this product
                         val ratingData = fetchProductRating(product.id)
                         val averageRating = ratingData?.first ?: 0.0
                         val totalReviews = ratingData?.second ?: 0
 
-                        // Start ProdukActivity with the additional rating data
                         val intent = Intent(this@DashboardActivity, ProdukActivity::class.java).apply {
                             putExtra("product_id", product.id)
                             putExtra("productName", product.nama_produk)
-                            putExtra("productImage", product.image) // Pass the image base name
-                            putExtra("productRating", averageRating.toFloat()) // Convert to Float for intent
-                            putExtra("productTotalReviews", totalReviews) // Pass the total reviews
+                            putExtra("productImage", product.image)
+                            putExtra("productRating", averageRating.toFloat())
+                            putExtra("productTotalReviews", totalReviews)
                             putExtra("productPrice", product.harga)
                             putExtra("productDesc", product.deskripsi)
                             putExtra("supplierId", product.supplier_id)
@@ -271,30 +308,26 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
+    // get each products avg rating and total review
     suspend fun fetchProductRating(productId: Long): Pair<Double, Int>? {
         return try {
             val response = RetrofitClient.instance.getProductRating(mapOf("product_id" to productId))
 
-            // Log the raw JSON response for debugging
             Log.d("fetchProductRating", "Response body: ${response.body()}")
 
             if (response.isSuccessful) {
                 val data = response.body()
 
-                // Check if data is an array and has at least one element
                 if (data != null && data is List<*>) {
                     val firstItem = data.firstOrNull() as? Map<String, Any>
                     if (firstItem != null) {
                         var averageRating = (firstItem["average_rating"] as? Double) ?: 0.0
-                        // Format averageRating to two decimal places
                         averageRating = String.format("%.2f", averageRating).toDouble()
 
-                        // Adjust totalReviews to be an Int from Double
                         val totalReviews = (firstItem["total_reviews"] as? Double)?.toInt() ?: 0
                         return Pair(averageRating, totalReviews)
                     }
                 }
-                // If there's no valid data, return default values
                 Pair(0.0, 0)
             } else {
                 Log.e("fetchProductRating", "Response not successful: ${response.code()}")
@@ -305,28 +338,4 @@ class DashboardActivity : AppCompatActivity() {
             null
         }
     }
-
-    private suspend fun loadFirstImageFromSupabase(folderPath: String): String? {
-        return withContext(Dispatchers.IO) {
-            try {
-                // List all files in the specified folder
-                val files = supabase.storage.from("products").list(folderPath)
-
-                // Check if files are retrieved and get the first file
-                if (files.isNotEmpty()) {
-                    val firstFile = files[0].name // Get the name of the first file
-                    // Construct the public URL to the first file
-                    return@withContext "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/$folderPath/$firstFile"
-                } else {
-                    Log.e("ImageLoadError", "No images found in the folder: $folderPath")
-                    return@withContext null
-                }
-            } catch (e: Exception) {
-                Log.e("ImageLoadError", "Failed to load images: ${e.message}")
-                return@withContext null
-            }
-        }
-    }
-
-
 }

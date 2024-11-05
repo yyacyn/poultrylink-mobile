@@ -71,7 +71,6 @@ class SignInActivity : AppCompatActivity() {
             if (validateInput(email, password)) {
                 lifecycleScope.launch {
                     try {
-                        // Check if the user exists in the database before logging in
                         if (checkUserExists(email)) {
                             loginUser(email, password)
                         } else {
@@ -119,23 +118,23 @@ class SignInActivity : AppCompatActivity() {
         return true
     }
 
+    // check if user exist in the database
     private suspend fun checkUserExists(email: String): Boolean {
         val response: Response<String> = RetrofitClient.instance.getUserByEmail(mapOf("p_email" to email))
         return response.isSuccessful && response.body()?.isNotEmpty() == true
     }
 
+    // login user using supabase auth
     private suspend fun loginUser(email: String, password: String) {
         try {
-            // Attempt to sign in with Supabase Auth
+
             supabase.auth.signInWith(Email) {
                 this.email = email
                 this.password = password
             }
             navigateToDashboard()
         } catch (e: Exception) {
-            // If sign-in fails because the user does not exist in Auth, show an error
             if (e.message?.contains("User not found") == true) {
-                // Attempt to sign in with Supabase Auth
                 supabase.auth.signUpWith(Email) {
                     this.email = email
                     this.password = password
@@ -155,6 +154,4 @@ class SignInActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
-
-
 }
