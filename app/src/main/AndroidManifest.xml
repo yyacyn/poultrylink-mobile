@@ -18,6 +18,9 @@
         android:theme="@style/Theme.Poultrylink_mobile"
         tools:targetApi="31">
         <activity
+            android:name=".AllCommentActivity"
+            android:exported="false" />
+        <activity
             android:name=".LocationStoreActivity"
             android:exported="false" />
         <activity

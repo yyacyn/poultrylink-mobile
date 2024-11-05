@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".NotificationActivity">
 
     <ScrollView
@@ -69,6 +70,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:backgroundTint="#FFD9C0"
                 app:cardCornerRadius="15dp"
                 >
@@ -131,6 +134,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:backgroundTint="#FFD9C0"
                 app:cardCornerRadius="15dp">
 
@@ -192,7 +197,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:backgroundTint="@android:color/transparent"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 app:cardCornerRadius="15dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/orange"
@@ -256,7 +262,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:backgroundTint="@android:color/transparent"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 app:cardCornerRadius="15dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/orange"
