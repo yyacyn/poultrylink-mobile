@@ -37,7 +37,6 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="16dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/fotoprofil"
                 android:id="@+id/user_pfp"
                 android:contentDescription="Profile Picture" />
 
@@ -59,9 +58,9 @@
 
                 <!-- Location -->
                 <TextView
+                    android:id="@+id/user_location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Bogor, Indonesia"
                     android:textColor="@android:color/white"
                     android:textSize="14sp"
                     android:drawablePadding="4dp"/>
@@ -125,6 +124,7 @@
                 android:orientation="horizontal">
                 <!-- Search Input -->
                 <EditText
+                    android:id="@+id/searchInput"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -403,6 +403,7 @@
     </ScrollView>
 
     <LinearLayout
+        android:layout_marginBottom="20dp"
         android:id="@+id/fixedLayout"
         android:layout_width="0dp"
         android:layout_height="80dp"

@@ -16,5 +16,7 @@ class LocationStoreActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        window.navigationBarColor = resources.getColor(R.color.orange)
     }
 }

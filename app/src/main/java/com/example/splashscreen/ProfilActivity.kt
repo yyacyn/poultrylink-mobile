@@ -16,6 +16,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.google.api.Distribution.BucketOptions.Linear
 import com.yourapp.network.RetrofitClient
 import de.hdodenhof.circleimageview.CircleImageView
 import io.github.jan.supabase.auth.Auth
@@ -63,9 +64,59 @@ class ProfilActivity : AppCompatActivity() {
                 val email = supabase.auth.retrieveUserForCurrentSession().email ?: return@launch
                 findViewById<TextView>(R.id.user_email).text = email
                 loadImageFromSupabase("$userEmail/1.jpg")
+
+                // Get the buyer details
+                val userId = userEmail.toLong()
+                val buyerDetailsResponse = RetrofitClient.instance.getBuyerDetails(mapOf("p_uid" to userId))
+                if (buyerDetailsResponse.isSuccessful) {
+                    val buyerDetails = buyerDetailsResponse.body()?.firstOrNull()
+
+                    if (buyerDetails != null) {
+                        // Display the country and city
+                        val negara = buyerDetails.negara ?: "Not available"
+                        val kota = buyerDetails.kota ?: "Not available"
+
+                        // You can display these values in a TextView
+                        findViewById<TextView>(R.id.user_location).text = "$kota, $negara"
+                    }
+                } else {
+                    Log.e("DashboardActivity", "Failed to retrieve buyer details: ${buyerDetailsResponse.errorBody()?.string()}")
+                }
+            }
+
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // Re-fetch buyer details
+        lifecycleScope.launch {
+            val userEmail = getUserIdByEmail(supabase.auth.retrieveUserForCurrentSession().email ?: return@launch)
+            if (userEmail != null) {
+                // Get the buyer details again after the profile update
+                val userId = userEmail.toLong()
+                val buyerDetailsResponse = RetrofitClient.instance.getBuyerDetails(mapOf("p_uid" to userId))
+                if (buyerDetailsResponse.isSuccessful) {
+                    val buyerDetails = buyerDetailsResponse.body()?.firstOrNull()
+
+                    if (buyerDetails != null) {
+                        // Display the updated country and city
+                        val negara = buyerDetails.negara ?: "Not available"
+                        val kota = buyerDetails.kota ?: "Not available"
+                        val firstName = buyerDetails.firstname ?: "Not avalaible"
+                        val lastName = buyerDetails.lastname ?: "Not avalaible"
+                        findViewById<TextView>(R.id.user_location).text = "$kota, $negara"
+                        findViewById<TextView>(R.id.FirstName).text = "$firstName "
+                        findViewById<TextView>(R.id.LastName).text = "$lastName"
+                    }
+                } else {
+                    Log.e("ProfilActivity", "Failed to retrieve buyer details: ${buyerDetailsResponse.errorBody()?.string()}")
+                }
             }
         }
     }
+
 
     // nav
     private fun Navigation(){
@@ -79,14 +130,13 @@ class ProfilActivity : AppCompatActivity() {
         val btnTransaction = findViewById<LinearLayout>(R.id.transactionHistory)
         val btnFaq = findViewById<LinearLayout>(R.id.faq)
         val btnLifechat = findViewById<LinearLayout>(R.id.lifeChat)
+        val btnLogout = findViewById<Button>(R.id.logout_button)
 
         btnHome.setOnClickListener {
             startActivity(Intent(this, DashboardActivity::class.java))
         }
 
-//        btnMarket.setOnClickListener {
-//            startActivity(Intent(this, MarketActivity::class.java))
-//        }
+        window.navigationBarColor = resources.getColor(R.color.orange)
 
         btnHistory.setOnClickListener {
             startActivity(Intent(this, CompletePaymentActivity::class.java))
@@ -119,6 +169,17 @@ class ProfilActivity : AppCompatActivity() {
         btnTransaction.setOnClickListener {
             startActivity(Intent(this, PaymentActivity::class.java))
         }
+
+        findViewById<ImageButton>(R.id.btn_back).setOnClickListener {
+            finish()
+        }
+
+        btnLogout.setOnClickListener {
+            lifecycleScope.launch {
+                supabase.auth.signOut()
+            }
+            startActivity(Intent(this, PilihanLoginActivity::class.java))
+        }
     }
 
     // func to get username by email to greet them
@@ -132,7 +193,7 @@ class ProfilActivity : AppCompatActivity() {
 
             if (response.isSuccessful) {
                 val displayName = response.body()?.removeSurrounding("\"")
-                greetUser.text = "Welcome, ${displayName ?: "User"}"
+                greetUser.text = "Hello, ${displayName ?: "User"}"
             } else {
                 greetUser.text = "Welcome, User"
             }
@@ -160,7 +221,7 @@ class ProfilActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 // Construct the public URL to the object in the storage bucket
-                val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath"
+                val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath?t=${System.currentTimeMillis()}"
 
                 // Use Glide to load the image into the ImageView
                 Glide.with(this@ProfilActivity)

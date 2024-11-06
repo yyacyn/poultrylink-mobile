@@ -22,3 +22,10 @@ data class GetUserByEmail(
     val p_email: String,
 )
 
+@Serializable
+data class UserResponse(
+    val email: String,
+    val password: String  // This will be the hashed password from database
+    // Add other fields as needed
+)
+

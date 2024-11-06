@@ -17,6 +17,8 @@ class CartCompleteActivity : AppCompatActivity() {
         val onprocess = findViewById<TextView>(R.id.onprocess)
         val complete = findViewById<TextView>(R.id.complete)
 
+        window.navigationBarColor = resources.getColor(R.color.orange)
+
         mycart.setOnClickListener {
             val intent = Intent(this, CartActivity::class.java)
             startActivity(intent)

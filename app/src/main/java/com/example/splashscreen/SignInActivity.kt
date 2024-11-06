@@ -22,6 +22,7 @@ import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.launch
+import org.mindrot.jbcrypt.BCrypt
 import retrofit2.Response
 
 class SignInActivity : AppCompatActivity() {
@@ -110,11 +111,11 @@ class SignInActivity : AppCompatActivity() {
             return false
         }
 
-        if (password.length < 6) {
-            passwordInput.error = "Password must be at least 6 characters"
-            passwordInput.requestFocus()
-            return false
-        }
+//        if (password.length < 6) {
+//            passwordInput.error = "Password must be at least 6 characters"
+//            passwordInput.requestFocus()
+//            return false
+//        }
         return true
     }
 
@@ -127,12 +128,21 @@ class SignInActivity : AppCompatActivity() {
     // login user using supabase auth
     private suspend fun loginUser(email: String, password: String) {
         try {
-
+            // First authenticate the user with Supabase Auth
             supabase.auth.signInWith(Email) {
                 this.email = email
                 this.password = password
             }
-            navigateToDashboard()
+
+            // After successful sign-in, fetch the stored hashed password from the database
+            val hashedPassword = getHashedPasswordFromDatabase(email)
+
+            // Use bcrypt to validate the password
+            if (BCrypt.checkpw(password, hashedPassword)) {
+                navigateToDashboard()
+            } else {
+                showError("Invalid password.")
+            }
         } catch (e: Exception) {
             if (e.message?.contains("User not found") == true) {
                 supabase.auth.signUpWith(Email) {
@@ -153,5 +163,14 @@ class SignInActivity : AppCompatActivity() {
         val intent = Intent(this, DashboardActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    private suspend fun getHashedPasswordFromDatabase(email: String): String {
+        val response: Response<String> = RetrofitClient.instance.getUserHashedPassword(mapOf("p_email" to email))
+        if (response.isSuccessful && response.body() != null) {
+            return response.body() ?: ""
+        } else {
+            throw Exception("Error fetching password from database.")
+        }
     }
 }

@@ -1,9 +1,12 @@
+import com.example.splashscreen.BuyerDetails
 import com.example.splashscreen.InsertUsers
 import com.example.splashscreen.Users
 import com.example.splashscreen.GetUserByEmail
+import com.example.splashscreen.InsertBuyer
 import com.example.splashscreen.ProductResponse
 import com.example.splashscreen.Products
 import com.example.splashscreen.Supplier
+import com.example.splashscreen.UpdateBuyer
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
@@ -46,6 +49,20 @@ interface ApiService {
 
     @POST("rpc/get_products_by_category")
     suspend fun getProductsByCategory(@Body requestBody: Map<String, String>): Response<List<Products>>
+
+    @Headers("Content-Type: application/json")
+    @POST("rpc/insert_buyer_for_user")
+    fun insertBuyer(@Body request: InsertBuyer): Call<Boolean>
+
+    @Headers("Content-Type: application/json")
+    @POST("rpc/get_user_hashed_password") // Ensure this endpoint matches your Supabase function
+    suspend fun getUserHashedPassword(@Body request: Map<String, String>): Response<String>
+
+    @POST("rpc/update_buyer_profile")
+    suspend fun updateUserProfile(@Body profileData: UpdateBuyer): Response<Boolean>
+
+    @POST("rpc/get_buyer_details")
+    suspend fun getBuyerDetails(@Body requestBody: Map<String, Long>): Response<List<BuyerDetails>>
 
 }
 

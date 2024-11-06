@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.GridLayout
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -37,7 +38,7 @@ class MeatCategoryActivity : AppCompatActivity() {
         install(Storage)
     }
 
-    // Store the list of all products for filtering
+    // store the list of all products for filtering
     private var allProducts: List<Products> = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,6 +50,11 @@ class MeatCategoryActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        findViewById<ImageButton>(R.id.btn_back).setOnClickListener {
+            finish()
+        }
+
         val categoryIds = intent.getStringExtra("categoryIds") ?: ""
 
         // initialize the search input

@@ -6,8 +6,13 @@ import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.media.Image
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
+import android.view.KeyEvent
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import android.widget.GridLayout
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -62,9 +67,40 @@ class DashboardActivity : AppCompatActivity() {
 
         val greetUser = findViewById<TextView>(R.id.greet)
         val userPfp = findViewById<ImageView>(R.id.user_pfp)
+        val userLocation = findViewById<TextView>(R.id.user_location)
 
         loadProducts()
         Navigation()
+
+        window.navigationBarColor = resources.getColor(R.color.orange)
+
+        // initialize the search input
+        val searchInput = findViewById<EditText>(R.id.searchInput)
+        // Set up TextWatcher for real-time filtering
+        searchInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val query = s.toString().trim()
+//                filterProducts(query)
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        // Set up OnEditorActionListener for Enter key
+        searchInput.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+
+                val query = searchInput.text.toString().trim()
+                val intent = Intent(this@DashboardActivity, SearchProdukActivity::class.java).apply {
+                    putExtra("search_query", query)
+                }
+                startActivity(intent)
+                true
+            } else {
+                false
+            }
+        }
 
         // user greeting
         lifecycleScope.launch {
@@ -74,9 +110,53 @@ class DashboardActivity : AppCompatActivity() {
             val userEmail = getUserIdByEmail(supabase.auth.retrieveUserForCurrentSession().email ?: return@launch)
             if (userEmail != null) {
                 loadImageFromSupabase("$userEmail/1.jpg")
+
+                // Get the buyer details
+                val userId = userEmail.toLong()
+                val buyerDetailsResponse = RetrofitClient.instance.getBuyerDetails(mapOf("p_uid" to userId))
+                if (buyerDetailsResponse.isSuccessful) {
+                    val buyerDetails = buyerDetailsResponse.body()?.firstOrNull()
+
+                    if (buyerDetails != null) {
+                        // Display the country and city
+                        val negara = buyerDetails.negara ?: "Not available"
+                        val kota = buyerDetails.kota ?: "Not available"
+
+                        // You can display these values in a TextView
+                        findViewById<TextView>(R.id.user_location).text = "$kota, $negara"
+                    }
+                } else {
+                    Log.e("DashboardActivity", "Failed to retrieve buyer details: ${buyerDetailsResponse.errorBody()?.string()}")
+                }
+            }
+
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // Re-fetch buyer details
+        lifecycleScope.launch {
+            val userEmail = getUserIdByEmail(supabase.auth.retrieveUserForCurrentSession().email ?: return@launch)
+            if (userEmail != null) {
+                // Get the buyer details again after the profile update
+                val userId = userEmail.toLong()
+                val buyerDetailsResponse = RetrofitClient.instance.getBuyerDetails(mapOf("p_uid" to userId))
+                if (buyerDetailsResponse.isSuccessful) {
+                    val buyerDetails = buyerDetailsResponse.body()?.firstOrNull()
+
+                    if (buyerDetails != null) {
+                        // Display the updated country and city
+                        val negara = buyerDetails.negara ?: "Not available"
+                        val kota = buyerDetails.kota ?: "Not available"
+                        findViewById<TextView>(R.id.user_location).text = "$kota, $negara"
+                    }
+                } else {
+                    Log.e("ProfilActivity", "Failed to retrieve buyer details: ${buyerDetailsResponse.errorBody()?.string()}")
+                }
             }
         }
-
     }
 
     // nav
@@ -100,16 +180,16 @@ class DashboardActivity : AppCompatActivity() {
         }
 
         buttonHistory.setOnClickListener {
-//            startActivity(this,H)
+            startActivity(Intent(this, CartCompleteActivity::class.java))
         }
 
         buttonProfile.setOnClickListener {
             startActivity(Intent(this, ProfilActivity::class.java))
         }
 
-//        buttonMarket.setOnClickListener {
-//            startActivity(Intent(this, MarketActivity::class.java))
-//        }
+        buttonMarket.setOnClickListener {
+            startActivity(Intent(this, LocationStoreActivity::class.java))
+        }
 
         buttonEgg.setOnClickListener {
             val categoryIds = "5,6"
@@ -183,7 +263,7 @@ class DashboardActivity : AppCompatActivity() {
     private fun loadImageFromSupabase(filePath: String) {
         lifecycleScope.launch {
             try {
-                val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath"
+                val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath?t=${System.currentTimeMillis()}"
 
                 Glide.with(this@DashboardActivity)
                     .load(imageUrl)
@@ -196,6 +276,7 @@ class DashboardActivity : AppCompatActivity() {
             }
         }
     }
+
 
     // load products from table produk
     private fun loadProducts() {
@@ -211,7 +292,9 @@ class DashboardActivity : AppCompatActivity() {
                     val products: Array<Products> = gson.fromJson(productsJson, productType)
                     Log.d("ProductLoad", "products: ${products.toList()}")
 
-                    displayProducts(products.toList())
+                    allProducts = products.toList()
+
+                    displayProducts(allProducts)
                 } else {
                     Log.e("ProductLoadError", "Unexpected response format: ${response.data}")
                 }
@@ -302,7 +385,6 @@ class DashboardActivity : AppCompatActivity() {
                 }
             }
 
-
             cardView.layoutParams = params
             gridLayout.addView(cardView)
         }
@@ -337,5 +419,15 @@ class DashboardActivity : AppCompatActivity() {
             Log.e("fetchProductRating", "Error fetching rating: ${e.message}")
             null
         }
+    }
+
+    // filter products by search input
+    private fun filterProducts(query: String) {
+        val filteredProducts = if (query.isEmpty()) {
+            allProducts
+        } else {
+            allProducts.filter { it.nama_produk.contains(query, ignoreCase = true) }
+        }
+        displayProducts(filteredProducts)
     }
 }

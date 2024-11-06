@@ -41,6 +41,7 @@ import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.time.format.DateTimeFormatter
 import kotlin.math.log
+import org.mindrot.jbcrypt.BCrypt
 
 
 class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
@@ -133,10 +134,10 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
         finish()
     }
 
-    // sign up into supabase auth
     private fun authSupabase(email: String, password: String, username: String) {
         lifecycleScope.launch {
             try {
+                // Sign up with Supabase using original password
                 val result = supabase.auth.signUpWith(Email) {
                     this.email = email
                     this.password = password
@@ -145,23 +146,31 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
                 val session = supabase.auth.retrieveUserForCurrentSession()
                 val userId = session.id
                 val userEmail = session.email
-                insertUser(email, password, username, userId)
 
-                uploadDefaultAvatar(userEmail.toString())
+                // Hash password before storing in database
+                val hashedPassword = hashPassword(password)
+                insertUser(email, hashedPassword, username, userId)
+
             } catch (e: Exception) {
                 handleSignUpError(e)
             }
         }
     }
 
-    // isnert user into database using supabase rest api
-    fun insertUser(email: String, password: String, username: String, userId: String) {
+    // Password hashing function using BCrypt
+    private fun hashPassword(plainTextPassword: String): String {
+        // Generate a salt with work factor of 12
+        val salt = BCrypt.gensalt(12)
+        return BCrypt.hashpw(plainTextPassword, salt)
+    }
 
+    // Insert user into database using supabase rest api
+    fun insertUser(email: String, hashedPassword: String, username: String, userId: String) {
         val request = InsertUsers(
-            p_uid =  userId,
+            p_uid = userId,
             p_username = username,
             p_email = email,
-            p_password = password
+            p_password = hashedPassword  // Now storing hashed password
         )
 
         RetrofitClient.instance.insertUser(request).enqueue(object : Callback<Boolean> {
@@ -171,6 +180,8 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
                     if (success == true) {
                         Log.d("InsertUser", "User inserted successfully")
                         Toast.makeText(this@SignUpActivity, "Sign up successful", Toast.LENGTH_SHORT).show()
+                        showSuccess("Sign up successful")
+                        uploadDefaultAvatar(email)
                         navigateToDashboard()
                     } else {
                         Log.d("InsertUser", "User insertion failed")
@@ -179,6 +190,7 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
                     Log.d("InsertUser", "Server error: ${response.errorBody()?.string()}")
                 }
             }
+
             override fun onFailure(call: Call<Boolean>, t: Throwable) {
                 Log.e("InsertUser", "Network error: ${t.message}")
             }
@@ -188,24 +200,30 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
     // upload user's default avatar by their email
     private fun uploadDefaultAvatar(userEmail: String) {
         lifecycleScope.launch {
-            val userId = getUserIdByEmail(userEmail)
-            Log.d("userId", userId.toString())
-            if (userId != null) {
-                val defaultAvatar = R.drawable.fotoprofil
-                val avatarPath = "$userId/1.jpg"
-                val imageData = getDrawableAsByteArray(defaultAvatar)
+            try {
+                val userId = getUserIdByEmail(userEmail).toString()
+                Log.d("userId", userId)
+                if (userId != null) {
+                    val defaultAvatar = R.drawable.fotoprofil
+                    val avatarPath = "$userId/1.jpg"
+                    val imageData = getDrawableAsByteArray(defaultAvatar)
 
-                withContext(Dispatchers.IO) {
-                    try {
-                        supabase.storage.from("avatar").upload(avatarPath, imageData)
-                        updateUserAvatarPath(userEmail, avatarPath)
-                        Log.d("Supabase", "Default avatar uploaded: $avatarPath")
-                    } catch (e: Exception) {
-                        Log.e("SupabaseUploadError", "Failed to upload avatar: ${e.message}")
+                    withContext(Dispatchers.IO) {
+                        Log.d("Supabase", "Attempting to upload avatar to: $avatarPath")
+                        try {
+                            supabase.storage.from("avatar").upload(avatarPath, imageData)
+                            Log.d("Supabase", "Avatar upload successful")
+                        } catch (e: Exception) {
+                            insertBuyer(userId.toLong(), avatarPath)
+                            updateUserAvatarPath(userId.toLong(), avatarPath)
+                            Log.e("SupabaseUploadError", "Failed to upload avatar: ${e.message}")
+                        }
                     }
+                } else {
+                    Log.e("AvatarUploadError", "User ID not found for email: $userEmail")
                 }
-            } else {
-                Log.e("AvatarUploadError", "User ID not found for email: $userEmail")
+            } catch (e: Exception) {
+                Log.e("AvatarUploadError", "Error during avatar upload process: ${e.message}")
             }
         }
     }
@@ -220,9 +238,9 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
         return outputStream.toByteArray()
     }
 
-    private suspend fun updateUserAvatarPath(email: String, filePath: String) {
+    private suspend fun updateUserAvatarPath(userId: Long, filePath: String) {
         supabase.postgrest["users"].update(mapOf("avatar_path" to filePath)) {
-            filter { eq("email", email) }
+            filter { eq("id", userId) }
         }
     }
 
@@ -238,5 +256,31 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
             Log.e("APIError", "Failed to retrieve user ID: ${response.errorBody()?.string()}")
             return null
         }
+    }
+
+    private fun insertBuyer(userId: Long, avatarPath: String) {
+        val request = InsertBuyer(
+            p_user_id = userId,
+            p_avatar_path = avatarPath
+        )
+
+        RetrofitClient.instance.insertBuyer(request).enqueue(object : Callback<Boolean> {
+            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                if (response.isSuccessful) {
+                    val success = response.body()
+                    if (success == true) {
+                        Log.d("InsertBuyer", "Buyer inserted successfully")
+                    } else {
+                        Log.d("InsertBuyer", "Buyer insertion failed")
+                    }
+                } else {
+                    Log.d("InsertBuyer", "Server error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                Log.e("InsertBuyer", "Network error: ${t.message}")
+            }
+        })
     }
 }

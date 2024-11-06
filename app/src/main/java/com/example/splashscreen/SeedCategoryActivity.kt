@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.GridLayout
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -52,6 +53,9 @@ class SeedCategoryActivity : AppCompatActivity() {
         }
 
         val categoryIds = intent.getStringExtra("categoryIds") ?: ""
+        findViewById<ImageButton>(R.id.btn_back).setOnClickListener {
+            finish()
+        }
 
         // initialize the search input
         val searchInput = findViewById<EditText>(R.id.searchInput)
