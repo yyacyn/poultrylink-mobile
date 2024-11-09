@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/historyCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="8dp"
+    android:background="@android:color/white"
+    android:layout_marginBottom="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- Gambar di sisi kiri -->
+        <ImageView
+            android:id="@+id/produkImage"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:src="@drawable/ayam"
+            android:scaleType="centerCrop"
+            android:layout_marginEnd="16dp"/>
+
+        <!-- Teks konten  -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/produkName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cemani Chicken Premium"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/kategoriProduk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(Kategori Produk)"
+                android:textSize="10sp"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginTop="4dp"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="bottom">
+
+                <!-- Price Text -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:layout_marginEnd="20dp"
+                    android:id="@+id/produkPrice"
+                    android:textColor="#000000"
+                    android:textSize="18dp" />
+
+                <!-- plus dan minus button -->
+                <LinearLayout
+                    android:layout_width="70dp"
+                    android:layout_height="30dp"
+
+                    android:orientation="horizontal"
+                    android:background="@drawable/buttoncart"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:elevation="8dp">
+
+                    <!-- Minus Button -->
+                    <ImageButton
+                        android:id="@+id/minus"
+                        android:layout_width="20dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/minus"
+                        android:textColor="#FFFFFF"
+                        android:background="@android:color/transparent"/>
+
+                    <!-- jumlah -->
+                    <TextView
+                        android:id="@+id/quantity"
+                        android:layout_width="5dp"
+                        android:layout_height="wrap_content"
+                        android:text="1"
+                        android:textSize="10sp"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginHorizontal="8dp"/>
+
+                    <!-- Plus Button -->
+                    <ImageButton
+                        android:id="@+id/plus"
+                        android:layout_width="20dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/plus"
+                        android:textColor="#FFFFFF"
+                        android:background="@android:color/transparent"/>
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

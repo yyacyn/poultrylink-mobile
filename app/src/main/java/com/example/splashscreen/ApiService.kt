@@ -1,8 +1,10 @@
 import com.example.splashscreen.BuyerDetails
+import com.example.splashscreen.CartItem
 import com.example.splashscreen.InsertUsers
 import com.example.splashscreen.Users
 import com.example.splashscreen.GetUserByEmail
 import com.example.splashscreen.InsertBuyer
+import com.example.splashscreen.InsertCart
 import com.example.splashscreen.ProductResponse
 import com.example.splashscreen.Products
 import com.example.splashscreen.Supplier
@@ -63,6 +65,12 @@ interface ApiService {
 
     @POST("rpc/get_buyer_details")
     suspend fun getBuyerDetails(@Body requestBody: Map<String, Long>): Response<List<BuyerDetails>>
+
+    @POST("rpc/insert_cart_item")
+    fun insertCartItem(@Body cart: InsertCart): Call<Boolean>
+
+    @POST("rpc/get_user_cart_items")
+    suspend fun getCartItems(@Body requestBody: Map<String, Long>): Response<List<Map<String, Any>>>
 
 }
 

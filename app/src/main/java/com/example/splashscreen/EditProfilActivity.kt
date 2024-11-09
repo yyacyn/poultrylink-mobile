@@ -1,6 +1,10 @@
 package com.example.splashscreen
 
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.Image
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -24,8 +28,10 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
+import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.launch
 import retrofit2.Response
+import java.io.ByteArrayOutputStream
 
 class EditProfilActivity : AppCompatActivity() {
 
@@ -47,6 +53,12 @@ class EditProfilActivity : AppCompatActivity() {
     private lateinit var kodePos: EditText
     private lateinit var alamat: EditText
     private lateinit var btnSave: Button
+    private lateinit var imageInput: CircleImageView
+    private lateinit var changePfpButton: ImageButton
+
+    companion object {
+        private const val REQUEST_CODE_PICK_IMAGE = 1
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,6 +75,7 @@ class EditProfilActivity : AppCompatActivity() {
         kodePos = findViewById(R.id.KodePos)
         alamat = findViewById(R.id.Street)
         btnSave = findViewById(R.id.buttonSave)
+        imageInput = findViewById(R.id.user_pfp)
 
         // user greeting
         lifecycleScope.launch {
@@ -96,7 +109,99 @@ class EditProfilActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.btn_back).setOnClickListener {
             finish()
         }
+
+        changePfpButton = findViewById(R.id.changePfpButton)
+        changePfpButton.setOnClickListener {
+            openImagePicker()
+        }
     }
+
+
+    private fun openImagePicker() {
+        // Create intent to show all available image sources
+        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+            type = "image/*"
+            addCategory(Intent.CATEGORY_OPENABLE)
+            putExtra(Intent.EXTRA_LOCAL_ONLY, true)
+            // This flag will show the device folders instead of recent files
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+
+        try {
+            // Create a chooser to show all available options
+            val chooserIntent = Intent.createChooser(intent, "Select a photo")
+            startActivityForResult(chooserIntent, REQUEST_CODE_PICK_IMAGE)
+        } catch (e: Exception) {
+            Toast.makeText(this, "No app can handle this action", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == RESULT_OK) {
+            data?.data?.let { uri ->
+                try {
+                    // Display the selected image in the CircleImageView
+                    imageInput.setImageURI(uri)
+
+                    // Upload the selected image to Supabase
+                    uploadProfilePicture(uri)
+                } catch (e: Exception) {
+                    Log.e("ImageSelection", "Error handling selected image: ${e.message}")
+                    Toast.makeText(
+                        this,
+                        "Failed to load selected image",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    // Replace this function to accept Uri instead of drawableId
+    private fun getDrawableAsByteArray(imageUri: Uri): ByteArray? {
+        return try {
+            val inputStream = contentResolver.openInputStream(imageUri)
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+            inputStream?.close()
+
+            val outputStream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            outputStream.toByteArray()
+        } catch (e: Exception) {
+            Log.e("ImageConversionError", "Error converting image: ${e.message}")
+            null
+        }
+    }
+
+    private fun uploadProfilePicture(imageUri: Uri) {
+        lifecycleScope.launch {
+            try {
+                val userId = getUserIdByEmail(supabase.auth.retrieveUserForCurrentSession().email ?: return@launch)
+                if (userId != null) {
+                    val imageData = getDrawableAsByteArray(imageUri)
+                    val filePath = "$userId/1.jpg"
+
+                    if (imageData != null) {
+                        val storage = supabase.storage["avatar"]
+
+                        // Delete the old image if it exists before uploading the new one
+                        storage.delete(filePath)  // Ensure old image is removed
+
+                        // Upload new image and check result
+                        storage.upload(filePath, imageData)
+                        loadImageFromSupabase(filePath)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("UploadError", "Error uploading profile picture: ${e.message}")
+            }
+        }
+    }
+
+
+
 
     // get user's id by email to get their avatar's path
     private suspend fun getUserIdByEmail(email: String): Int? {

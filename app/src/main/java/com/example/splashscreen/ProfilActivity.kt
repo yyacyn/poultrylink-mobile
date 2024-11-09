@@ -125,7 +125,7 @@ class ProfilActivity : AppCompatActivity() {
         val btnHistory = findViewById<ImageButton>(R.id.btnhistory)
         val btnProfil = findViewById<ImageButton>(R.id.btnprofil)
         val btnEditProfil = findViewById<LinearLayout>(R.id.editProfile)
-        val btnOpenStore = findViewById<Button>(R.id.open_store_button)
+//        val btnOpenStore = findViewById<Button>(R.id.open_store_button)
         val btnNotif = findViewById<LinearLayout>(R.id.notif)
         val btnTransaction = findViewById<LinearLayout>(R.id.transactionHistory)
         val btnFaq = findViewById<LinearLayout>(R.id.faq)
@@ -158,16 +158,16 @@ class ProfilActivity : AppCompatActivity() {
             startActivity(Intent(this, NotificationActivity::class.java))
         }
 
-        btnOpenStore.setOnClickListener {
-            startActivity(Intent(this, TokoActivity::class.java))
-        }
+//        btnOpenStore.setOnClickListener {
+//            startActivity(Intent(this, TokoActivity::class.java))
+//        }
 
         btnFaq.setOnClickListener {
             startActivity(Intent(this, FaqActivity::class.java))
         }
 
         btnTransaction.setOnClickListener {
-            startActivity(Intent(this, PaymentActivity::class.java))
+            startActivity(Intent(this, CartCompleteActivity::class.java))
         }
 
         findViewById<ImageButton>(R.id.btn_back).setOnClickListener {

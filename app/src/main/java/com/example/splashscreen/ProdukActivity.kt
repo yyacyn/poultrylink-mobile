@@ -10,6 +10,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -22,6 +23,7 @@ import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.yourapp.network.RetrofitClient
 import io.github.jan.supabase.auth.Auth
+import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
@@ -31,6 +33,8 @@ import io.github.jan.supabase.storage.Storage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 import java.text.NumberFormat
 import java.util.Locale
@@ -78,6 +82,16 @@ class ProdukActivity : AppCompatActivity() {
         )
         imageSlider.setImageList(slideModels, ScaleTypes.CENTER_CROP)
 
+        val btnCard = findViewById<ImageButton>(R.id.cart)
+        lifecycleScope.launch {
+            val userId = getUserIdByEmail(supabase.auth.retrieveUserForCurrentSession().email ?: return@launch)?.toLong()
+            btnCard.setOnClickListener {
+                if (userId != null) {
+                    insertCartItem(productId, userId , 1, productPrice)
+                }
+            }
+        }
+
         // get and display supplier name, get products with the same category, get product reviews
         lifecycleScope.launch {
             fetchSupplierName(productSupplierId, findViewById(R.id.seller_name), findViewById(R.id.seller_location))
@@ -85,6 +99,51 @@ class ProdukActivity : AppCompatActivity() {
             fetchProductReviews(productId)
         }
     }
+
+    // get user's id by email to get their avatar's path
+    private suspend fun getUserIdByEmail(email: String): Int? {
+        val requestBody = mapOf("user_email" to email)
+        val response: Response<Int> = RetrofitClient.instance.getUserIdByEmail(requestBody)
+
+        if (response.isSuccessful) {
+            Log.d("APIResponse", "User ID retrieved: ${response.body()}")
+            return response.body() // Return the user ID directly
+        } else {
+            Log.e("APIError", "Failed to retrieve user ID: ${response.errorBody()?.string()}")
+            return null
+        }
+    }
+
+    fun insertCartItem(productId: Long, userId: Long, quantity: Int, productPrice: Long) {
+        val request = InsertCart(
+            p_produk_id = productId,
+            p_user_id = userId,
+            p_total_barang = quantity.toString(),
+            p_total_harga = (quantity * productPrice).toString()
+        )
+
+        RetrofitClient.instance.insertCartItem(request).enqueue(object : Callback<Boolean> {
+            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                if (response.isSuccessful) {
+                    val success = response.body()
+                    if (success == true) {
+                        Log.d("InsertCart", "Product added to cart successfully")
+                        Toast.makeText(this@ProdukActivity, "Product added to cart", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Log.d("InsertCart", "Product insertion failed")
+                    }
+                } else {
+                    Log.d("InsertCart", "Server error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                Log.e("InsertCart", "Network error: ${t.message}")
+            }
+        })
+    }
+
+
 
     // nav
     private fun Navigation(product_id: Long) {
