@@ -324,7 +324,7 @@ class ProdukActivity : AppCompatActivity() {
             productPrice.text = "Rp. $value"
 
             val params = cardView.layoutParams as ViewGroup.MarginLayoutParams
-            params.setMargins(if (index % 2 == 0) 30 else 20, 20, 10, 20)
+            params.setMargins(if (index % 2 == 0) 20 else 20, 20, 10, 20)
 
             cardView.setOnClickListener {
                 CoroutineScope(Dispatchers.Main).launch {

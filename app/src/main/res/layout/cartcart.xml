@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="14dp">
 
         <!-- Gambar di sisi kiri -->
         <ImageView
@@ -35,7 +35,6 @@
                 android:id="@+id/produkName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cemani Chicken Premium"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black" />
@@ -44,7 +43,6 @@
                 android:id="@+id/kategoriProduk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="(Kategori Produk)"
                 android:textSize="10sp"
                 android:textColor="@android:color/darker_gray"
                 android:layout_marginTop="4dp"/>
@@ -62,10 +60,10 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="start"
-                    android:layout_marginEnd="20dp"
+                    android:layout_marginEnd="10dp"
                     android:id="@+id/produkPrice"
                     android:textColor="#000000"
-                    android:textSize="18dp" />
+                    android:textSize="16dp" />
 
                 <!-- plus dan minus button -->
                 <LinearLayout

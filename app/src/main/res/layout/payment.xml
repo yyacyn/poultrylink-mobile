@@ -19,6 +19,7 @@
             android:layout_marginLeft="25dp">
 
             <ImageButton
+                android:id="@+id/backbutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/arrowbackblack"
@@ -53,44 +54,12 @@
                 android:textStyle="bold"
                 android:layout_marginTop="4dp"/>
 
-            <!-- Gambar dan Detail Produk -->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/cart_container"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="10dp">
-
-                <!-- Gambar Produk -->
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/ayam"
-                    android:scaleType="centerCrop"
-                    android:layout_gravity="center_vertical"/>
-
-                <!-- Detail Produk -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="16dp"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Cemani Chicken Premium"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="#000"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Jumlah Pesanan : 20"
-                        android:textSize="14sp"
-                        android:textColor="#808080"/>
-                </LinearLayout>
+                android:orientation="vertical">
+                <include layout="@layout/payment_products"/>
             </LinearLayout>
 
             <!-- Alamat -->
@@ -163,12 +132,13 @@
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Item Total"
-                        android:textSize="14sp"
-                        android:textColor="#000"/>
+                        android:layout_height="match_parent"
+                        android:text="Sub Total"
+                        android:textColor="#000"
+                        android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/subTotal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -194,6 +164,7 @@
 
 
                     <TextView
+                        android:id="@+id/shippingFee"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -227,6 +198,7 @@
                         android:textColor="#000"/>
 
                     <TextView
+                        android:id="@+id/total"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -315,7 +287,6 @@
 
             <!-- Total Price -->
             <TextView
-                android:id="@+id/total"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start"
@@ -328,10 +299,9 @@
             <!-- Total Price -->
             <TextView
                 android:id="@+id/totalPrice"
-                android:layout_width="wrap_content"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:text="Rp. 149.000"
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 android:textSize="16sp"

@@ -9,10 +9,9 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.google.android.material.button.MaterialButton
 import com.yourapp.network.RetrofitClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.auth
@@ -34,6 +33,10 @@ class CartActivity : AppCompatActivity() {
         install(Postgrest)
         install(Storage)
     }
+
+    private var totalPrice: Long = 0
+    private var cartItems: List<Map<String, Any>> = emptyList()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,10 +62,19 @@ class CartActivity : AppCompatActivity() {
         val produkPrice = findViewById<TextView>(R.id.produkPrice)
         val produkImage = findViewById<ImageView>(R.id.produkImage)
         val produkKategori = findViewById<TextView>(R.id.kategoriProduk)
+        val checkOut = findViewById<MaterialButton>(R.id.buttonPurchase)
 
         mycart.setOnClickListener {
             val intent = Intent(this, CartActivity::class.java)
             startActivity(intent)
+        }
+
+        checkOut.setOnClickListener {
+            lifecycleScope.launch {
+                updateCartItemsForCheckout() // Update items before proceeding
+                val intent = Intent(this@CartActivity, PaymentActivity::class.java)
+                startActivity(intent)
+            }
         }
 
         onprocess.setOnClickListener {
@@ -75,6 +87,7 @@ class CartActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
     // get user's id by email to get their avatar's path
     private suspend fun getUserIdByEmail(email: String): Int? {
         val requestBody = mapOf("user_email" to email)
@@ -168,34 +181,41 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun displayCartItems(cartItems: List<Map<String, Any>>, initialTotalPrice: Long) {
+        this.cartItems = cartItems  // Store the cart items for later use
         val cartContainer = findViewById<LinearLayout>(R.id.cart_container)
         cartContainer.removeAllViews()
-        var totalPrice = initialTotalPrice
+        var currentTotalPrice = initialTotalPrice
+
+        Log.d("CartDisplay", "Displaying ${cartItems.size} items")
 
         for (cartItem in cartItems) {
             val cartItemView = layoutInflater.inflate(R.layout.cartcart, cartContainer, false)
 
-            // Extract data from the map
+            // Extract data with better null handling
+            val productId = (cartItem["product_id"] as? Number)?.toLong() ?: run {
+                Log.e("CartError", "Invalid product_id for item: $cartItem")
+            }
+
             val productName = cartItem["product_name"] as? String ?: "Unknown Product"
-            val productPrice = cartItem["total_harga"] as? String ?: "0"
-            val productImage = cartItem["product_image"] as? String ?: ""
+            val productPrice = (cartItem["total_harga"] as? String)?.toLongOrNull() ?: 0L
+            val totalBarang = (cartItem["total_barang"] as? String)?.toIntOrNull() ?: 1
             val productKategori = cartItem["kategori_name"] as? String ?: "Unknown Category"
-            val totalBarang = cartItem["total_barang"] as? String ?: "1" // Default to 1 if not provided
-            val productId = (cartItem["product_id"] as? Number)?.toLong() ?: 0L
+            val productImage = cartItem["product_image"] as? String ?: ""
 
-            // Parse price and quantity
-            var itemQuantity = totalBarang.toIntOrNull() ?: 1
-            val itemPrice = productPrice.toLongOrNull() ?: 0L
+            Log.d("CartItem", "Processing item: $productId, Quantity: $totalBarang, Price: $productPrice")
 
-            // Set initial UI data
+            // Initialize views
+            val quantityTextView = cartItemView.findViewById<TextView>(R.id.quantity)
+            val produkPriceTextView = cartItemView.findViewById<TextView>(R.id.produkPrice)
+
+
             cartItemView.findViewById<TextView>(R.id.produkName).text = productName
             cartItemView.findViewById<TextView>(R.id.kategoriProduk).text = productKategori
-            val produkPriceTextView = cartItemView.findViewById<TextView>(R.id.produkPrice)
-            val quantityTextView = cartItemView.findViewById<TextView>(R.id.quantity)
-            quantityTextView.text = itemQuantity.toString()
 
-            // Display the initial calculated price for the item
-            produkPriceTextView.text = "Rp. ${formatWithDots((itemPrice * itemQuantity).toString())}"
+            var currentQuantity = totalBarang
+            val singleItemPrice = if (currentQuantity > 0) productPrice / currentQuantity else 0L
+
+            quantityTextView.text = currentQuantity.toString()
 
             // Load product image if available
             val productImageView = cartItemView.findViewById<ImageView>(R.id.produkImage)
@@ -203,25 +223,34 @@ class CartActivity : AppCompatActivity() {
                 loadProductImage(productImage, productImageView)
             }
 
-            // Plus and minus buttons for updating quantity and price
-            val plusButton = cartItemView.findViewById<ImageButton>(R.id.plus)
-            val minusButton = cartItemView.findViewById<ImageButton>(R.id.minus)
+            // Update UI
+            quantityTextView.text = currentQuantity.toString()
+            updateItemPrice(produkPriceTextView, singleItemPrice, currentQuantity)
 
-            plusButton.setOnClickListener {
-                itemQuantity++
-                quantityTextView.text = itemQuantity.toString()
-                updateItemPrice(produkPriceTextView, itemPrice, itemQuantity)
-                totalPrice += itemPrice
-                updateTotalPrice(totalPrice)
+            // Handle quantity changes
+            cartItemView.findViewById<ImageButton>(R.id.plus).setOnClickListener {
+                currentQuantity++
+                updateCartItemQuantity(productId.toLong(), currentQuantity)
+                quantityTextView.text = currentQuantity.toString()
+                val newItemTotal = singleItemPrice * currentQuantity
+                updateItemPrice(produkPriceTextView, singleItemPrice, currentQuantity)
+                currentTotalPrice += singleItemPrice
+                updateTotalPrice(currentTotalPrice)
+
+                Log.d("CartUpdate", "Increased quantity for product $productId to $currentQuantity")
             }
 
-            minusButton.setOnClickListener {
-                if (itemQuantity > 1) {
-                    itemQuantity--
-                    quantityTextView.text = itemQuantity.toString()
-                    updateItemPrice(produkPriceTextView, itemPrice, itemQuantity)
-                    totalPrice -= itemPrice
-                    updateTotalPrice(totalPrice)
+            cartItemView.findViewById<ImageButton>(R.id.minus).setOnClickListener {
+                if (currentQuantity > 1) {
+                    currentQuantity--
+                    updateCartItemQuantity(productId.toLong(), currentQuantity)
+                    quantityTextView.text = currentQuantity.toString()
+                    val newItemTotal = singleItemPrice * currentQuantity
+                    updateItemPrice(produkPriceTextView, singleItemPrice, currentQuantity)
+                    currentTotalPrice -= singleItemPrice
+                    updateTotalPrice(currentTotalPrice)
+
+                    Log.d("CartUpdate", "Decreased quantity for product $productId to $currentQuantity")
                 }
             }
 
@@ -229,13 +258,70 @@ class CartActivity : AppCompatActivity() {
             cartContainer.addView(cartItemView)
         }
 
-        // Set the initial total price
-        updateTotalPrice(totalPrice)
+        updateTotalPrice(currentTotalPrice)
     }
+
+    private fun updateCartItemQuantity(productId: Long, quantity: Int) {
+        lifecycleScope.launch {
+            try {
+                val request = CartUpdateRequest(
+                    p_cart_id = productId,
+                    p_quantity = quantity
+                )
+
+                Log.d("CartUpdate", "Sending update request: $request")
+
+                val response = RetrofitClient.instance.updateCartItem(request)
+                if (response.isSuccessful) {
+                    Log.d("CartUpdate", "Successfully updated cart item $productId to quantity $quantity")
+                } else {
+                    Log.e("CartUpdate", "Failed to update cart: ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("CartUpdate", "Exception updating cart: ${e.message}", e)
+            }
+        }
+    }
+
+    private suspend fun updateCartItemsForCheckout() {
+        try {
+            Log.d("Checkout", "Starting checkout process with ${cartItems.size} items")
+
+            cartItems.forEach { cartItem ->
+                val productId = (cartItem["product_id"] as? Number)?.toLong() ?: run {
+                    Log.e("Checkout", "Invalid product_id in cart item: $cartItem")
+                    return@forEach
+                }
+
+                val quantity = (cartItem["total_barang"] as? String)?.toIntOrNull() ?: run {
+                    Log.e("Checkout", "Invalid quantity in cart item: $cartItem")
+                    return@forEach
+                }
+
+                val request = CartUpdateRequest(
+                    p_cart_id = productId,
+                    p_quantity = quantity
+                )
+
+                Log.d("Checkout", "Updating item: $productId with quantity: $quantity")
+
+                val response = RetrofitClient.instance.updateCartItem(request)
+                if (response.isSuccessful) {
+                    Log.d("Checkout", "Successfully updated item $productId")
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "No error body"
+                    Log.e("Checkout", "Failed to update item $productId: $errorBody")
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("Checkout", "Exception during checkout: ${e.message}", e)
+        }
+    }
+
 
     // Helper function to update the price of each item based on quantity
     private fun updateItemPrice(produkPriceTextView: TextView, itemPrice: Long, quantity: Int) {
-        val totalItemPrice = itemPrice * quantity
+        val totalItemPrice = itemPrice * quantity // Calculate total price based on quantity
         produkPriceTextView.text = "Rp. ${formatWithDots(totalItemPrice.toString())}"
     }
 
@@ -261,13 +347,13 @@ class CartActivity : AppCompatActivity() {
 
     // Load product image from the URL
     private fun loadProductImage(filePath: String, imageView: ImageView) {
+
         val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/$filePath/1.jpg"
 
         Glide.with(this)
             .load(imageUrl)
-            .placeholder(R.drawable.sekar) // Replace with your placeholder
-            .error(R.drawable.emiya) // Replace with your error image
+            .placeholder(R.drawable.sekar)
+            .error(R.drawable.emiya)
             .into(imageView)
     }
-
 }

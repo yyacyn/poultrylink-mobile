@@ -51,7 +51,7 @@
                     android:id="@+id/greet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Hello, Jenny!"
+                    android:text=""
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
                     android:textStyle="bold"/>
@@ -404,7 +404,6 @@
     </ScrollView>
 
     <LinearLayout
-        android:layout_marginBottom="20dp"
         android:id="@+id/fixedLayout"
         android:layout_width="0dp"
         android:layout_height="80dp"

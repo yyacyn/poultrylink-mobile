@@ -1,8 +1,6 @@
 import com.example.splashscreen.BuyerDetails
-import com.example.splashscreen.CartItem
+import com.example.splashscreen.CartUpdateRequest
 import com.example.splashscreen.InsertUsers
-import com.example.splashscreen.Users
-import com.example.splashscreen.GetUserByEmail
 import com.example.splashscreen.InsertBuyer
 import com.example.splashscreen.InsertCart
 import com.example.splashscreen.ProductResponse
@@ -71,6 +69,11 @@ interface ApiService {
 
     @POST("rpc/get_user_cart_items")
     suspend fun getCartItems(@Body requestBody: Map<String, Long>): Response<List<Map<String, Any>>>
+
+    @Headers("Content-Type: application/json")
+    @POST("rpc/update_cart_item")
+    suspend fun updateCartItem(@Body request: CartUpdateRequest): Response<Boolean>
+
 
 }
 

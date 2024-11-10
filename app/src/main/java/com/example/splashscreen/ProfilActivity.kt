@@ -16,6 +16,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.api.Distribution.BucketOptions.Linear
 import com.yourapp.network.RetrofitClient
 import de.hdodenhof.circleimageview.CircleImageView
@@ -226,6 +227,8 @@ class ProfilActivity : AppCompatActivity() {
                 // Use Glide to load the image into the ImageView
                 Glide.with(this@ProfilActivity)
                     .load(imageUrl)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .override(100, 100)
                     .placeholder(R.drawable.fotoprofil) // Add a placeholder image
                     .error(R.drawable.fotoprofil) // Add an error image
                     .into(findViewById<CircleImageView>(R.id.profile_image))
