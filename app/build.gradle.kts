@@ -88,6 +88,8 @@ dependencies {
     annotationProcessor ("com.github.bumptech.glide:compiler:4.14.2")
     implementation ("at.favre.lib:bcrypt:0.9.0")
     implementation ("org.mindrot:jbcrypt:0.4")
+    implementation ("org.springframework.security:spring-security-crypto:5.8.1")
+
 //    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
 //    implementation("io.supabase:supabase-android:0.0.1")

@@ -157,11 +157,17 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
         }
     }
 
-    // Password hashing function using BCrypt
+    // Password hashing function using BCrypt with $2y$ prefix
     private fun hashPassword(plainTextPassword: String): String {
-        // Generate a salt with work factor of 12
+        // Generate salt with work factor of 12
         val salt = BCrypt.gensalt(12)
-        return BCrypt.hashpw(plainTextPassword, salt)
+        // Hash the password with the generated salt
+        var hashedPassword = BCrypt.hashpw(plainTextPassword, salt)
+        // Replace $2a$ with $2y$ in the hash to match your preference
+        if (hashedPassword.startsWith("$2a$")) {
+            hashedPassword = "$2y$" + hashedPassword.substring(4)
+        }
+        return hashedPassword
     }
 
     // Insert user into database using supabase rest api
@@ -213,9 +219,9 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
                         try {
                             supabase.storage.from("avatar").upload(avatarPath, imageData)
                             Log.d("Supabase", "Avatar upload successful")
-                        } catch (e: Exception) {
                             insertBuyer(userId.toLong(), avatarPath)
                             updateUserAvatarPath(userId.toLong(), avatarPath)
+                        } catch (e: Exception) {
                             Log.e("SupabaseUploadError", "Failed to upload avatar: ${e.message}")
                         }
                     }

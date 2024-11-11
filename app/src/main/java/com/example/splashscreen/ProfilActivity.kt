@@ -148,7 +148,7 @@ class ProfilActivity : AppCompatActivity() {
         }
 
         btnEditProfil.setOnClickListener {
-            startActivity(Intent(this, EditProfilActivity::class.java))
+            startActivity(Intent(this, MyProfilActivity::class.java))
         }
 
         btnLifechat.setOnClickListener {
@@ -227,7 +227,7 @@ class ProfilActivity : AppCompatActivity() {
                 // Use Glide to load the image into the ImageView
                 Glide.with(this@ProfilActivity)
                     .load(imageUrl)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .override(100, 100)
                     .placeholder(R.drawable.fotoprofil) // Add a placeholder image
                     .error(R.drawable.fotoprofil) // Add an error image

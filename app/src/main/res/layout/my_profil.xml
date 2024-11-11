@@ -57,7 +57,7 @@
                 android:layout_marginTop="8dp">
                 <!-- User Name -->
                 <TextView
-                    android:id="@+id/user_name"
+                    android:id="@+id/FullName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Jenny Alkatiri"
@@ -67,6 +67,7 @@
                     android:textStyle="bold" />
                 <!-- edit button -->
                 <ImageButton
+                    android:id="@+id/editProfil"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginStart="5dp"
@@ -110,6 +111,7 @@
                     android:textColor="@color/black" />
 
                 <TextView
+                    android:id="@+id/FirstName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Jenny"
@@ -136,9 +138,9 @@
                     android:textColor="@color/black" />
 
                 <TextView
+                    android:id="@+id/LastName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Alkatiri"
                     android:textColor="@color/gray" />
             </LinearLayout>
             <View
@@ -163,9 +165,9 @@
                     android:textColor="@color/black" />
 
                 <TextView
+                    android:id="@+id/userEmail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Jenny123@gmail.com"
                     android:textColor="@color/gray" />
             </LinearLayout>
             <View
@@ -189,6 +191,7 @@
                     android:textColor="@color/black" />
 
                 <TextView
+                    android:id="@+id/phoneNumber"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="081234567890"
@@ -238,6 +241,7 @@
                     android:textColor="@color/black" />
 
                 <TextView
+                    android:id="@+id/country"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Indonesia"
@@ -265,6 +269,7 @@
                     android:textColor="@color/black" />
 
                 <TextView
+                    android:id="@+id/province"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Jawa Barat"
@@ -291,6 +296,7 @@
                     android:textColor="@color/black" />
 
                 <TextView
+                    android:id="@+id/city"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Bogor"
@@ -317,6 +323,7 @@
                     android:textColor="@color/black" />
 
                 <TextView
+                    android:id="@+id/kodepos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="16162"
@@ -345,6 +352,7 @@
                     android:textColor="@color/black" />
 
                 <TextView
+                    android:id="@+id/alamat"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:gravity="end"

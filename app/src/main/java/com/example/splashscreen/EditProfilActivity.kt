@@ -103,6 +103,8 @@ class EditProfilActivity : AppCompatActivity() {
                 if (uid != null) {
                     updateProfile(uid.toLong(), userFirstName, userLastName, userPhoneNumber, userCountry, userProvinsi, userKota, userKodePos, userAlamat)
                 }
+
+                startActivity(Intent(this@EditProfilActivity, MyProfilActivity::class.java))
             }
         }
 
@@ -182,6 +184,7 @@ class EditProfilActivity : AppCompatActivity() {
                 if (userId != null) {
                     val imageData = getDrawableAsByteArray(imageUri)
                     val filePath = "$userId/1.jpg"
+                    Log.d("session", "$userId")
 
                     if (imageData != null) {
                         val storage = supabase.storage["avatar"]

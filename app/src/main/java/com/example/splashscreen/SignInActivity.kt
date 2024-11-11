@@ -30,6 +30,7 @@ class SignInActivity : AppCompatActivity() {
     lateinit var emailInput: EditText
     lateinit var passwordInput: EditText
 
+
     private val supabase = createSupabaseClient(
         supabaseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co",
         supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhic3N5bHV1Y3J3c2JmenNweWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk2NTU4OTEsImV4cCI6MjA0NTIzMTg5MX0.o6fkro2tPKFoA9sxAp1nuseiHRGiDHs_HI4-ZoqOTfQ"
@@ -135,7 +136,12 @@ class SignInActivity : AppCompatActivity() {
             }
 
             // After successful sign-in, fetch the stored hashed password from the database
-            val hashedPassword = getHashedPasswordFromDatabase(email)
+            var hashedPassword = getHashedPasswordFromDatabase(email)
+
+            // Adjust prefix if necessary
+            if (hashedPassword.startsWith("$2y$")) {
+                hashedPassword = "$2a$" + hashedPassword.substring(4)
+            }
 
             // Use bcrypt to validate the password
             if (BCrypt.checkpw(password, hashedPassword)) {
@@ -154,6 +160,7 @@ class SignInActivity : AppCompatActivity() {
             }
         }
     }
+
 
     private fun showError(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
