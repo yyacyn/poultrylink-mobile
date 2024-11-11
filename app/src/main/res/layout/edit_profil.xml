@@ -57,8 +57,9 @@
                 android:cropToPadding="true"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:background="@android:color/transparent"
                 android:layout_marginTop="25dp"
-                android:src="@drawable/editpfp"
+                android:src="@drawable/edit"
                 />
         </LinearLayout>
     </LinearLayout>
