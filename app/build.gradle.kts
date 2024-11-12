@@ -86,7 +86,7 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.14.2")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.14.2")
     implementation ("at.favre.lib:bcrypt:0.9.0")
-//    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    implementation ("androidx.core:core-ktx:1.6.0")
 
 //    implementation("io.supabase:supabase-android:0.0.1")
 
