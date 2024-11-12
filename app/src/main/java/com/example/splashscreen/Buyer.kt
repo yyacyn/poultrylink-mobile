@@ -52,3 +52,43 @@ data class BuyerDetails(
     val negara: String?
 )
 
+data class BuyerResponse(
+    val data: BuyerData
+)
+
+
+data class BuyerData(
+    val id: Long?,
+    val firstname: String?,
+    val lastname: String?,
+    val alamat: String?,
+    val telepon: String?,
+    val kota: String?,
+    val kodepos: String?,
+    val provinsi: String?,
+    val negara: String?,
+    val user_id: Long?,
+    val avatar_path: String?,
+    val default_avatar: String?,
+    val user: User,
+    val ulasan: List<Ulasan>
+)
+
+//@Serializable
+data class BuyerProfileRequest(
+    val user_id: Long? = null,
+//    val firstname: String? = null,
+//    val lastname: String? = null,
+//    val alamat: String? = null,
+//    val telepon: String? = null,
+//    val kota: String? = null,
+//    val kodepos: String? = null,
+//    val provinsi: String? = null,
+//    val negara: String? = null,
+    val default_avatar: String? = null,
+//    val avatar_path: String? = null
+)
+
+
+
+

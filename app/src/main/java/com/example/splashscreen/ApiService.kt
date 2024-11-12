@@ -1,16 +1,25 @@
+import com.example.splashscreen.Buyer
+import com.example.splashscreen.BuyerData
 import com.example.splashscreen.BuyerDetails
+import com.example.splashscreen.BuyerProfileRequest
+import com.example.splashscreen.BuyerResponse
 import com.example.splashscreen.CartUpdateRequest
 import com.example.splashscreen.InsertUsers
 import com.example.splashscreen.InsertBuyer
 import com.example.splashscreen.InsertCart
+import com.example.splashscreen.InsertUser
+import com.example.splashscreen.LoginResponse
 import com.example.splashscreen.ProductResponse
 import com.example.splashscreen.Products
+import com.example.splashscreen.RegisterResponse
+import com.example.splashscreen.ReviewResponse
 import com.example.splashscreen.Supplier
 import com.example.splashscreen.UpdateBuyer
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -74,6 +83,32 @@ interface ApiService {
     @POST("rpc/update_cart_item")
     suspend fun updateCartItem(@Body request: CartUpdateRequest): Response<Boolean>
 
+    @POST("register")
+    fun registerUser(@Body request: InsertUser): Call<RegisterResponse>
+
+    @POST("postprofilep")
+    fun createBuyerProfilep(
+        @Body buyerProfileRequest: BuyerProfileRequest): Call<BuyerResponse>
+
+    @POST("postprofile")
+    fun createBuyerProfile(
+        @Header("Authorization") token: String,
+        @Body buyerProfileRequest: BuyerProfileRequest): Call<BuyerResponse>
+
+    @POST("login")
+    suspend fun loginUser(@Body credentials: Map<String, String>): Response<LoginResponse>
+
+    @GET("produk")
+    fun getProduk(): Call<List<Products>>
+
+    @GET("getprofile")
+    fun getProfile(@Header("Authorization") token: String): Call<BuyerResponse>
+
+    @GET("produkall")
+    fun getProducts(@Header("Authorization") token: String): Call<ProductResponse>
+
+    @GET("ulasanall")
+    fun getReviews(@Header("Authorization") token: String): Call<ReviewResponse>
 
 }
 
