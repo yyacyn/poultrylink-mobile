@@ -15,21 +15,28 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.homepage.HomeActivity
 import com.yourapp.network.RetrofitClient
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.w3c.dom.Text
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.text.NumberFormat
 import java.util.Locale
+
 
 class DashboardActivity : AppCompatActivity() {
 
@@ -40,7 +47,11 @@ class DashboardActivity : AppCompatActivity() {
         setContentView(R.layout.dashboard)
 
         // Retrieve the TOKEN passed from the previous activity
-        val token = "Bearer " + intent.getStringExtra("TOKEN")
+//        val token = "Bearer " + intent.getStringExtra("TOKEN")
+        val storedtoken = "Bearer ${getStoredToken().toString()}"
+        Log.d("storedtoken", "$storedtoken")
+
+        Navigation()
 
         val greetUser = findViewById<TextView>(R.id.greet)
         val userLocation = findViewById<TextView>(R.id.user_location)
@@ -67,7 +78,7 @@ class DashboardActivity : AppCompatActivity() {
                 val query = searchInput.text.toString().trim()
                 val intent = Intent(this@DashboardActivity, SearchProdukActivity::class.java).apply {
                     putExtra("search_query", query)
-                    putExtra("TOKEN", token)
+                    putExtra("TOKEN", storedtoken)
                 }
                 startActivity(intent)
                 true
@@ -77,18 +88,130 @@ class DashboardActivity : AppCompatActivity() {
         }
 
         // Make the API call to get the user profile
-        getProfile(token, greetUser, userLocation, userpfp)
-        getProducts(token, gridLayout)
+        getProfile(storedtoken, greetUser, userLocation, userpfp)
+        getProducts(storedtoken, gridLayout)
     }
 
-//    private fun filterProducts(query: String, gridLayout: GridLayout, token: String) {
-//        val filteredProducts = if (query.isEmpty()) {
-//            allProducts
-//        } else {
-//            allProducts.filter { it.nama_produk.contains(query, ignoreCase = true) }
-//        }
-//        displayProducts(filteredProducts, gridLayout, token)
-//    }
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onProfilePicUpdate(event: Event.ProfilePicUpdateEvent) {
+        // Get reference to the profile image view
+        val userPfp = findViewById<CircleImageView>(R.id.user_pfp)
+
+        // Get the token and make API call to refresh profile
+        val token = "Bearer ${getStoredToken().toString()}"
+
+        // Refresh profile data including the image
+        RetrofitClient.instance.getProfile(token)
+            .enqueue(object : Callback<BuyerResponse> {
+                override fun onResponse(call: Call<BuyerResponse>, response: Response<BuyerResponse>) {
+                    if (response.isSuccessful) {
+                        val buyerData = response.body()?.data
+                        val userId = buyerData?.id ?: 0
+                        // Force refresh the profile picture
+                        loadImageFromSupabase("$userId/1.jpg", userPfp, forceRefresh = true)
+                    }
+                }
+
+                override fun onFailure(call: Call<BuyerResponse>, t: Throwable) {
+                    Log.e("ProfileUpdate", "Failed to update profile: ${t.message}")
+                }
+            })
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val greetUser = findViewById<TextView>(R.id.greet)
+        val userPfp = findViewById<CircleImageView>(R.id.user_pfp)
+        val userLocation = findViewById<TextView>(R.id.user_location)
+
+
+        // Retrieve the token and update profile
+        val token = "Bearer ${getStoredToken().toString()}"
+        getProfile(token, greetUser, userLocation, userPfp)
+    }
+
+    // Retrieve the token from SharedPreferences
+    private fun getStoredToken(): String? {
+        val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
+        return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
+    }
+
+    private fun Navigation() {
+        val buttoncart = findViewById<ImageButton>(R.id.cart)
+        val buttonProduk = findViewById<CardView>(R.id.produkcard)
+        val buttonMarket = findViewById<ImageButton>(R.id.btnmarket)
+        val buttonHistory = findViewById<ImageButton>(R.id.btnhistory)
+        val buttonProfile = findViewById<ImageButton>(R.id.btnprofil)
+        val buttonEgg = findViewById<LinearLayout>(R.id.egg)
+        val buttonPoultry = findViewById<LinearLayout>(R.id.poultry)
+        val buttonMeat = findViewById<LinearLayout>(R.id.meat)
+        val buttonSeed = findViewById<LinearLayout>(R.id.seed)
+
+        buttoncart.setOnClickListener {
+            startActivity(Intent(this, CartActivity::class.java))
+        }
+
+        buttonProduk.setOnClickListener {
+            startActivity(Intent(this, ProdukActivity::class.java))
+        }
+
+        buttonHistory.setOnClickListener {
+            startActivity(Intent(this, CartCompleteActivity::class.java))
+        }
+
+        buttonProfile.setOnClickListener {
+            startActivity(Intent(this, ProfilActivity::class.java))
+        }
+
+        buttonMarket.setOnClickListener {
+            startActivity(Intent(this, LocationStoreActivity::class.java))
+        }
+
+        buttonEgg.setOnClickListener {
+            val categoryIds = "5,6"
+            val intent = Intent(this@DashboardActivity, EggCategoryActivity::class.java).apply {
+                putExtra("categoryIds", categoryIds)
+            }
+            startActivity(intent)
+        }
+
+        buttonMeat.setOnClickListener {
+            val categoryIds = "3,4"
+            val intent = Intent(this@DashboardActivity, MeatCategoryActivity::class.java).apply {
+                putExtra("categoryIds", categoryIds)
+            }
+            startActivity(intent)
+        }
+
+        buttonPoultry.setOnClickListener {
+            val categoryIds = "1,2"
+            val intent = Intent(this@DashboardActivity, PoultryCategoryActivity::class.java).apply {
+                putExtra("categoryIds", categoryIds)
+            }
+            startActivity(intent)
+        }
+
+        buttonSeed.setOnClickListener {
+            val categoryIds = "7"
+            val intent = Intent(this@DashboardActivity, SeedCategoryActivity::class.java).apply {
+                putExtra("categoryIds", categoryIds)
+            }
+            startActivity(intent)
+        }
+
+    }
+
 
     private fun getProfile(token: String?, greetUser: TextView, userLocation: TextView, userPfp: CircleImageView) {
         RetrofitClient.instance.getProfile(token ?: "")
@@ -102,6 +225,7 @@ class DashboardActivity : AppCompatActivity() {
                         val userId = buyerData?.id ?: 0
                         greetUser.text = "Hello, $username!"
                         loadImageFromSupabase("$userId/1.jpg", userPfp)
+                        Log.d("getprofileresponse", "${response.body()}")
                         if (userkota.isNullOrEmpty() || usernegara.isNullOrEmpty()){
                             userLocation.text = "Somewhere"
                         } else{
@@ -118,20 +242,26 @@ class DashboardActivity : AppCompatActivity() {
             })
     }
 
-    private fun loadImageFromSupabase(filePath: String, imageView: CircleImageView) {
+    private fun loadImageFromSupabase(filePath: String, imageView: CircleImageView, forceRefresh: Boolean = false) {
         lifecycleScope.launch {
             try {
-                val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath?t=${System.currentTimeMillis()}"
+                val baseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath"
+                val imageUrl = if (forceRefresh) {
+                    "$baseUrl?t=${System.currentTimeMillis()}"
+                } else {
+                    baseUrl
+                }
 
                 Glide.with(this@DashboardActivity)
                     .load(imageUrl)
                     .placeholder(R.drawable.fotoprofil)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .skipMemoryCache(true)
+                    .skipMemoryCache(false)
                     .override(100, 100)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .priority(Priority.HIGH)
                     .error(R.drawable.fotoprofil)
                     .into(imageView)
-                Log.d("ImageLoad", "Image loaded successfully from $imageUrl")
             } catch (e: Exception) {
                 Log.e("ImageLoadError", "Failed to load image: ${e.message}")
             }
@@ -174,7 +304,31 @@ class DashboardActivity : AppCompatActivity() {
             })
     }
 
+    private fun loadProductImage(imagePath: String, imageView: ImageView, forceRefresh: Boolean = false) {
+        try {
+            val baseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/$imagePath/1.jpg"
+            val imageUrl = if (forceRefresh) {
+                "$baseUrl?t=${System.currentTimeMillis()}"
+            } else {
+                baseUrl
+            }
+
+            Glide.with(this)
+                .load(imageUrl)
+                .placeholder(R.drawable.emiya)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .skipMemoryCache(false)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .priority(Priority.HIGH)
+                .error(R.drawable.sekar)
+                .into(imageView)
+        } catch (e: Exception) {
+            Log.e("ImageLoadError", "Failed to load product image: ${e.message}")
+        }
+    }
+
     private fun displayProducts(products: List<ProductData>, reviews: List<ReviewData>, gridLayout: GridLayout) {
+        val sortedProducts = products.sortedByDescending { it.created_at }
         gridLayout.removeAllViews()
         for ((index, product) in products.withIndex()) {
             val cardView = layoutInflater.inflate(R.layout.product_card, gridLayout, false)
@@ -185,14 +339,11 @@ class DashboardActivity : AppCompatActivity() {
             val productPrice = cardView.findViewById<TextView>(R.id.productPrice)
             val productLocation = cardView.findViewById<TextView>(R.id.productLocation)
 
-            val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/${product.image}/1.jpg"
-            Glide.with(this)
-                .load(imageUrl)
-                .placeholder(R.drawable.emiya)
-                .error(R.drawable.sekar)
-                .into(productImage)
+            loadProductImage(product.image, productImage)
 
             productName.text = product.nama_produk
+
+            productLocation.text = "${product.supplier?.kota}, ${product.supplier?.negara}"
 
             // Filter reviews for the current product
             val productReviews = reviews.filter { it.produk_id == product.id.toString() }
@@ -202,6 +353,7 @@ class DashboardActivity : AppCompatActivity() {
                 0.0
             }
             val totalReviews = productReviews.size
+
 
             productRating.text = "%.1f".format(averageRating)
             productAmountRating.text = "($totalReviews Reviews)"
@@ -216,16 +368,22 @@ class DashboardActivity : AppCompatActivity() {
                 params.setMargins(20, 20, 10, 20)
             }
 
+
             cardView.setOnClickListener {
                 val intent = Intent(this@DashboardActivity, ProdukActivity::class.java).apply {
                     putExtra("product_id", product.id)
                     putExtra("productName", product.nama_produk)
                     putExtra("productImage", product.image)
-                    putExtra("productRating", averageRating.toFloat())
+                    putExtra("productRating", "%.1f".format(averageRating).toFloat())
                     putExtra("productTotalReviews", totalReviews)
-                    putExtra("productPrice", product.harga)
+                    putExtra("productPrice", product.harga.toLong())
                     putExtra("productDesc", product.deskripsi)
                     putExtra("supplierId", product.supplier_id)
+                    putExtra("supplierKota", product.supplier?.kota)
+                    putExtra("supplierNegara", product.supplier?.negara)
+                    putExtra("supplierToko", product.supplier?.nama_toko)
+                    putExtra("productCategory", product.kategori_id)
+                    putExtra("location", "dashboard")
                 }
                 startActivity(intent)
             }
@@ -234,39 +392,6 @@ class DashboardActivity : AppCompatActivity() {
             gridLayout.addView(cardView)
         }
     }
-
-//    private fun getReviews(productId: String, token: String, callback: (Double, Int) -> Unit) {
-//        RetrofitClient.instance.getReviews(token)
-//            .enqueue(object : Callback<ReviewResponse> {
-//                override fun onResponse(call: Call<ReviewResponse>, response: Response<ReviewResponse>) {
-//                    if (response.isSuccessful) {
-//                        val reviews = response.body()?.data ?: emptyList()
-//                        Log.d("reviews", "$reviews")
-//                        val productReviews = reviews.filter { it.produk_id == productId }
-//
-//                        val averageRating = if (productReviews.isNotEmpty()) {
-//                            productReviews.mapNotNull { it.rating }.average()
-//                        } else {
-//                            0.0
-//                        }
-//                        val totalReviews = productReviews.size
-//
-//                        // Invoke callback with the calculated values
-//                        callback(averageRating, totalReviews)
-//                    } else {
-//                        // Handle unsuccessful response
-//                        callback(0.0, 0)
-//                    }
-//                }
-//
-//                override fun onFailure(call: Call<ReviewResponse>, t: Throwable) {
-//                    // Handle failure and call the callback with default values
-//                    Log.e("getReviews", "Error: ${t.message}")
-//                    callback(0.0, 0)
-//                }
-//            })
-//    }
-
 
     // price formatting
     private fun formatWithDots(amount: Long): String {

@@ -89,6 +89,7 @@ dependencies {
     implementation ("at.favre.lib:bcrypt:0.9.0")
     implementation ("org.mindrot:jbcrypt:0.4")
     implementation ("org.springframework.security:spring-security-crypto:5.8.1")
+    implementation ("org.greenrobot:eventbus:3.2.0")
 
 //    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 

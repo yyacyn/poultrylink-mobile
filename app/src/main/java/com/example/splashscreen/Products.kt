@@ -1,12 +1,13 @@
 package com.example.splashscreen
 
 import com.google.gson.annotations.SerializedName
+import java.sql.Timestamp
 
 data class Products(
     val id: Long,
     val nama_produk: String,
     val deskripsi: String,
-    val kategori_id: Long,
+    val kategori_id: String,
     val supplier_id: Long,
     val harga: Long,
     val ulasan: Long? = null, // This field represents the count of total reviews, if applicable
@@ -24,7 +25,7 @@ data class ProductResponse(
 
 data class ProductData(
     @SerializedName("id")
-    val id: Int,
+    val id: Long,
     @SerializedName("nama_produk")
     val nama_produk: String,
     @SerializedName("deskripsi")
@@ -38,5 +39,11 @@ data class ProductData(
     @SerializedName("supplier_id")
     val supplier_id: String,
     @SerializedName("image")
-    val image: String
+    val image: String,
+    @SerializedName("jumlah")
+    val jumlah: Long?,
+    @SerializedName("supplier")
+    val supplier: Supplier?,
+    @SerializedName("created_at")
+    val created_at: Timestamp
 )

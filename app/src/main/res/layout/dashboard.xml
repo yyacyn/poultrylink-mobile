@@ -393,7 +393,6 @@
                 <!-- Include product_card layout -->
                 <include layout="@layout/product_card" />
 
-                <include layout="@layout/product_card" />
 
                 <!-- Add more product cards as needed -->
             </GridLayout>

@@ -20,7 +20,8 @@ data class RegisterData(
 @Serializable
 data class User(
     val id: Int,
-    val username: String
+    val username: String,
+    val email: String
 )
 
 @Serializable

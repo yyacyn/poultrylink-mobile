@@ -50,7 +50,7 @@
                         android:id="@+id/username"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Jenny"
+                        android:text="Loading user.."
                         android:textStyle="bold"
                         android:textSize="16sp"/>
 
@@ -72,7 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Elit mollis sit tristique tempus metus tincidunt mollis. Ad erat dictum imperdiet varius bibendum velit quisque tempus."
+                android:text="Loading review."
                 android:textColor="@android:color/darker_gray"
                 android:textSize="14sp"/>
         </LinearLayout>

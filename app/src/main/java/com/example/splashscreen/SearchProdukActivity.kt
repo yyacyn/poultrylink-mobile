@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.GridLayout
@@ -13,6 +14,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.yourapp.network.RetrofitClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -73,9 +77,33 @@ class SearchProdukActivity : AppCompatActivity() {
         return format.format(amount)
     }
 
+    private fun loadProductImage(imagePath: String, imageView: ImageView, forceRefresh: Boolean = false) {
+        try {
+            val baseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/$imagePath/1.jpg"
+            val imageUrl = if (forceRefresh) {
+                "$baseUrl?t=${System.currentTimeMillis()}"
+            } else {
+                baseUrl
+            }
+
+            Glide.with(this)
+                .load(imageUrl)
+                .placeholder(R.drawable.emiya)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .skipMemoryCache(false)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .priority(Priority.HIGH)
+                .error(R.drawable.sekar)
+                .into(imageView)
+        } catch (e: Exception) {
+            Log.e("ImageLoadError", "Failed to load product image: ${e.message}")
+        }
+    }
+
     private fun displayProducts(products: List<ProductData>, reviews: List<ReviewData>) {
         gridLayout.removeAllViews()
-        for ((index, product) in products.withIndex()) {
+        val sortedProducts = products.sortedByDescending { it.created_at }
+        for ((index, product) in sortedProducts.withIndex()) {
             val cardView = layoutInflater.inflate(R.layout.product_card, gridLayout, false)
             val productImage = cardView.findViewById<ImageView>(R.id.productImage)
             val productName = cardView.findViewById<TextView>(R.id.productName)
@@ -83,11 +111,7 @@ class SearchProdukActivity : AppCompatActivity() {
             val productAmountRating = cardView.findViewById<TextView>(R.id.productAmountRating)
             val productPrice = cardView.findViewById<TextView>(R.id.productPrice)
 
-            Glide.with(this)
-                .load("https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/${product.image}/1.jpg")
-                .placeholder(R.drawable.emiya)
-                .error(R.drawable.sekar)
-                .into(productImage)
+            loadProductImage(product.image, productImage)
 
             productName.text = product.nama_produk
 

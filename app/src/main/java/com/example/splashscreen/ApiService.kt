@@ -110,5 +110,13 @@ interface ApiService {
     @GET("ulasanall")
     fun getReviews(@Header("Authorization") token: String): Call<ReviewResponse>
 
+    @POST("logout")
+    fun logout(@Header("Authorization") token: String): Call<Void>
+
+    @GET("logoutmobile")
+    fun logoutMobile(@Header("Authorization") token: String): Call<Map<String, Boolean>>
+
+    @GET("ulasanall")
+    fun getReviewsByProductId(@Header("Authorization") token: String, @Query("product_id") productId: Long): Call<ReviewResponse>
 }
 

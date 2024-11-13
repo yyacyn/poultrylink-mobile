@@ -2,6 +2,7 @@ package com.example.splashscreen
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -11,23 +12,22 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.yourapp.network.RetrofitClient
+import de.hdodenhof.circleimageview.CircleImageView
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class AllCommentActivity : AppCompatActivity() {
 
-    private val supabase = createSupabaseClient(
-        supabaseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co",
-        supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhic3N5bHV1Y3J3c2JmenNweWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk2NTU4OTEsImV4cCI6MjA0NTIzMTg5MX0.o6fkro2tPKFoA9sxAp1nuseiHRGiDHs_HI4-ZoqOTfQ"
-    ) {
-        install(Auth)
-        install(Postgrest)
-        install(Storage)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,45 +39,67 @@ class AllCommentActivity : AppCompatActivity() {
             insets
         }
 
+
+        val token = "Bearer ${getStoredToken()}"
+
         val productId = intent.getLongExtra("product_id", 0)
-        lifecycleScope.launch {
-            fetchProductReviews(productId)
-        }
+
+        getProducts(token, productId.toString())
     }
 
-    // get all reviews of that product
-    private suspend fun fetchProductReviews(productId: Long) {
-        try {
-            val response = RetrofitClient.instance.getProductReviews(productId)
-            if (response.isSuccessful && response.body() != null) {
-                val reviews = response.body()!!
-                displayReviews(reviews)
-            } else {
-                Log.e("ReviewFetchError", "Error fetching reviews: ${response.message()}")
-            }
-        } catch (e: Exception) {
-            Log.e("ReviewFetchError", "Exception: ${e.message}")
-        }
+    private fun getStoredToken(): String? {
+        val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
+        return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
     }
 
-    // display the reviews into linear layout
-    private fun displayReviews(reviews: List<Map<String, Any>>) {
+    private fun getReviews(token: String, products: List<ProductData>, currentProductId: String) {
+        RetrofitClient.instance.getReviews(token)
+            .enqueue(object : Callback<ReviewResponse> {
+                override fun onResponse(call: Call<ReviewResponse>, response: Response<ReviewResponse>) {
+                    if (response.isSuccessful) {
+                        val reviews = response.body()?.data ?: emptyList()
+                        displayReviews(reviews,currentProductId)
+                    } else {
+                        // Handle error cases
+                    }
+                }
+
+                override fun onFailure(call: Call<ReviewResponse>, t: Throwable) {
+                    // Handle network errors
+                }
+            })
+    }
+
+
+    private fun displayReviews(reviews: List<ReviewData>, currentProductId: String) {
         val reviewContainer = findViewById<LinearLayout>(R.id.review_container)
-        reviewContainer.removeAllViews()
+        reviewContainer.removeAllViews() // Clear previous reviews
 
-        for (review in reviews) {
-            val reviewView = layoutInflater.inflate(R.layout.review, reviewContainer, false)
+        Log.d("reviews", "$reviews")
 
-            val username = review["username"] as String
-            val ulasan = review["ulasan"] as String
-            val rating = (review["rating"] as Number).toInt()
-            val avatar_path = review["avatar_path"] as String
+        // Add logging to check the currentProductId
+        Log.d("currentProductId", "Current ID: $currentProductId")
+
+        // Filter reviews to only include reviews for the current product based on product_id
+        val filteredReviews = reviews.filter { review ->
+            Log.d("comparison", "Comparing ${review.produk_id} with $currentProductId")
+            review.produk_id == currentProductId
+        }
+
+        for (review in filteredReviews) {
+            val reviewView = layoutInflater.inflate(R.layout.review_card, reviewContainer, false)
+
+            // Extract fields from the review data
+            val username = review.user.username
+            val ulasan = review.ulasan
+            val rating = review.rating
+            val avatar_path = review.buyer.avatar_path
 
             reviewView.findViewById<TextView>(R.id.username).text = username
             reviewView.findViewById<TextView>(R.id.ulasan).text = ulasan
 
             if (!avatar_path.isNullOrEmpty()) {
-                val avatarImageView = reviewView.findViewById<ImageView>(R.id.user_pfp)
+                val avatarImageView = reviewView.findViewById<CircleImageView>(R.id.user_pfp)
                 loadUserAvatar(avatar_path, avatarImageView)
             }
 
@@ -101,13 +123,31 @@ class AllCommentActivity : AppCompatActivity() {
     }
 
     // load user's avatar to show in their review
-    private fun loadUserAvatar(filePath: String, imageView: ImageView) {
-        val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath"
+    private fun loadUserAvatar(filePath: String, imageView: CircleImageView) {
+        val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath/1.jpg"
 
         Glide.with(this)
             .load(imageUrl)
             .placeholder(R.drawable.fotoprofil)
             .error(R.drawable.fotoprofil)
             .into(imageView)
+    }
+
+    private fun getProducts(token: String, product_id: String) {
+        RetrofitClient.instance.getProducts(token)
+            .enqueue(object : Callback<ProductResponse> {
+                override fun onResponse(call: Call<ProductResponse>, response: Response<ProductResponse>) {
+                    if (response.isSuccessful) {
+                        val products = response.body()?.data ?: emptyList()
+                        getReviews(token, products, product_id)
+                    } else {
+                        // Handle error cases
+                    }
+                }
+
+                override fun onFailure(call: Call<ProductResponse>, t: Throwable) {
+                    // Handle network errors
+                }
+            })
     }
 }

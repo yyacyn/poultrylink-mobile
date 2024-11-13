@@ -20,14 +20,14 @@
             android:layout_marginRight="25dp"
             android:layout_marginLeft="25dp">
 
-            <ImageButton
-                android:id="@+id/btn_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/arrowbackblack"
-                android:background="#00FFFFFF"
-                android:layout_marginBottom="20dp"
-                />
+<!--            <ImageButton-->
+<!--                android:id="@+id/btn_back"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:src="@drawable/arrowbackblack"-->
+<!--                android:background="#00FFFFFF"-->
+<!--                android:layout_marginBottom="20dp"-->
+<!--                />-->
 
             <LinearLayout
                 android:layout_width="match_parent"

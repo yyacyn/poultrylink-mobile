@@ -17,3 +17,4 @@ data class Supplier(
     val image: String? = null,
     val confirmed: String? = null
 )
+

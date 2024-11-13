@@ -29,12 +29,21 @@ data class ReviewData(
     @SerializedName("rating")
     val rating: Int,
     @SerializedName("user")
-    val user: UserData
+    val user: UlasanUser,
+    @SerializedName("buyer")
+    val buyer: UlasanBuyer
 )
 
-data class UserData(
+data class UlasanUser(
     @SerializedName("id")
-    val id: Int,
+    val id: Long,
     @SerializedName("username")
     val username: String
+)
+
+data class UlasanBuyer(
+    @SerializedName("id")
+    val id: Long,
+    @SerializedName("avatar_path")
+    val avatar_path: String
 )
