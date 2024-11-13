@@ -1,6 +1,9 @@
 package com.example.splashscreen
 
+import android.net.Uri
+import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
+import java.io.File
 
 // Data class representing a buyer record
 @Serializable
@@ -26,18 +29,42 @@ data class InsertBuyer(
     val p_avatar_path: String
 )
 
-@Serializable
-data class UpdateBuyer(
-    val p_uid: Long,
-    val p_alamat: String,
-    val p_telepon: Long,
-    val p_kota: String,
-    val p_kodepos: String,
-    val p_provinsi: String,
-    val p_negara: String,
-    val p_firstname: String,
-    val p_lastname: String,
+data class UpdateProfileRequest(
+    @SerializedName("firstname")
+    val firstname: String,
+    @SerializedName("lastname")
+    val lastname: String,
+    @SerializedName("alamat")
+    val alamat: String,
+    @SerializedName("telepon")
+    val telepon: String,
+    @SerializedName("kota")
+    val kota: String,
+    @SerializedName("kodepos")
+    val kodepos: String,
+    @SerializedName("provinsi")
+    val provinsi: String,
+    @SerializedName("negara")
+    val negara: String,
 )
+
+data class UpdateProfileResponse(
+    val success: Boolean,
+    val message: String
+)
+
+data class UserProfile(
+    val firstName: String? = null,
+    val lastName: String? = null,
+    val address: String? = null,
+    val phoneNumber: String? = null,
+    val city: String? = null,
+    val postalCode: String? = null,
+    val province: String? = null,
+    val country: String? = null,
+    val avatar_path: Uri? = null
+)
+
 
 @Serializable
 data class BuyerDetails(

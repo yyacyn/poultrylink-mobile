@@ -1,6 +1,8 @@
 package com.example.splashscreen
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.Image
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +17,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.yourapp.network.RetrofitClient
 import de.hdodenhof.circleimageview.CircleImageView
 import io.github.jan.supabase.auth.Auth
@@ -22,20 +27,18 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.w3c.dom.Text
+import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
+import java.io.ByteArrayOutputStream
+import java.net.URL
 
 class MyProfilActivity : AppCompatActivity() {
 
-    private val supabase = createSupabaseClient(
-        supabaseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co",
-        supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhic3N5bHV1Y3J3c2JmenNweWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk2NTU4OTEsImV4cCI6MjA0NTIzMTg5MX0.o6fkro2tPKFoA9sxAp1nuseiHRGiDHs_HI4-ZoqOTfQ"
-    ) {
-        install(Auth)
-        install(Postgrest)
-        install(Storage)
-    }
 
     private lateinit var lastName: TextView
     private lateinit var fullName: TextView
@@ -75,17 +78,6 @@ class MyProfilActivity : AppCompatActivity() {
         email = findViewById(R.id.userEmail)
 
         // user greeting
-        lifecycleScope.launch {
-            // get user id from auth email and load avatar
-            val userId = getUserIdByEmail(supabase.auth.retrieveUserForCurrentSession().email ?: return@launch)
-            if (userId != null) {
-                loadImageFromSupabase("$userId/1.jpg")
-            }
-
-            if (userId != null) {
-                fetchBuyerDetails(userId.toLong())
-            }
-        }
 
         findViewById<ImageButton>(R.id.editProfil).setOnClickListener {
             startActivity(Intent(this, EditProfilActivity::class.java))
@@ -94,110 +86,107 @@ class MyProfilActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.btn_back).setOnClickListener {
             startActivity(Intent(this, ProfilActivity::class.java))
         }
+
+
+        val token = "Bearer ${getStoredToken().toString()}"
+
+        getProfile(token)
+    }
+
+    // Retrieve the token from SharedPreferences
+    private fun getStoredToken(): String? {
+        val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
+        return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
     }
 
     override fun onResume() {
         super.onResume()
 
-        // Re-fetch buyer details
-        lifecycleScope.launch {
-            val userEmail = getUserIdByEmail(supabase.auth.retrieveUserForCurrentSession().email ?: return@launch)
-            if (userEmail != null) {
-                // Get the buyer details again after the profile update
-                val userId = userEmail.toLong()
-                val buyerDetailsResponse = RetrofitClient.instance.getBuyerDetails(mapOf("p_uid" to userId))
-                if (buyerDetailsResponse.isSuccessful) {
-                    val buyerDetails = buyerDetailsResponse.body()?.firstOrNull()
+        val token = "Bearer ${getStoredToken().toString()}"
+        getProfile(token)
 
-                    if (buyerDetails != null) {
-                        // Display the updated country and city
-                        val negara = buyerDetails.negara ?: "Not available"
-                        val kota = buyerDetails.kota ?: "Not available"
-                        val firstName = buyerDetails.firstname ?: "Not avalaible"
-                        val lastName = buyerDetails.lastname ?: "Not avalaible"
-                        val province = buyerDetails.provinsi ?: "Not available"
-                        val alamat = buyerDetails.alamat ?: "Not available"
-                        val number = buyerDetails.telepon ?: "Not available"
-                        val kodepos = buyerDetails.kodepos ?: "Not available"
+
+    }
+
+    private fun getProfile(token: String?) {
+        RetrofitClient.instance.getProfile(token ?: "")
+            .enqueue(object : Callback<BuyerResponse> {
+                override fun onResponse(call: Call<BuyerResponse>, response: Response<BuyerResponse>) {
+                    if (response.isSuccessful) {
+
+                        val buyerData = response.body()?.data
+                        val username = buyerData?.user?.username ?: "User"
+                        val userkota = buyerData?.kota ?: "Not available"
+                        val usernegara = buyerData?.negara ?: "Not available"
+                        val userId = buyerData?.id ?: 0
+                        val firstName = buyerData?.firstname?:"Not Available"
+                        val lastName = buyerData?.lastname?: "Not available"
+                        val userEmail  = buyerData?.user?.email
+                        val number = buyerData?.telepon ?: "Not available"
+                        val alamat = buyerData?.alamat ?: "Not available"
+                        val province = buyerData?.provinsi ?: "Not available"
+                        val kota = buyerData?.kota ?: "Not available"
+                        val kodepos = buyerData?.kodepos ?: "Not available"
+
+                        val userPfp = findViewById<CircleImageView>(R.id.profile_image)
+
+                        loadImageFromSupabase("$userId/1.jpg", userPfp)
+
 
                         findViewById<TextView>(R.id.phoneNumber).text = "$number"
                         findViewById<TextView>(R.id.alamat).text = "$alamat"
                         findViewById<TextView>(R.id.province).text = "$province"
                         findViewById<TextView>(R.id.city).text = "$kota"
-                        findViewById<TextView>(R.id.country).text = "$negara"
+                        findViewById<TextView>(R.id.country).text = "$usernegara"
                         findViewById<TextView>(R.id.FirstName).text = "$firstName "
                         findViewById<TextView>(R.id.LastName).text = "$lastName"
+                        findViewById<TextView>(R.id.userEmail).text = "$userEmail"
+                        findViewById<TextView>(R.id.kodepos).text = "$kodepos"
+                        findViewById<TextView>(R.id.FullName).text = "$firstName $lastName"
 
-                        loadImageFromSupabase("$userEmail/1.jpg")
+                    } else {
+                        // Handle error cases
                     }
-                } else {
-                    Log.e("ProfilActivity", "Failed to retrieve buyer details: ${buyerDetailsResponse.errorBody()?.string()}")
                 }
-            }
-        }
+
+                override fun onFailure(call: Call<BuyerResponse>, t: Throwable) {
+                    // Handle network errors
+                }
+            })
     }
 
-    private fun fetchBuyerDetails(userId: Long) {
+
+    private fun loadImageFromSupabase(filePath: String, imageView: CircleImageView, forceRefresh: Boolean = false) {
         lifecycleScope.launch {
             try {
-                val response: Response<List<BuyerDetails>> = RetrofitClient.instance.getBuyerDetails(mapOf("p_uid" to userId))
-                if (response.isSuccessful) {
-                    val detailsList = response.body()
-                    if (!detailsList.isNullOrEmpty()) {
-                        val details = detailsList[0]
-                        // Populate the EditText fields with current details
-                        firstName.setText(details.firstname ?: "")
-                        lastName.setText(details.lastname ?: "")
-                        alamat.setText(details.alamat ?: "")
-                        phoneNumber.setText(details.telepon?.toString() ?: "")
-                        kota.setText(details.kota ?: "")
-                        kodePos.setText(details.kodepos ?: "")
-                        provinsi.setText(details.provinsi ?: "")
-                        country.setText(details.negara ?: "")
-                        lifecycleScope.launch {
-                            val userId = supabase.auth.retrieveUserForCurrentSession().email ?: return@launch
-                            email.setText(userId)
-                        }
-
-                        fullName.setText("${details.firstname ?: ""} ${details.lastname ?: ""}")
-                    }
+                val baseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath"
+                val imageUrl = if (forceRefresh) {
+                    "$baseUrl?t=${System.currentTimeMillis()}"
                 } else {
-                    Toast.makeText(this@MyProfilActivity, "Failed to load profile", Toast.LENGTH_SHORT).show()
+                    baseUrl
                 }
-            } catch (e: Exception) {
-                Toast.makeText(this@MyProfilActivity, "An error occurred: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
 
-    // get user's id by email to get their avatar's path
-    private suspend fun getUserIdByEmail(email: String): Int? {
-        val requestBody = mapOf("user_email" to email)
-        val response: Response<Int> = RetrofitClient.instance.getUserIdByEmail(requestBody)
+                // Directly load image from URL as Bitmap
+                withContext(Dispatchers.IO) {
+                    val urlConnection = URL(imageUrl).openConnection()
+                    val originalBitmap = BitmapFactory.decodeStream(urlConnection.getInputStream())
 
-        if (response.isSuccessful) {
-            Log.d("APIResponse", "User ID retrieved: ${response.body()}")
-            return response.body() // Return the user ID directly
-        } else {
-            Log.e("APIError", "Failed to retrieve user ID: ${response.errorBody()?.string()}")
-            return null
-        }
-    }
+                    // Resize the image
+                    val desiredWidth = 200 // Set the desired width
+                    val desiredHeight = 200 // Set the desired height
+                    val resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, desiredWidth, desiredHeight, true)
 
-    // load user's avatar from supabase
-    private fun loadImageFromSupabase(filePath: String) {
-        lifecycleScope.launch {
-            try {
-                // Construct the public URL to the object in the storage bucket
-                val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath?t=${System.currentTimeMillis()}"
+                    // Compress the image
+                    val outputStream = ByteArrayOutputStream()
+                    resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 75, outputStream) // Set the quality (0-100)
+                    val compressedByteArray = outputStream.toByteArray()
 
-                // Use Glide to load the image into the ImageView
-                Glide.with(this@MyProfilActivity)
-                    .load(imageUrl)
-                    .placeholder(R.drawable.fotoprofil) // Add a placeholder image
-                    .error(R.drawable.fotoprofil) // Add an error image
-                    .into(findViewById<CircleImageView>(R.id.profile_image))
-                Log.d("ImageLoad", "Image loaded successfully from $imageUrl")
+                    withContext(Dispatchers.Main) {
+                        imageView.setImageBitmap(BitmapFactory.decodeByteArray(compressedByteArray, 0, compressedByteArray.size))
+                    }
+                }
+
+                Log.d("imageloaded", "image loaded from: $imageUrl")
             } catch (e: Exception) {
                 Log.e("ImageLoadError", "Failed to load image: ${e.message}")
             }

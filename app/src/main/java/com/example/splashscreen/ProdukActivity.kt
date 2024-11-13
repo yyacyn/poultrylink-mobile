@@ -2,6 +2,8 @@ package com.example.splashscreen
 
 import ApiService
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.ViewGroup
@@ -35,22 +37,17 @@ import io.github.jan.supabase.storage.Storage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.ByteArrayOutputStream
+import java.net.URL
 import java.text.NumberFormat
 import java.util.Locale
 
 
 class ProdukActivity : AppCompatActivity() {
-    private val supabase = createSupabaseClient(
-        supabaseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co",
-        supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhic3N5bHV1Y3J3c2JmenNweWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk2NTU4OTEsImV4cCI6MjA0NTIzMTg5MX0.o6fkro2tPKFoA9sxAp1nuseiHRGiDHs_HI4-ZoqOTfQ"
-    ) {
-        install(Auth)
-        install(Postgrest)
-        install(Storage)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,7 +99,6 @@ class ProdukActivity : AppCompatActivity() {
 
 
     }
-
 
     // nav
     private fun Navigation(product_id: Long, location: String) {
@@ -243,15 +239,41 @@ class ProdukActivity : AppCompatActivity() {
     }
 
 
-    // load user's avatar to show in their review
-    private fun loadUserAvatar(filePath: String, imageView: CircleImageView) {
-        val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath/1.jpg"
+    private fun loadUserAvatar(filePath: String, imageView: CircleImageView, forceRefresh: Boolean = false) {
+        lifecycleScope.launch {
+            try {
+                val baseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath/1.jpg"
+                val imageUrl = if (forceRefresh) {
+                    "$baseUrl?t=${System.currentTimeMillis()}"
+                } else {
+                    baseUrl
+                }
 
-        Glide.with(this)
-            .load(imageUrl)
-            .placeholder(R.drawable.fotoprofil)
-            .error(R.drawable.fotoprofil)
-            .into(imageView)
+                // Directly load image from URL as Bitmap
+                withContext(Dispatchers.IO) {
+                    val urlConnection = URL(imageUrl).openConnection()
+                    val originalBitmap = BitmapFactory.decodeStream(urlConnection.getInputStream())
+
+                    // Resize the image
+                    val desiredWidth = 100 // Set the desired width
+                    val desiredHeight = 100 // Set the desired height
+                    val resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, desiredWidth, desiredHeight, true)
+
+                    // Compress the image
+                    val outputStream = ByteArrayOutputStream()
+                    resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream) // Set the quality (0-100)
+                    val compressedByteArray = outputStream.toByteArray()
+
+                    withContext(Dispatchers.Main) {
+                        imageView.setImageBitmap(BitmapFactory.decodeByteArray(compressedByteArray, 0, compressedByteArray.size))
+                    }
+                }
+
+                Log.d("imageloaded", "image loaded from: $imageUrl")
+            } catch (e: Exception) {
+                Log.e("ImageLoadError", "Failed to load image: ${e.message}")
+            }
+        }
     }
 
 

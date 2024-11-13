@@ -14,14 +14,19 @@ import com.example.splashscreen.Products
 import com.example.splashscreen.RegisterResponse
 import com.example.splashscreen.ReviewResponse
 import com.example.splashscreen.Supplier
-import com.example.splashscreen.UpdateBuyer
+import com.example.splashscreen.UpdateProfileRequest
+import com.example.splashscreen.UpdateProfileResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Query
 
 interface ApiService {
@@ -67,8 +72,6 @@ interface ApiService {
     @POST("rpc/get_user_hashed_password") // Ensure this endpoint matches your Supabase function
     suspend fun getUserHashedPassword(@Body request: Map<String, String>): Response<String>
 
-    @POST("rpc/update_buyer_profile")
-    suspend fun updateUserProfile(@Body profileData: UpdateBuyer): Response<Boolean>
 
     @POST("rpc/get_buyer_details")
     suspend fun getBuyerDetails(@Body requestBody: Map<String, Long>): Response<List<BuyerDetails>>
@@ -118,5 +121,12 @@ interface ApiService {
 
     @GET("ulasanall")
     fun getReviewsByProductId(@Header("Authorization") token: String, @Query("product_id") productId: Long): Call<ReviewResponse>
+
+    @POST("updateprofile")
+    suspend fun updateProfile(
+        @Header("Authorization") token: String,
+        @Body request: UpdateProfileRequest,
+    ): Response<Any>
+
 }
 

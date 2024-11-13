@@ -91,7 +91,6 @@
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
         android:layout_marginBottom="20dp"
-        android:hint="First Name"
         app:boxStrokeColor="@color/orange"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
@@ -111,7 +110,6 @@
             android:layout_marginLeft="25dp"
             android:layout_marginRight="25dp"
             android:layout_marginBottom="20dp"
-            android:hint="Last Name"
             app:boxStrokeColor="@color/orange"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
@@ -134,7 +132,6 @@
             android:layout_marginLeft="25dp"
             android:layout_marginRight="25dp"
             android:layout_marginBottom="20dp"
-            android:hint="Change Phone Number"
             app:boxStrokeColor="@color/orange"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
@@ -204,74 +201,6 @@
 <!--            </RadioGroup>-->
 <!--        </LinearLayout>-->
 
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp">
-            <!--  Date   -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:hint="Date"
-                app:boxStrokeColor="@color/orange"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/Tanggal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:inputType="number"
-                    android:padding="15dp" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!--  Month   -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginBottom="20dp"
-                android:hint="Month"
-                app:boxStrokeColor="@color/orange"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/Bulan"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:inputType="number"
-                    android:padding="15dp" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!--  Year   -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginBottom="20dp"
-                android:hint="Year"
-                app:boxStrokeColor="@color/orange"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/Tahun"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:inputType="number"
-                    android:padding="15dp" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
-
-
-
-
-
         <!-- Location  -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -293,7 +222,6 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Country"
                 app:boxStrokeColor="@color/orange"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
@@ -314,7 +242,6 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="180dp"
                     android:layout_height="wrap_content"
-                    android:hint="Provinsi"
                     app:boxStrokeColor="@color/orange"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
@@ -329,11 +256,11 @@
 
                 <!--  Kota   -->
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/City"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginBottom="20dp"
-                    android:hint="City"
                     app:boxStrokeColor="@color/orange"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
@@ -351,7 +278,6 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Kode Pos"
                 app:boxStrokeColor="@color/orange"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
@@ -368,7 +294,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:hint="Street"
                 app:boxStrokeColor="@color/orange"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 

@@ -1,6 +1,8 @@
 package com.example.splashscreen
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -27,6 +29,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -34,6 +37,8 @@ import org.w3c.dom.Text
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.ByteArrayOutputStream
+import java.net.URL
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -118,7 +123,7 @@ class DashboardActivity : AppCompatActivity() {
                         val buyerData = response.body()?.data
                         val userId = buyerData?.id ?: 0
                         // Force refresh the profile picture
-                        loadImageFromSupabase("$userId/1.jpg", userPfp, forceRefresh = true)
+                        updateImageFromSupabase("$userId/1.jpg", userPfp, forceRefresh = true)
                     }
                 }
 
@@ -212,6 +217,19 @@ class DashboardActivity : AppCompatActivity() {
 
     }
 
+    // load user's avatar to show in their review
+    private fun loadImageFromSupabase(filePath: String, imageView: CircleImageView) {
+        val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath/1.jpg"
+
+        Glide.with(this)
+            .load(imageUrl)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .skipMemoryCache(false)
+            .override(100, 100)
+            .placeholder(R.drawable.fotoprofil)
+            .error(R.drawable.fotoprofil)
+            .into(imageView)
+    }
 
     private fun getProfile(token: String?, greetUser: TextView, userLocation: TextView, userPfp: CircleImageView) {
         RetrofitClient.instance.getProfile(token ?: "")
@@ -224,7 +242,7 @@ class DashboardActivity : AppCompatActivity() {
                         val usernegara = buyerData?.negara
                         val userId = buyerData?.id ?: 0
                         greetUser.text = "Hello, $username!"
-                        loadImageFromSupabase("$userId/1.jpg", userPfp)
+                        updateImageFromSupabase("$userId", userPfp)
                         Log.d("getprofileresponse", "${response.body()}")
                         if (userkota.isNullOrEmpty() || usernegara.isNullOrEmpty()){
                             userLocation.text = "Somewhere"
@@ -242,26 +260,37 @@ class DashboardActivity : AppCompatActivity() {
             })
     }
 
-    private fun loadImageFromSupabase(filePath: String, imageView: CircleImageView, forceRefresh: Boolean = false) {
+    private fun updateImageFromSupabase(filePath: String, imageView: CircleImageView, forceRefresh: Boolean = false) {
         lifecycleScope.launch {
             try {
-                val baseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath"
+                val baseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath/1.jpg"
                 val imageUrl = if (forceRefresh) {
                     "$baseUrl?t=${System.currentTimeMillis()}"
                 } else {
                     baseUrl
                 }
 
-                Glide.with(this@DashboardActivity)
-                    .load(imageUrl)
-                    .placeholder(R.drawable.fotoprofil)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .skipMemoryCache(false)
-                    .override(100, 100)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .priority(Priority.HIGH)
-                    .error(R.drawable.fotoprofil)
-                    .into(imageView)
+                // Directly load image from URL as Bitmap
+                withContext(Dispatchers.IO) {
+                    val urlConnection = URL(imageUrl).openConnection()
+                    val originalBitmap = BitmapFactory.decodeStream(urlConnection.getInputStream())
+
+                    // Resize the image
+                    val desiredWidth = 100 // Set the desired width
+                    val desiredHeight = 100 // Set the desired height
+                    val resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, desiredWidth, desiredHeight, true)
+
+                    // Compress the image
+                    val outputStream = ByteArrayOutputStream()
+                    resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 75, outputStream) // Set the quality (0-100)
+                    val compressedByteArray = outputStream.toByteArray()
+
+                    withContext(Dispatchers.Main) {
+                        imageView.setImageBitmap(BitmapFactory.decodeByteArray(compressedByteArray, 0, compressedByteArray.size))
+                    }
+                }
+
+                Log.d("ImageLoaded", "Image loaded from: $imageUrl")
             } catch (e: Exception) {
                 Log.e("ImageLoadError", "Failed to load image: ${e.message}")
             }

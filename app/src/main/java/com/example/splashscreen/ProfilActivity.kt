@@ -1,6 +1,8 @@
 package com.example.splashscreen
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.Image
 import android.os.Bundle
 import android.util.Log
@@ -29,11 +31,15 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.w3c.dom.Text
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.ByteArrayOutputStream
+import java.net.URL
 
 class ProfilActivity : AppCompatActivity() {
 
@@ -216,16 +222,26 @@ class ProfilActivity : AppCompatActivity() {
                     baseUrl
                 }
 
-                Glide.with(this@ProfilActivity)
-                    .load(imageUrl)
-                    .placeholder(R.drawable.fotoprofil)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .skipMemoryCache(false)
-                    .override(100, 100)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .priority(Priority.HIGH)
-                    .error(R.drawable.fotoprofil)
-                    .into(imageView)
+                // Directly load image from URL as Bitmap
+                withContext(Dispatchers.IO) {
+                    val urlConnection = URL(imageUrl).openConnection()
+                    val originalBitmap = BitmapFactory.decodeStream(urlConnection.getInputStream())
+
+                    // Resize the image
+                    val desiredWidth = 100 // Set the desired width
+                    val desiredHeight = 100 // Set the desired height
+                    val resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, desiredWidth, desiredHeight, true)
+
+                    // Compress the image
+                    val outputStream = ByteArrayOutputStream()
+                    resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 75, outputStream) // Set the quality (0-100)
+                    val compressedByteArray = outputStream.toByteArray()
+
+                    withContext(Dispatchers.Main) {
+                        imageView.setImageBitmap(BitmapFactory.decodeByteArray(compressedByteArray, 0, compressedByteArray.size))
+                    }
+                }
+
             } catch (e: Exception) {
                 Log.e("ImageLoadError", "Failed to load image: ${e.message}")
             }
