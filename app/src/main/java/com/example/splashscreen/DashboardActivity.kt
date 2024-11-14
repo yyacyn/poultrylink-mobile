@@ -123,7 +123,7 @@ class DashboardActivity : AppCompatActivity() {
                         val buyerData = response.body()?.data
                         val userId = buyerData?.id ?: 0
                         // Force refresh the profile picture
-                        updateImageFromSupabase("$userId/1.jpg", userPfp, forceRefresh = true)
+//                        updateImageFromSupabase("$userId/1.jpg", userPfp, forceRefresh = true)
                     }
                 }
 
@@ -242,7 +242,7 @@ class DashboardActivity : AppCompatActivity() {
                         val usernegara = buyerData?.negara
                         val userId = buyerData?.id ?: 0
                         greetUser.text = "Hello, $username!"
-                        updateImageFromSupabase("$userId", userPfp)
+                        loadImageFromSupabase("$userId/1.jpg")
                         Log.d("getprofileresponse", "${response.body()}")
                         if (userkota.isNullOrEmpty() || usernegara.isNullOrEmpty()){
                             userLocation.text = "Somewhere"
@@ -260,37 +260,21 @@ class DashboardActivity : AppCompatActivity() {
             })
     }
 
-    private fun updateImageFromSupabase(filePath: String, imageView: CircleImageView, forceRefresh: Boolean = false) {
+    // load user's avatar from supabase
+    private fun loadImageFromSupabase(filePath: String) {
         lifecycleScope.launch {
             try {
-                val baseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath/1.jpg"
-                val imageUrl = if (forceRefresh) {
-                    "$baseUrl?t=${System.currentTimeMillis()}"
-                } else {
-                    baseUrl
-                }
+                // Construct the public URL to the object in the storage bucket
+                val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath?t=${System.currentTimeMillis()}"
 
-                // Directly load image from URL as Bitmap
-                withContext(Dispatchers.IO) {
-                    val urlConnection = URL(imageUrl).openConnection()
-                    val originalBitmap = BitmapFactory.decodeStream(urlConnection.getInputStream())
-
-                    // Resize the image
-                    val desiredWidth = 100 // Set the desired width
-                    val desiredHeight = 100 // Set the desired height
-                    val resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, desiredWidth, desiredHeight, true)
-
-                    // Compress the image
-                    val outputStream = ByteArrayOutputStream()
-                    resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 75, outputStream) // Set the quality (0-100)
-                    val compressedByteArray = outputStream.toByteArray()
-
-                    withContext(Dispatchers.Main) {
-                        imageView.setImageBitmap(BitmapFactory.decodeByteArray(compressedByteArray, 0, compressedByteArray.size))
-                    }
-                }
-
-                Log.d("ImageLoaded", "Image loaded from: $imageUrl")
+                // Use Glide to load the image into the ImageView
+                Glide.with(this@DashboardActivity)
+                    .load(imageUrl)
+                    .override(100, 100)
+                    .placeholder(R.drawable.fotoprofil) // Add a placeholder image
+                    .error(R.drawable.fotoprofil) // Add an error image
+                    .into(findViewById<CircleImageView>(R.id.user_pfp))
+                Log.d("ImageLoad", "Image loaded successfully from $imageUrl")
             } catch (e: Exception) {
                 Log.e("ImageLoadError", "Failed to load image: ${e.message}")
             }

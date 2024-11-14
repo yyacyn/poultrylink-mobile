@@ -67,6 +67,18 @@ class EditProfilActivity : AppCompatActivity() {
         private const val REQUEST_CODE_PICK_IMAGE = 1
     }
 
+    private var buyerId: Int = 0
+
+
+    private val supabase = createSupabaseClient(
+        supabaseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co",
+        supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhic3N5bHV1Y3J3c2JmenNweWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk2NTU4OTEsImV4cCI6MjA0NTIzMTg5MX0.o6fkro2tPKFoA9sxAp1nuseiHRGiDHs_HI4-ZoqOTfQ"
+    ) {
+        install(Auth)
+        install(Postgrest)
+        install(Storage)
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -129,6 +141,31 @@ class EditProfilActivity : AppCompatActivity() {
         }
     }
 
+    private fun uploadImageToSupabase(imageUri: Uri, buyerId: Int) {
+        lifecycleScope.launch {
+            try {
+                val imageData = getDrawableAsByteArray(imageUri)
+                val filePath = "$buyerId/1.jpg"  // Use buyerId as folder name
+
+                if (imageData != null) {
+                    val storage = supabase.storage["avatar"]
+
+                    // Delete old image if it exists
+                    storage.delete(filePath)
+
+                    // Upload new image
+                    storage.upload(filePath, imageData)
+
+                    // Load the image with cache refresh
+                    loadImageFromSupabase(filePath)
+                }
+            } catch (e: Exception) {
+                Log.e("UploadError", "Error uploading profile picture: ${e.message}")
+            }
+        }
+    }
+
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -136,28 +173,21 @@ class EditProfilActivity : AppCompatActivity() {
             data?.data?.let { uri ->
                 imageUri = uri
                 imageInput.setImageURI(uri)
+
             }
         }
     }
 
-
-    // Modify your getDrawableAsByteArray function to return a File
-    private fun getDrawableAsFile(imageUri: Uri): File? {
+    // Replace this function to accept Uri instead of drawableId
+    private fun getDrawableAsByteArray(imageUri: Uri): ByteArray? {
         return try {
             val inputStream = contentResolver.openInputStream(imageUri)
             val bitmap = BitmapFactory.decodeStream(inputStream)
             inputStream?.close()
 
-            // Create a temporary file to store the image
-            val tempFile = File.createTempFile("avatar_", ".jpg", cacheDir)
-            tempFile.deleteOnExit()
-
-            // Write the bitmap to the temp file
-            val outputStream = tempFile.outputStream()
+            val outputStream = ByteArrayOutputStream()
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-            outputStream.close()
-
-            tempFile
+            outputStream.toByteArray()
         } catch (e: Exception) {
             Log.e("ImageConversionError", "Error converting image: ${e.message}")
             null
@@ -174,77 +204,30 @@ class EditProfilActivity : AppCompatActivity() {
         val userKodePos = kodePos.text.toString()
         val userAlamat = alamat.text.toString()
 
-        // Check if an image URI is selected
-        if (imageUri != null) {
-            val avatarFile = getDrawableAsFile(imageUri!!)
+        updateProfile(token, userFirstName, userLastName, userPhoneNumber, userCountry, userProvinsi, userKota, userKodePos, userAlamat)
 
-            if (avatarFile != null) {
-                updateProfile(
-                    token,
-                    userFirstName,
-                    userLastName,
-                    userPhoneNumber,
-                    userCountry,
-                    userProvinsi,
-                    userKota,
-                    userKodePos,
-                    userAlamat,
-                    avatarFile
-                )
-            } else {
-                // Handle error for missing avatar
-                Toast.makeText(this, "Error: Avatar image is missing", Toast.LENGTH_SHORT).show()
-            }
-        } else {
-            // Handle case where no image is selected
-            updateProfile(
-                token,
-                userFirstName,
-                userLastName,
-                userPhoneNumber,
-                userCountry,
-                userProvinsi,
-                userKota,
-                userKodePos,
-                userAlamat,
-                null // Send null if no image is selected
-            )
+        // Check if imageUri is not null, meaning a new image has been selected
+        imageUri?.let {
+            uploadImageToSupabase(it, buyerId)  // Upload the image if a new one was selected
         }
     }
 
 
-
-    private fun loadImageFromSupabase(filePath: String, imageView: CircleImageView, forceRefresh: Boolean = false) {
+    // load user's avatar from supabase
+    private fun loadImageFromSupabase(filePath: String) {
         lifecycleScope.launch {
             try {
-                val baseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath"
-                val imageUrl = if (forceRefresh) {
-                    "$baseUrl?t=${System.currentTimeMillis()}"
-                } else {
-                    baseUrl
-                }
+                // Construct the public URL to the object in the storage bucket
+                val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath?t=${System.currentTimeMillis()}"
 
-                // Directly load image from URL as Bitmap
-                withContext(Dispatchers.IO) {
-                    val urlConnection = URL(imageUrl).openConnection()
-                    val originalBitmap = BitmapFactory.decodeStream(urlConnection.getInputStream())
-
-                    // Resize the image
-                    val desiredWidth = 200 // Set the desired width
-                    val desiredHeight = 200 // Set the desired height
-                    val resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, desiredWidth, desiredHeight, true)
-
-                    // Compress the image
-                    val outputStream = ByteArrayOutputStream()
-                    resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 75, outputStream) // Set the quality (0-100)
-                    val compressedByteArray = outputStream.toByteArray()
-
-                    withContext(Dispatchers.Main) {
-                        imageView.setImageBitmap(BitmapFactory.decodeByteArray(compressedByteArray, 0, compressedByteArray.size))
-                    }
-                }
-
-                Log.d("ImageLoaded", "Image loaded from: $imageUrl")
+                // Use Glide to load the image into the ImageView
+                Glide.with(this@EditProfilActivity)
+                    .load(imageUrl)
+                    .override(200, 200)
+                    .placeholder(R.drawable.fotoprofil) // Add a placeholder image
+                    .error(R.drawable.fotoprofil) // Add an error image
+                    .into(findViewById<CircleImageView>(R.id.user_pfp))
+                Log.d("ImageLoad", "Image loaded successfully from $imageUrl")
             } catch (e: Exception) {
                 Log.e("ImageLoadError", "Failed to load image: ${e.message}")
             }
@@ -253,13 +236,13 @@ class EditProfilActivity : AppCompatActivity() {
 
     private fun getProfile(token: String?) {
 
-
         RetrofitClient.instance.getProfile(token ?: "")
             .enqueue(object : Callback<BuyerResponse> {
                 override fun onResponse(call: Call<BuyerResponse>, response: Response<BuyerResponse>) {
                     if (response.isSuccessful) {
 
                         val buyerData = response.body()?.data
+                        buyerId = (buyerData?.id ?: 0).toInt()
                         val username = buyerData?.user?.username ?: "User"
                         val userkota = buyerData?.kota ?: "Not available"
                         val usernegara = buyerData?.negara ?: "Not available"
@@ -274,7 +257,7 @@ class EditProfilActivity : AppCompatActivity() {
 
                         val userPfp = findViewById<CircleImageView>(R.id.user_pfp)
 
-                        loadImageFromSupabase("$userId/1.jpg", userPfp)
+                        loadImageFromSupabase("$userId/1.jpg")
 
                         firstName.hint = firstname ?: ""
                         lastName.hint = lastname
@@ -297,25 +280,9 @@ class EditProfilActivity : AppCompatActivity() {
     }
 
 
-    private fun updateProfile(
-        token: String?,
-        firstName: String,
-        lastName: String,
-        phoneNumber: String,
-        country: String,
-        provinsi: String,
-        kota: String,
-        kodePos: String,
-        alamat: String,
-        avatarFile: File?
-    ) {
+    private fun updateProfile(token: String?, firstName: String, lastName: String, phoneNumber: String, country: String, provinsi: String, kota: String, kodePos: String, alamat: String) {
         lifecycleScope.launch {
             try {
-                // Prepare avatar file part if it's available
-                val avatarPart = avatarFile?.let { file ->
-                    val requestBody = RequestBody.create(MediaType.parse("image/*"), file)
-                    MultipartBody.Part.createFormData("avatar_path", file.name, requestBody)
-                }
 
                 val request = UpdateProfileRequest(
                     firstname = firstName,   // Replace with the actual value or null
@@ -335,10 +302,6 @@ class EditProfilActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.i("ProfileUpdate", "Profile updated successfully.")
                     Toast.makeText(this@EditProfilActivity, "Profile updated successfully", Toast.LENGTH_SHORT).show()
-
-                    val intent = Intent(this@EditProfilActivity, MyProfilActivity::class.java)
-                    startActivity(intent)
-                    finish()
                     getProfile(token)
 
                 } else {

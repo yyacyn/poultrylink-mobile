@@ -42,7 +42,8 @@
                     android:layout_width="72dp"
                     android:layout_height="72dp"
                     android:src="@drawable/fotoprofil"
-                    android:contentDescription="Profile Picture" />
+                    android:contentDescription="Profile Picture"
+                    android:scaleType="centerCrop"/>
 
                 <TextView
                     android:id="@+id/username"
