@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_marginTop="8dp"
-            android:text="Cemani Chicken Premium"
+            android:text="Loading product..."
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -49,7 +49,6 @@
                 android:id="@+id/productRating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="4.9"
                 android:textSize="14sp"
                 android:textColor="@android:color/black"
                 android:layout_marginStart="4dp" />
@@ -58,7 +57,6 @@
                 android:id="@+id/productAmountRating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="(1280 Reviews)"
                 android:textSize="14sp"
                 android:textColor="@android:color/darker_gray"
                 android:layout_marginStart="4dp" />
@@ -70,7 +68,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Rp 149.000"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@android:color/black" />
@@ -80,7 +77,6 @@
             android:id="@+id/productLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bogor, Indonesia"
             android:textSize="12sp"
             android:textColor="@android:color/darker_gray"
             android:layout_marginTop="4dp" />

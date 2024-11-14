@@ -42,6 +42,15 @@ class SearchProdukActivity : AppCompatActivity() {
 
         val token = "Bearer " + intent.getStringExtra("TOKEN")
 
+        findViewById<ImageView>(R.id.btn_back).setOnClickListener {
+            finish()
+        }
+
+        findViewById<TextView>(R.id.pemasok).setOnClickListener {
+            startActivity(Intent(this, SearchPemasokActivity::class.java))
+            finish()
+        }
+
         val searchInput = findViewById<EditText>(R.id.searchInput)
         searchQuery?.let { searchInput.setText(it) }
 
@@ -55,6 +64,8 @@ class SearchProdukActivity : AppCompatActivity() {
 
         loadProducts(token)
     }
+
+
 
     private fun loadProducts(token: String) {
         // Make API call to get products and set `allProducts`

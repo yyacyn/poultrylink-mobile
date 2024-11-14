@@ -308,10 +308,11 @@ class ProdukActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<ReviewResponse>, response: Response<ReviewResponse>) {
                     if (response.isSuccessful) {
                         val reviews = response.body()?.data ?: emptyList()
+                        Log.d("reviews", "$reviews")
                         displayReviews(reviews,currentProductId)
                         displayRecommendedProducts(products, reviews, gridLayout)
                     } else {
-                        // Handle error cases
+                        Log.d("reviews", "failure")
                     }
                 }
 

@@ -13,7 +13,7 @@ import com.example.splashscreen.ProductResponse
 import com.example.splashscreen.Products
 import com.example.splashscreen.RegisterResponse
 import com.example.splashscreen.ReviewResponse
-import com.example.splashscreen.Supplier
+import com.example.splashscreen.SupplierResponse
 import com.example.splashscreen.UpdateProfileRequest
 import com.example.splashscreen.UpdateProfileResponse
 import okhttp3.MultipartBody
@@ -43,10 +43,6 @@ interface ApiService {
 
     @GET("rpc/get_all_products")
     suspend fun getProducts(): Response<ProductResponse>
-
-    @Headers("Content-Type: application/json")
-    @POST("rpc/get_supplier_by_id")
-    suspend fun getSupplierById(@Body request: Map<String, Long>): Response<List<Supplier>>
 
     @POST("rpc/get_user_id_by_email") // Replace with your actual endpoint
     suspend fun getUserIdByEmail(@Body requestBody: Map<String, String>): Response<Int>
@@ -127,6 +123,9 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body request: UpdateProfileRequest,
     ): Response<Any>
+
+    @GET("getSupplier")
+    fun getSupplier(@Header("Authorization") token: String): Call<SupplierResponse>
 
 }
 

@@ -272,7 +272,7 @@ class DashboardActivity : AppCompatActivity() {
                     .load(imageUrl)
                     .override(100, 100)
                     .placeholder(R.drawable.fotoprofil) // Add a placeholder image
-                    .error(R.drawable.fotoprofil) // Add an error image
+                    .error(R.drawable.emiya) // Add an error image
                     .into(findViewById<CircleImageView>(R.id.user_pfp))
                 Log.d("ImageLoad", "Image loaded successfully from $imageUrl")
             } catch (e: Exception) {
@@ -305,6 +305,7 @@ class DashboardActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<ReviewResponse>, response: Response<ReviewResponse>) {
                     if (response.isSuccessful) {
                         val reviews = response.body()?.data ?: emptyList()
+                        Log.d("getReviews", "$reviews")
                         displayProducts(products, reviews, gridLayout)
                     } else {
                         // Handle error cases
