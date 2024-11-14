@@ -115,7 +115,7 @@ class SearchPemasokActivity : AppCompatActivity() {
 
                         // Filter products for the specific supplier and sort by date
                         val sortedProducts = products
-                            .filter { it.supplier_id == supplierId.toString() }
+                            .filter { it.supplier?.id == supplierId }
                             .sortedByDescending { it.created_at }
                             .take(3) // Get the three most recent products
 
@@ -138,7 +138,7 @@ class SearchPemasokActivity : AppCompatActivity() {
         Log.d("DisplayProducts", "Displaying ${products.size} products")
         for (product in products) {
             // Inflate product card view for each product
-            Log.d("DisplayProducts", "Product: ${product.nama_produk} - ${product.id}")
+            Log.d("DisplayProducts", "Product: ${product.nama_produk} - ${product.id} - ${product.supplier_id}")
             val productView = layoutInflater.inflate(R.layout.supplier_products, supplierProductContainer, false)
 
             // Populate product details
@@ -188,20 +188,21 @@ class SearchPemasokActivity : AppCompatActivity() {
         }
     }
 
-    private fun displaySuppliers(token:String, suppliers: List<SupplierData>) {
+    private fun displaySuppliers(token: String, suppliers: List<SupplierData>) {
         val supplierContainer = findViewById<LinearLayout>(R.id.supplierContainer)
         supplierContainer.removeAllViews()
-        for (supplier in suppliers.take(1)) {
+
+        for (supplier in suppliers.take(2)) {
             // Inflate supplier card view for each supplier
             val supplierView = layoutInflater.inflate(R.layout.supplier_card, supplierContainer, false)
 
+            // Fetch and display products for the supplier
             supplier.id?.let { getProducts(token, it) }
 
             // Populate supplier details
             val supplierImage = supplierView.findViewById<CircleImageView>(R.id.supplierImage)
             val supplierName = supplierView.findViewById<TextView>(R.id.supplierName)
             val supplierLocation = supplierView.findViewById<TextView>(R.id.supplierLocation)
-
 
             // Set supplier details
             supplierName.text = supplier.nama_toko
@@ -216,15 +217,16 @@ class SearchPemasokActivity : AppCompatActivity() {
                     putExtra("supplier_id", supplier.id)
                     putExtra("supplierName", supplier.nama_toko)
                     putExtra("supplierLocation", supplierLocation.text)
-                    putExtra("supplierImage", supplier.id.toString(),)
-                    // Add additional extras as needed
+                    putExtra("supplierImage", supplier.id.toString())
                 }
                 startActivity(intent)
             }
+
             // Add supplier view to container
             supplierContainer.addView(supplierView)
         }
     }
+
 
     // price formatting
     private fun formatWithDots(amount: Long): String {

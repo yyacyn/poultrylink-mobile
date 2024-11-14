@@ -73,6 +73,7 @@ class ProdukActivity : AppCompatActivity() {
         Navigation(productId,location.toString())
 
         val token = "Bearer ${getStoredToken().toString()}"
+        Log.d("tokenproduk", "$token")
 
 
         findViewById<TextView>(R.id.seller_name).text = supplierToko
@@ -95,6 +96,7 @@ class ProdukActivity : AppCompatActivity() {
         val btnCard = findViewById<ImageButton>(R.id.cart)
         if (productCategory != null) {
             getProducts(token, findViewById<GridLayout>(R.id.gridLayout), productCategory, product_id.toInt())
+            Log.d("testcategory", "$productCategory")
         }
 
 
@@ -279,7 +281,7 @@ class ProdukActivity : AppCompatActivity() {
 
     private fun getProducts(token: String, gridLayout: GridLayout, currentCategoryId: String, currentProductId: Int) {
         val categoryRange = getRecommendedCategoryRange(currentCategoryId)
-
+        Log.d("categoryRange", "$categoryRange")
         RetrofitClient.instance.getProducts(token)
             .enqueue(object : Callback<ProductResponse> {
                 override fun onResponse(call: Call<ProductResponse>, response: Response<ProductResponse>) {
