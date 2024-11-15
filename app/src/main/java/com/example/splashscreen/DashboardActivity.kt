@@ -3,10 +3,12 @@ package com.example.splashscreen
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Gravity
 import android.view.KeyEvent
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
@@ -271,7 +273,8 @@ class DashboardActivity : AppCompatActivity() {
                 Glide.with(this@DashboardActivity)
                     .load(imageUrl)
                     .override(100, 100)
-                    .placeholder(R.drawable.fotoprofil) // Add a placeholder image
+                    .placeholder(R.drawable.fotoprofil)
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.fotoprofil) // Add an error image
                     .into(findViewById<CircleImageView>(R.id.user_pfp))
                 Log.d("ImageLoad", "Image loaded successfully from $imageUrl")
@@ -282,22 +285,47 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     private fun getProducts(token: String, gridLayout: GridLayout) {
+        Log.d("gettingproducts", "getting products")
         RetrofitClient.instance.getProducts(token)
             .enqueue(object : Callback<ProductResponse> {
                 override fun onResponse(call: Call<ProductResponse>, response: Response<ProductResponse>) {
                     if (response.isSuccessful) {
                         val products = response.body()?.data ?: emptyList()
+                        Log.d("getproducts", "$products")
                         getReviews(token, products, gridLayout)
                     } else {
-                        // Handle error cases
+                        // Handle different error cases based on the response code
+                        when (response.code()) {
+                            401 -> Log.e("getproducts", "Unauthorized access. Check token validity.")
+                            403 -> Log.e("getproducts", "Access forbidden.")
+                            404 -> Log.e("getproducts", "Products not found.")
+                            else -> Log.e("getproducts", "Server error: ${response.code()} ${response.message()}")
+                        }
+                        // Display an error message on the UI
+                        displayErrorMessage(gridLayout, "Failed to load products. Please try again.")
                     }
                 }
 
                 override fun onFailure(call: Call<ProductResponse>, t: Throwable) {
-                    // Handle network errors
+                    Log.e("getproducts", "Network failure: ${t.localizedMessage}", t)
+                    // Display a network error message on the UI
+                    displayErrorMessage(gridLayout, "Network error. Check your connection and try again.")
                 }
             })
     }
+
+    // Function to display an error message in the GridLayout
+    private fun displayErrorMessage(gridLayout: GridLayout, message: String) {
+        gridLayout.removeAllViews()
+        val errorTextView = TextView(gridLayout.context).apply {
+            text = message
+            textSize = 16f
+            setTextColor(Color.RED)
+            gravity = Gravity.CENTER
+        }
+        gridLayout.addView(errorTextView)
+    }
+
 
     private fun getReviews(token: String, products: List<ProductData>, gridLayout: GridLayout) {
         RetrofitClient.instance.getReviews(token)
@@ -328,7 +356,6 @@ class DashboardActivity : AppCompatActivity() {
 
             Glide.with(this)
                 .load(imageUrl)
-                .placeholder(R.drawable.emiya)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .skipMemoryCache(false)
                 .transition(DrawableTransitionOptions.withCrossFade())
@@ -341,9 +368,9 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     private fun displayProducts(products: List<ProductData>, reviews: List<ReviewData>, gridLayout: GridLayout) {
-        val sortedProducts = products.sortedByDescending { it.created_at }
+        val sortedProducts = products.sortedByDescending { it.id }
         gridLayout.removeAllViews()
-        for ((index, product) in products.withIndex()) {
+        for ((index, product) in sortedProducts.withIndex()) {
             val cardView = layoutInflater.inflate(R.layout.product_card, gridLayout, false)
             val productImage = cardView.findViewById<ImageView>(R.id.productImage)
             val productName = cardView.findViewById<TextView>(R.id.productName)

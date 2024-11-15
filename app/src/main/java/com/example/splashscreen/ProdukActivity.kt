@@ -4,8 +4,11 @@ import ApiService
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.ImageButton
@@ -16,10 +19,15 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.denzcoskun.imageslider.ImageSlider
 import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
@@ -84,23 +92,73 @@ class ProdukActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.product_rating).text = productRating.toString()
         findViewById<TextView>(R.id.product_desc).text = productDesc
 
-        // set up ImageSlider for multiple images
-        val imageSlider = findViewById<ImageSlider>(R.id.imageSlider)
-        val slideModels = arrayListOf(
-            SlideModel("https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/$productImage/1.jpg", ScaleTypes.FIT),
-            SlideModel("https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/$productImage/2.jpg", ScaleTypes.FIT),
-            SlideModel("https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/$productImage/3.jpg", ScaleTypes.FIT)
-        )
-        imageSlider.setImageList(slideModels, ScaleTypes.CENTER_CROP)
-
         val btnCard = findViewById<ImageButton>(R.id.cart)
         if (productCategory != null) {
             getProducts(token, findViewById<GridLayout>(R.id.gridLayout), productCategory, product_id.toInt())
             Log.d("testcategory", "$productCategory")
         }
 
+// Set up ImageSlider for multiple images
+        val imageSlider = findViewById<ImageSlider>(R.id.imageSlider)
+        val slideModels = arrayListOf(
+            SlideModel("https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/$productImage/1.jpg", ScaleTypes.CENTER_CROP),
+            SlideModel("https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/$productImage/2.jpg", ScaleTypes.CENTER_CROP),
+            SlideModel("https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/$productImage/3.jpg", ScaleTypes.CENTER_CROP)
+        )
+
+
+    // Track the number of completed loads (both success and failure)
+        var processedCount = 0
+        val validSlides = mutableListOf<SlideModel>()
+
+        // Check if all slides have been processed
+        fun checkAllProcessed() {
+            if (processedCount == slideModels.size) {
+                if (validSlides.isNotEmpty()) {
+                    imageSlider.setImageList(validSlides, ScaleTypes.CENTER_CROP)
+                } else {
+                    imageSlider.visibility = View.GONE // Hide slider if no valid images
+                }
+            }
+        }
+
+        // Attempt to load each image
+        slideModels.forEach { slideModel ->
+            Glide.with(this)
+                .load(slideModel.imageUrl)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .error(R.drawable.placeholder) // Optional placeholder for invalid images
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        processedCount++
+                        checkAllProcessed()
+                        return false // Allow Glide to handle its default behavior
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        validSlides.add(slideModel)
+                        processedCount++
+                        checkAllProcessed()
+                        return false
+                    }
+                })
+                .preload()
+        }
 
     }
+
+
 
     // nav
     private fun Navigation(product_id: Long, location: String) {
@@ -120,20 +178,42 @@ class ProdukActivity : AppCompatActivity() {
 
     private fun displayReviews(reviews: List<ReviewData>, currentProductId: String) {
         val reviewContainer = findViewById<LinearLayout>(R.id.review_container)
+        val lihatSemuaTextView = findViewById<TextView>(R.id.lihatsemua)
+
         reviewContainer.removeAllViews() // Clear previous reviews
 
         Log.d("reviews", "$reviews")
-
-        // Add logging to check the currentProductId
         Log.d("currentProductId", "Current ID: $currentProductId")
 
-        // Filter reviews to only include reviews for the current product based on product_id
         val filteredReviews = reviews.filter { review ->
-            Log.d("comparison", "Comparing ${review.produk_id} with $currentProductId")
             review.produk_id == currentProductId
+        }.sortedByDescending { it.id }
+
+        if (filteredReviews.isEmpty()) {
+            // No reviews found, hide the 'lihatsemua' TextView
+            lihatSemuaTextView.visibility = View.GONE
+
+            // Display a placeholder message
+            val noReviewsTextView = TextView(this).apply {
+                text = "No reviews yet. Be the first to leave a review!"
+                textSize = 16f
+                setTextColor(ContextCompat.getColor(this@ProdukActivity, R.color.gray))
+                gravity = Gravity.CENTER
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(16, 16, 16, 16)
+                }
+            }
+            reviewContainer.addView(noReviewsTextView)
+            return
+        } else {
+            // If reviews exist, make the 'lihatsemua' TextView visible
+            lihatSemuaTextView.visibility = View.VISIBLE
         }
 
-        // Display only the first 2 filtered reviews (can be adjusted to show more if necessary)
+        // Display only the first 2 filtered reviews
         for (review in filteredReviews.take(2)) {
             val reviewView = layoutInflater.inflate(R.layout.review_card, reviewContainer, false)
 
@@ -198,6 +278,8 @@ class ProdukActivity : AppCompatActivity() {
 
             productName.text = product.nama_produk
 
+
+
             // Filter reviews for the current product
             val productReviews = reviews.filter { it.produk_id == product.id.toString() }
             Log.d("productreviews", "$productReviews")
@@ -226,11 +308,16 @@ class ProdukActivity : AppCompatActivity() {
                     putExtra("product_id", product.id)
                     putExtra("productName", product.nama_produk)
                     putExtra("productImage", product.image)
-                    putExtra("productRating", averageRating.toFloat())
+                    putExtra("productRating", "%.1f".format(averageRating).toFloat())
                     putExtra("productTotalReviews", totalReviews)
-                    putExtra("productPrice", product.harga)
+                    putExtra("productPrice", product.harga.toLong())
                     putExtra("productDesc", product.deskripsi)
                     putExtra("supplierId", product.supplier_id)
+                    putExtra("supplierKota", product.supplier?.kota)
+                    putExtra("supplierNegara", product.supplier?.negara)
+                    putExtra("supplierToko", product.supplier?.nama_toko)
+                    putExtra("productCategory", product.kategori_id)
+                    putExtra("location", "dashboard")
                 }
                 startActivity(intent)
             }

@@ -67,10 +67,8 @@ class SearchPemasokActivity : AppCompatActivity() {
     private fun loadImageFromSupabase(filePath: String, imageView: CircleImageView) {
         lifecycleScope.launch {
             try {
-                // Construct the public URL to the object in the storage bucket
-//                val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath/1.jpg?t=${System.currentTimeMillis()}"
+                val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath/1.jpg?t=${System.currentTimeMillis()}"
 
-                val imageUrl = R.drawable.placeholder
 
                 // Use Glide to load the image into the ImageView
                 Glide.with(this@SearchPemasokActivity)
@@ -79,21 +77,22 @@ class SearchPemasokActivity : AppCompatActivity() {
                     .placeholder(R.drawable.fotoprofil) // Add a placeholder image
                     .error(R.drawable.fotoprofil) // Add an error image
                     .into(imageView)
-                Log.d("ImageLoad", "Image loaded successfully from $imageUrl")
+                Log.d("ImageLoadSuppplier", "Image loaded successfully from $imageUrl")
             } catch (e: Exception) {
                 Log.e("ImageLoadError", "Failed to load image: ${e.message}")
             }
         }
     }
 
-    private fun getSupplier(token: String, supplierProductContainer: LinearLayout, supplierContainer: LinearLayout) {
-        RetrofitClient.instance.getSupplier(token ?: "")
+    private fun getSupplier(token: String, supplierContainer: LinearLayout, supplierProductContainer: LinearLayout) {
+        RetrofitClient.instance.getSupplier(token)
             .enqueue(object : Callback<SupplierResponse> {
                 override fun onResponse(call: Call<SupplierResponse>, response: Response<SupplierResponse>) {
                     if (response.isSuccessful) {
                         val supplierData = response.body()?.data ?: emptyList()
                         Log.d("SupplierResponse", "Suppliers: $supplierData")
-                        displaySuppliers(token, supplierData)
+                        // Get all products and reviews at once
+                        getAllProductsAndReviews(token, supplierData)
                     } else {
                         Log.e("SupplierError", "Failed to fetch supplier data")
                     }
@@ -105,72 +104,55 @@ class SearchPemasokActivity : AppCompatActivity() {
             })
     }
 
-    private fun getProducts(token: String, supplierId: Long) {
+    private fun getAllProductsAndReviews(token: String, suppliers: List<SupplierData>) {
+        // First, get all products
         RetrofitClient.instance.getProducts(token)
             .enqueue(object : Callback<ProductResponse> {
                 override fun onResponse(call: Call<ProductResponse>, response: Response<ProductResponse>) {
                     if (response.isSuccessful) {
                         val products = response.body()?.data ?: emptyList()
-                        Log.d("ProductResponse", "Products: $products")
-
-                        // Filter products for the specific supplier and sort by date
-                        val sortedProducts = products
-                            .filter { it.supplier?.id == supplierId }
-                            .sortedByDescending { it.created_at }
-                            .take(3) // Get the three most recent products
-
-                        getReviews(token, sortedProducts)
+                        val filteredProducts = products.sortedByDescending { it.id }
+                        // Then get all reviews
+                        getReviewsForAllProducts(token, filteredProducts, suppliers)
                     } else {
                         Log.e("ProductError", "Failed to fetch products")
                     }
                 }
-
                 override fun onFailure(call: Call<ProductResponse>, t: Throwable) {
                     Log.e("ProductError", "Error: ${t.message}")
                 }
             })
     }
 
-    private fun displayProducts(products: List<ProductData>, reviews: List<ReviewData>) {
+    private fun displaySupplierProducts(products: List<ProductData>, reviews: List<ReviewData>, productContainer: LinearLayout) {
+        productContainer.removeAllViews()
 
-        val supplierProductContainer = findViewById<LinearLayout>(R.id.productContainer)
-        supplierProductContainer.removeAllViews()
-        Log.d("DisplayProducts", "Displaying ${products.size} products")
-        for (product in products) {
-            // Inflate product card view for each product
-            Log.d("DisplayProducts", "Product: ${product.nama_produk} - ${product.id} - ${product.supplier_id}")
-            val productView = layoutInflater.inflate(R.layout.supplier_products, supplierProductContainer, false)
+        for (product in products.take(3)) {
+            val productView = layoutInflater.inflate(R.layout.supplier_products, productContainer, false)
 
-            // Populate product details
             val productImage = productView.findViewById<ImageView>(R.id.supplierProductImage)
             val productPrice = productView.findViewById<TextView>(R.id.supplierProductPrice)
 
-            // Load product image
             loadProductImage(product.image, productImage)
 
-            // Filter reviews for the current product
+            // Calculate product rating
             val productReviews = reviews.filter { it.produk_id == product.id.toString() }
-            val averageRating = if (productReviews.isNotEmpty()) {
-                productReviews.map { it.rating }.average()
-            } else {
-                0.0
-            }
-            val totalReviews = productReviews.size
+            val averageRating = productReviews.takeIf { it.isNotEmpty() }
+                ?.map { it.rating }
+                ?.average() ?: 0.0
 
-
-            // Format and display product price
+            // Format and set price
             val formattedPrice = formatWithDots(product.harga.toLong())
             productPrice.text = "Rp. $formattedPrice"
 
-            // Set click listener to open product details
+            // Set click listener for product
             productView.setOnClickListener {
                 val intent = Intent(this@SearchPemasokActivity, ProdukActivity::class.java).apply {
                     putExtra("product_id", product.id)
                     putExtra("productName", product.nama_produk)
                     putExtra("productImage", product.image)
-                    putExtra("supplierId", product.supplier_id)
                     putExtra("productRating", "%.1f".format(averageRating).toFloat())
-                    putExtra("productTotalReviews", totalReviews)
+                    putExtra("productTotalReviews", productReviews.size)
                     putExtra("productPrice", product.harga.toLong())
                     putExtra("productDesc", product.deskripsi)
                     putExtra("supplierId", product.supplier_id)
@@ -178,55 +160,13 @@ class SearchPemasokActivity : AppCompatActivity() {
                     putExtra("supplierNegara", product.supplier?.negara)
                     putExtra("supplierToko", product.supplier?.nama_toko)
                     putExtra("productCategory", product.kategori_id)
-                    // Add additional extras as needed
                 }
                 startActivity(intent)
             }
 
-            // Add product view to container
-            supplierProductContainer.addView(productView)
+            productContainer.addView(productView)
         }
     }
-
-    private fun displaySuppliers(token: String, suppliers: List<SupplierData>) {
-        val supplierContainer = findViewById<LinearLayout>(R.id.supplierContainer)
-        supplierContainer.removeAllViews()
-
-        for (supplier in suppliers.take(2)) {
-            // Inflate supplier card view for each supplier
-            val supplierView = layoutInflater.inflate(R.layout.supplier_card, supplierContainer, false)
-
-            // Fetch and display products for the supplier
-            supplier.id?.let { getProducts(token, it) }
-
-            // Populate supplier details
-            val supplierImage = supplierView.findViewById<CircleImageView>(R.id.supplierImage)
-            val supplierName = supplierView.findViewById<TextView>(R.id.supplierName)
-            val supplierLocation = supplierView.findViewById<TextView>(R.id.supplierLocation)
-
-            // Set supplier details
-            supplierName.text = supplier.nama_toko
-            supplierLocation.text = "${supplier.kota}, ${supplier.negara}"
-
-            // Load supplier image
-            loadImageFromSupabase(supplier.id.toString(), supplierImage)
-
-            // Set click listener to open supplier details
-            supplierView.setOnClickListener {
-                val intent = Intent(this@SearchPemasokActivity, DashboardActivity::class.java).apply {
-                    putExtra("supplier_id", supplier.id)
-                    putExtra("supplierName", supplier.nama_toko)
-                    putExtra("supplierLocation", supplierLocation.text)
-                    putExtra("supplierImage", supplier.id.toString())
-                }
-                startActivity(intent)
-            }
-
-            // Add supplier view to container
-            supplierContainer.addView(supplierView)
-        }
-    }
-
 
     // price formatting
     private fun formatWithDots(amount: Long): String {
@@ -245,35 +185,74 @@ class SearchPemasokActivity : AppCompatActivity() {
 
             Glide.with(this)
                 .load(imageUrl)
-                .placeholder(R.drawable.emiya)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .skipMemoryCache(false)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .priority(Priority.HIGH)
                 .error(R.drawable.sekar)
                 .into(imageView)
+            Log.d("loadingimage","loading image from: $imageUrl")
         } catch (e: Exception) {
             Log.e("ImageLoadError", "Failed to load product image: ${e.message}")
         }
     }
 
-    private fun getReviews(token: String, products: List<ProductData>) {
+    private fun getReviewsForAllProducts(token: String, products: List<ProductData>, suppliers: List<SupplierData>) {
         RetrofitClient.instance.getReviews(token)
             .enqueue(object : Callback<ReviewResponse> {
                 override fun onResponse(call: Call<ReviewResponse>, response: Response<ReviewResponse>) {
                     if (response.isSuccessful) {
                         val reviews = response.body()?.data ?: emptyList()
-                        Log.d("ReviewResponse", "Reviews: $reviews")
-                        displayProducts(products, reviews)
+                        // Now we have all data, display suppliers with their products
+                        displaySuppliersWithProducts(suppliers, products, reviews)
                     } else {
-                        // Handle error cases
+                        Log.e("ReviewError", "Failed to fetch reviews")
                     }
                 }
-
                 override fun onFailure(call: Call<ReviewResponse>, t: Throwable) {
-                    // Handle network errors
+                    Log.e("ReviewError", "Error: ${t.message}")
                 }
             })
+    }
+
+    private fun displaySuppliersWithProducts(suppliers: List<SupplierData>, allProducts: List<ProductData>, allReviews: List<ReviewData>) {
+        val supplierContainer = findViewById<LinearLayout>(R.id.supplierContainer)
+        supplierContainer.removeAllViews()
+
+        for (supplier in suppliers) {
+            // Inflate supplier card view
+            val supplierView = layoutInflater.inflate(R.layout.supplier_card, supplierContainer, false)
+
+            // Set up supplier details
+            val supplierImage = supplierView.findViewById<CircleImageView>(R.id.supplierImage)
+            val supplierName = supplierView.findViewById<TextView>(R.id.supplierName)
+            val supplierLocation = supplierView.findViewById<TextView>(R.id.supplierLocation)
+            val productContainer = supplierView.findViewById<LinearLayout>(R.id.productContainer)
+
+            // Set supplier details
+            supplierName.text = supplier.nama_toko
+            supplierLocation.text = "${supplier.kota}, ${supplier.negara}"
+            loadImageFromSupabase(supplier.buyer?.id.toString(), supplierImage)
+
+            // Filter and display products for this supplier
+            val supplierProducts = allProducts.filter { it.supplier_id == supplier.id.toString() }
+            displaySupplierProducts(supplierProducts, allReviews, productContainer)
+
+            // Set click listener for supplier card
+            supplierView.setOnClickListener {
+                val intent = Intent(this@SearchPemasokActivity, DashboardActivity::class.java).apply {
+                    putExtra("supplier_id", supplier.id)
+                    putExtra("supplierName", supplier.nama_toko)
+                    putExtra("supplierKota", supplier.kota)
+                    putExtra("supplierNegara", supplier.negara)
+                    putExtra("supplierProvinsi", supplier.provinsi)
+                    putExtra("supplierImage", supplier.id.toString())
+                }
+                startActivity(intent)
+            }
+
+            supplierContainer.addView(supplierView)
+        }
     }
 
 }

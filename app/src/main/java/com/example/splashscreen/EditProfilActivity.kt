@@ -224,7 +224,8 @@ class EditProfilActivity : AppCompatActivity() {
                 Glide.with(this@EditProfilActivity)
                     .load(imageUrl)
                     .override(200, 200)
-                    .placeholder(R.drawable.fotoprofil) // Add a placeholder image
+                    .placeholder(R.drawable.fotoprofil)
+                    .transition(DrawableTransitionOptions.withCrossFade())// Add a placeholder image
                     .error(R.drawable.fotoprofil) // Add an error image
                     .into(findViewById<CircleImageView>(R.id.user_pfp))
                 Log.d("ImageLoad", "Image loaded successfully from $imageUrl")

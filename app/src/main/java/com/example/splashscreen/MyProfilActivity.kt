@@ -167,6 +167,7 @@ class MyProfilActivity : AppCompatActivity() {
                 Glide.with(this@MyProfilActivity)
                     .load(imageUrl)
                     .override(200, 200)
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .placeholder(R.drawable.fotoprofil) // Add a placeholder image
                     .error(R.drawable.fotoprofil) // Add an error image
                     .into(findViewById<CircleImageView>(R.id.profile_image))

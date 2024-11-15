@@ -17,7 +17,8 @@ data class Supplier(
     val updated_at: String? = null, // Adjust based on your actual schema (nullable)
     val nama_toko: String? = null,
     val image: String? = null,
-    val confirmed: String? = null
+    val confirmed: String? = null,
+    val buyer: Buyer? = null,
 )
 
 //data class SupplierData(
@@ -58,6 +59,8 @@ data class SupplierData(
     val user_id: String? = null,
     @SerializedName("nama_toko")
     val nama_toko: String? = null,
+    @SerializedName("buyer")
+    val buyer: Buyer?,
 )
 
 data class SupplierResponse(
