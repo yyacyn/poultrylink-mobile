@@ -18,6 +18,7 @@ import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.yourapp.network.RetrofitClient
+import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -126,8 +127,14 @@ class SearchProdukActivity : AppCompatActivity() {
 
             productName.text = product.nama_produk
 
+            // Filter reviews for the current product
             val productReviews = reviews.filter { it.produk_id == product.id.toString() }
-            val averageRating = productReviews.map { it.rating }.average().takeIf { it.isFinite() } ?: 0.0
+            val averageRating = if (productReviews.isNotEmpty()) {
+                productReviews.map { it.rating }.average()
+            } else {
+                0.0
+            }
+            val totalReviews = productReviews.size
             productRating.text = "%.1f".format(averageRating)
             productAmountRating.text = "(${productReviews.size} Reviews)"
 
@@ -142,15 +149,21 @@ class SearchProdukActivity : AppCompatActivity() {
                     putExtra("product_id", product.id)
                     putExtra("productName", product.nama_produk)
                     putExtra("productImage", product.image)
-                    putExtra("productRating", averageRating.toFloat())
-                    putExtra("productTotalReviews", productReviews.size)
-                    putExtra("productPrice", product.harga)
+                    putExtra("productRating", "%.1f".format(averageRating).toFloat())
+                    putExtra("productTotalReviews", totalReviews)
+                    putExtra("productPrice", product.harga.toLong())
                     putExtra("productDesc", product.deskripsi)
                     putExtra("supplierId", product.supplier_id)
+                    product.supplier?.buyer?.let { it1 -> putExtra("supplierImage", it1.id) }
+                    putExtra("supplierKota", product.supplier?.kota)
+                    putExtra("supplierNegara", product.supplier?.negara)
+                    putExtra("supplierPronvisi", product.supplier?.provinsi)
+                    putExtra("supplierName", product.supplier?.nama_toko)
+                    putExtra("supplierRating", product.supplier?.rating)
+                    putExtra("productCategory", product.kategori_id)
                 }
                 startActivity(intent)
             }
-
             gridLayout.addView(cardView)
         }
     }
@@ -171,9 +184,14 @@ class SearchProdukActivity : AppCompatActivity() {
     }
 
     private fun filterProducts(query: String, reviews: List<ReviewData> = emptyList()) {
-        val filteredProducts = if (query.isEmpty()) allProducts else {
-            allProducts.filter { it.nama_produk.contains(query, ignoreCase = true) }
+        val filteredProducts = if (query.isEmpty()) {
+            allProducts }
+        else {
+            allProducts.filter {
+                it.nama_produk.contains(query, ignoreCase = true) || it.kategori.contains(query, ignoreCase = true)
+            }
         }
         displayProducts(filteredProducts, reviews)
     }
+
 }

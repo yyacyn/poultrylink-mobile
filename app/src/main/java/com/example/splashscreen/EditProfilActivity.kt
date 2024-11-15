@@ -225,7 +225,7 @@ class EditProfilActivity : AppCompatActivity() {
                     .load(imageUrl)
                     .override(200, 200)
                     .placeholder(R.drawable.fotoprofil)
-                    .transition(DrawableTransitionOptions.withCrossFade())// Add a placeholder image
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.fotoprofil) // Add an error image
                     .into(findViewById<CircleImageView>(R.id.user_pfp))
                 Log.d("ImageLoad", "Image loaded successfully from $imageUrl")

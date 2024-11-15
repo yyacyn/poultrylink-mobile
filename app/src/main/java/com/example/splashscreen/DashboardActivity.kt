@@ -274,7 +274,7 @@ class DashboardActivity : AppCompatActivity() {
                     .load(imageUrl)
                     .override(100, 100)
                     .placeholder(R.drawable.fotoprofil)
-                    .transition(DrawableTransitionOptions.withCrossFade())
+//                    .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.fotoprofil) // Add an error image
                     .into(findViewById<CircleImageView>(R.id.user_pfp))
                 Log.d("ImageLoad", "Image loaded successfully from $imageUrl")
@@ -419,15 +419,16 @@ class DashboardActivity : AppCompatActivity() {
                     putExtra("productPrice", product.harga.toLong())
                     putExtra("productDesc", product.deskripsi)
                     putExtra("supplierId", product.supplier_id)
+                    product.supplier?.buyer?.let { it1 -> putExtra("supplierImage", it1.id) }
                     putExtra("supplierKota", product.supplier?.kota)
                     putExtra("supplierNegara", product.supplier?.negara)
-                    putExtra("supplierToko", product.supplier?.nama_toko)
+                    putExtra("supplierProvinsi", product.supplier?.provinsi)
+                    putExtra("supplierName", product.supplier?.nama_toko)
+                    putExtra("supplierRating", product.supplier?.rating)
                     putExtra("productCategory", product.kategori_id)
-                    putExtra("location", "dashboard")
                 }
                 startActivity(intent)
             }
-
             cardView.layoutParams = params
             gridLayout.addView(cardView)
         }

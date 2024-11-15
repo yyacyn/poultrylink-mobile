@@ -95,7 +95,7 @@ class AllCommentActivity : AppCompatActivity() {
         val filteredReviews = reviews.filter { review ->
             Log.d("comparison", "Comparing ${review.produk_id} with $currentProductId")
             review.produk_id == currentProductId
-        }
+        }. sortedByDescending { it.id }
 
         for (review in filteredReviews) {
             val reviewView = layoutInflater.inflate(R.layout.review_card, reviewContainer, false)

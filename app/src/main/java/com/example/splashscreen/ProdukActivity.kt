@@ -69,20 +69,29 @@ class ProdukActivity : AppCompatActivity() {
         val productTotalReviews = intent.getIntExtra("productTotalReviews", 0)
         val productPrice = intent.getLongExtra("productPrice", 0)
         val productDesc = intent.getStringExtra("productDesc")
-        val productSupplierId = intent.getLongExtra("supplierId", 0)
+        val productSupplierId = intent.getStringExtra("supplierId")
         val supplierKota = intent.getStringExtra("supplierKota")
         val supplierNegara = intent.getStringExtra("supplierNegara")
-        val supplierToko = intent.getStringExtra("supplierToko")
+        val supplierToko = intent.getStringExtra("supplierName")
+        val supplierPronvinsi = intent.getStringExtra("supplierProvinsi")
         val productCategory = intent.getStringExtra("productCategory")
         val product_id = intent.getLongExtra("product_id", 0)
         val location = intent.getStringExtra("location")
+        val supplierImageUrl = intent.getLongExtra("supplierImage", 0)
+        val supplierRating = intent.getStringExtra("supplierRating")
+
         Log.d("product_id", "$product_id")
+        Log.d("catproduct", "$productCategory")
+        Log.d("productSupplierId", "$productSupplierId")
 
         Navigation(productId,location.toString())
 
         val token = "Bearer ${getStoredToken().toString()}"
         Log.d("tokenproduk", "$token")
 
+        val supplierImageView = findViewById<CircleImageView>(R.id.supplierImage)
+
+        loadImageFromSupabase(supplierImageUrl.toString(), supplierImageView)
 
         findViewById<TextView>(R.id.seller_name).text = supplierToko
         findViewById<TextView>(R.id.seller_location).text = "$supplierKota, $supplierNegara"
@@ -91,6 +100,32 @@ class ProdukActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.product_price).text = "Rp. $value"
         findViewById<TextView>(R.id.product_rating).text = productRating.toString()
         findViewById<TextView>(R.id.product_desc).text = productDesc
+
+        findViewById<CircleImageView>(R.id.supplierImage).setOnClickListener {
+            val intent = Intent(this@ProdukActivity, TokoActivity::class.java).apply {
+                putExtra("supplierId", productSupplierId)
+                putExtra("supplierImage", supplierImageUrl)
+                putExtra("supplierKota", supplierKota)
+                putExtra("supplierNegara", supplierNegara)
+                putExtra("supplierProvinsi", supplierPronvinsi)
+                putExtra("supplierName", supplierToko)
+                putExtra("supplierRating", supplierRating)
+            }
+            startActivity(intent)
+        }
+
+        findViewById<TextView>(R.id.seller_name).setOnClickListener {
+            val intent = Intent(this@ProdukActivity, TokoActivity::class.java).apply {
+                putExtra("supplierId", productSupplierId)
+                putExtra("supplierImage", supplierImageUrl)
+                putExtra("supplierKota", supplierKota)
+                putExtra("supplierNegara", supplierNegara)
+                putExtra("supplierProvinsi", supplierPronvinsi)
+                putExtra("supplierName", supplierToko)
+                putExtra("supplierRating", supplierRating)
+            }
+            startActivity(intent)
+        }
 
         val btnCard = findViewById<ImageButton>(R.id.cart)
         if (productCategory != null) {
@@ -157,8 +192,6 @@ class ProdukActivity : AppCompatActivity() {
         }
 
     }
-
-
 
     // nav
     private fun Navigation(product_id: Long, location: String) {
@@ -278,8 +311,6 @@ class ProdukActivity : AppCompatActivity() {
 
             productName.text = product.nama_produk
 
-
-
             // Filter reviews for the current product
             val productReviews = reviews.filter { it.produk_id == product.id.toString() }
             Log.d("productreviews", "$productReviews")
@@ -313,14 +344,18 @@ class ProdukActivity : AppCompatActivity() {
                     putExtra("productPrice", product.harga.toLong())
                     putExtra("productDesc", product.deskripsi)
                     putExtra("supplierId", product.supplier_id)
+                    product.supplier?.buyer?.let { it1 -> putExtra("supplierId", it1.id) }
                     putExtra("supplierKota", product.supplier?.kota)
                     putExtra("supplierNegara", product.supplier?.negara)
-                    putExtra("supplierToko", product.supplier?.nama_toko)
+                    putExtra("supplierProvinsi", product.supplier?.provinsi)
+                    putExtra("supplierName", product.supplier?.nama_toko)
+                    putExtra("supplierRating", product.supplier?.rating)
                     putExtra("productCategory", product.kategori_id)
                     putExtra("location", "dashboard")
                 }
                 startActivity(intent)
             }
+
 
             cardView.layoutParams = params
             gridLayout.addView(cardView)

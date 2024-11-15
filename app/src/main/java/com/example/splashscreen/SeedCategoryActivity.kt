@@ -196,11 +196,13 @@ class SeedCategoryActivity : AppCompatActivity() {
                     putExtra("productPrice", product.harga.toLong())
                     putExtra("productDesc", product.deskripsi)
                     putExtra("supplierId", product.supplier_id)
+                    product.supplier?.buyer?.let { it1 -> putExtra("supplierImage", it1.id) }
                     putExtra("supplierKota", product.supplier?.kota)
                     putExtra("supplierNegara", product.supplier?.negara)
-                    putExtra("supplierToko", product.supplier?.nama_toko)
+                    putExtra("supplierProvinsi", product.supplier?.provinsi)
+                    putExtra("supplierName", product.supplier?.nama_toko)
+                    putExtra("supplierRating", product.supplier?.rating)
                     putExtra("productCategory", product.kategori_id)
-                    putExtra("location", "dashboard")
                 }
                 startActivity(intent)
             }
@@ -209,8 +211,7 @@ class SeedCategoryActivity : AppCompatActivity() {
             gridLayout.addView(cardView)
         }
     }
-
-
+    
     private fun getReviews(token: String, products: List<ProductData>, gridLayout: GridLayout) {
         RetrofitClient.instance.getReviews(token)
             .enqueue(object : Callback<ReviewResponse> {

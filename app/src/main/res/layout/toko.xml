@@ -23,6 +23,7 @@
         android:background="@color/orange">
 
         <ImageButton
+            android:id="@+id/back_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/arrowback"
@@ -39,6 +40,7 @@
 
             <!-- Search Input -->
             <EditText
+                android:id="@+id/searchInput"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -103,17 +105,16 @@
                     android:id="@+id/store_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="PoultryLink"
+                    android:text="Loading Store Name..."
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold"/>
 
-                <!-- Status -->
+                <!-- Lokasi -->
                 <TextView
-                    android:id="@+id/active_status"
+                    android:id="@+id/store_location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Aktif 18 menit lalu"
                     android:textColor="@color/white"
                     android:textSize="14sp"/>
 
@@ -124,11 +125,14 @@
                     android:layout_marginTop="4dp">
 
                     <!-- Rating -->
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/star" />
                     <TextView
                         android:id="@+id/rating_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="⭐ 4.8/5.0"
                         android:textColor="@color/white"
                         android:textSize="14sp"/>
 
@@ -138,7 +142,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="2,2RB Pengikut"
                         android:textColor="@color/white"
                         android:textSize="14sp"/>
                 </LinearLayout>
@@ -177,6 +180,7 @@
         </LinearLayout>
 
     <LinearLayout
+        android:layout_marginBottom="60dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf ="@+id/profiltoko"
@@ -200,175 +204,12 @@
 
             <!-- CardViews -->
             <LinearLayout
+                android:id="@+id/popularProductsContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <!-- CardView 1 -->
-                <androidx.cardview.widget.CardView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:padding="12dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="4dp">
-
-                    <!-- Product Layout -->
-                    <LinearLayout
-                        android:layout_width="180dp"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="10dp">
-
-                        <!-- Foto produk-->
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="150dp"
-                            android:src="@drawable/ayam"
-                            android:scaleType="centerCrop" />
-
-                        <!-- Judul produk -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Cemani Chicken Premium"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
-
-                        <!-- Rating dan Reviews -->
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginTop="4dp">
-
-                            <ImageView
-                                android:layout_width="16dp"
-                                android:layout_height="16dp"
-                                android:src="@drawable/star" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="4.9"
-                                android:textSize="14sp"
-                                android:textColor="@android:color/black"
-                                android:layout_marginStart="4dp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="(1280 Reviews)"
-                                android:textSize="14sp"
-                                android:textColor="@android:color/darker_gray"
-                                android:layout_marginStart="4dp" />
-                        </LinearLayout>
-
-                        <!-- Harga Produk -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Rp 149.000"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:textColor="@android:color/black" />
-
-                        <!-- Lokasi -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Bogor, Indonesia"
-                            android:textSize="12sp"
-                            android:textColor="@android:color/darker_gray"
-                            android:layout_marginTop="4dp" />
-
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!-- CardView 2 -->
-                <androidx.cardview.widget.CardView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:padding="12dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="4dp">
-
-                    <!-- Product Layout -->
-                    <LinearLayout
-                        android:layout_width="180dp"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="10dp">
-
-                        <!-- Foto produk-->
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="150dp"
-                            android:src="@drawable/ayam"
-                            android:scaleType="centerCrop" />
-
-                        <!-- Judul produk -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Cemani Chicken Premium"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
-
-                        <!-- Rating dan Reviews -->
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginTop="4dp">
-
-                            <ImageView
-                                android:layout_width="16dp"
-                                android:layout_height="16dp"
-                                android:src="@drawable/star" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="4.9"
-                                android:textSize="14sp"
-                                android:textColor="@android:color/black"
-                                android:layout_marginStart="4dp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="(1280 Reviews)"
-                                android:textSize="14sp"
-                                android:textColor="@android:color/darker_gray"
-                                android:layout_marginStart="4dp" />
-                        </LinearLayout>
-
-                        <!-- Harga Produk -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Rp 149.000"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:textColor="@android:color/black" />
-
-                        <!-- Lokasi -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Bogor, Indonesia"
-                            android:textSize="12sp"
-                            android:textColor="@android:color/darker_gray"
-                            android:layout_marginTop="4dp" />
-
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
+                <include layout="@layout/product_card"/>
             </LinearLayout>
         </HorizontalScrollView>
 
@@ -388,336 +229,8 @@
             android:columnCount="2"
             android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@id/textforyou">
-            <!-- CardView 1 -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:padding="12dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
 
-                <!-- Product Layout -->
-                <LinearLayout
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="10dp">
-
-                    <!-- Foto produk-->
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="150dp"
-                        android:src="@drawable/ayam"
-                        android:scaleType="centerCrop" />
-
-                    <!-- Judul produk -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Cemani Chicken Premium"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <!-- Rating dan Reviews -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="4dp">
-
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:src="@drawable/star" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="4.9"
-                            android:textSize="14sp"
-                            android:textColor="@android:color/black"
-                            android:layout_marginStart="4dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="(1280 Reviews)"
-                            android:textSize="14sp"
-                            android:textColor="@android:color/darker_gray"
-                            android:layout_marginStart="4dp" />
-                    </LinearLayout>
-
-                    <!-- Harga Produk -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Rp 149.000"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/black" />
-
-                    <!-- Lokasi -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Bogor, Indonesia"
-                        android:textSize="12sp"
-                        android:textColor="@android:color/darker_gray"
-                        android:layout_marginTop="4dp" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- CardView 2 -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:padding="12dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
-
-                <!-- Product Layout -->
-                <LinearLayout
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="10dp">
-
-                    <!-- Foto produk-->
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="150dp"
-                        android:src="@drawable/ayam"
-                        android:scaleType="centerCrop" />
-
-                    <!-- Judul produk -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Cemani Chicken Premium"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <!-- Rating dan Reviews -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="4dp">
-
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:src="@drawable/star" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="4.9"
-                            android:textSize="14sp"
-                            android:textColor="@android:color/black"
-                            android:layout_marginStart="4dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="(1280 Reviews)"
-                            android:textSize="14sp"
-                            android:textColor="@android:color/darker_gray"
-                            android:layout_marginStart="4dp" />
-                    </LinearLayout>
-
-                    <!-- Harga Produk -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Rp 149.000"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/black" />
-
-                    <!-- Lokasi -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Bogor, Indonesia"
-                        android:textSize="12sp"
-                        android:textColor="@android:color/darker_gray"
-                        android:layout_marginTop="4dp" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-            <!-- CardView 1 -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:padding="12dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
-
-                <!-- Product Layout -->
-                <LinearLayout
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="10dp">
-
-                    <!-- Foto produk-->
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="150dp"
-                        android:src="@drawable/ayam"
-                        android:scaleType="centerCrop" />
-
-                    <!-- Judul produk -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Cemani Chicken Premium"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <!-- Rating dan Reviews -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="4dp">
-
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:src="@drawable/star" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="4.9"
-                            android:textSize="14sp"
-                            android:textColor="@android:color/black"
-                            android:layout_marginStart="4dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="(1280 Reviews)"
-                            android:textSize="14sp"
-                            android:textColor="@android:color/darker_gray"
-                            android:layout_marginStart="4dp" />
-                    </LinearLayout>
-
-                    <!-- Harga Produk -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Rp 149.000"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/black" />
-
-                    <!-- Lokasi -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Bogor, Indonesia"
-                        android:textSize="12sp"
-                        android:textColor="@android:color/darker_gray"
-                        android:layout_marginTop="4dp" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- CardView 2 -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:padding="12dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
-
-                <!-- Product Layout -->
-                <LinearLayout
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="10dp">
-
-                    <!-- Foto produk-->
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="150dp"
-                        android:src="@drawable/ayam"
-                        android:scaleType="centerCrop" />
-
-                    <!-- Judul produk -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Cemani Chicken Premium"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <!-- Rating dan Reviews -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="4dp">
-
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:src="@drawable/star" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="4.9"
-                            android:textSize="14sp"
-                            android:textColor="@android:color/black"
-                            android:layout_marginStart="4dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="(1280 Reviews)"
-                            android:textSize="14sp"
-                            android:textColor="@android:color/darker_gray"
-                            android:layout_marginStart="4dp" />
-                    </LinearLayout>
-
-                    <!-- Harga Produk -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Rp 149.000"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/black" />
-
-                    <!-- Lokasi -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Bogor, Indonesia"
-                        android:textSize="12sp"
-                        android:textColor="@android:color/darker_gray"
-                        android:layout_marginTop="4dp" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            <include layout="@layout/product_card" />
 
         </GridLayout>
 

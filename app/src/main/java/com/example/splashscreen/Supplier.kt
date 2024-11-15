@@ -58,7 +58,7 @@ data class SupplierData(
     @SerializedName("user_id")
     val user_id: String? = null,
     @SerializedName("nama_toko")
-    val nama_toko: String? = null,
+    val nama_toko: String,
     @SerializedName("buyer")
     val buyer: Buyer?,
 )

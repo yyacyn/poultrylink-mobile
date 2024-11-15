@@ -2,7 +2,11 @@ package com.example.splashscreen
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -27,6 +31,9 @@ import java.text.NumberFormat
 import java.util.Locale
 
 class SearchPemasokActivity : AppCompatActivity() {
+
+    private var allSuppliers: List<SupplierData> = listOf()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -49,12 +56,25 @@ class SearchPemasokActivity : AppCompatActivity() {
             finish()
         }
 
+
         findViewById<TextView>(R.id.Produk).setOnClickListener {
             startActivity(Intent(this, SearchProdukActivity::class.java))
             finish()
         }
 
-        getSupplier(token, supplierContainer ,supplierProductContainer)
+        getSupplier(token)
+
+        val searchInput = findViewById<EditText>(R.id.searchInput)
+        searchInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filterSuppliers(token, s.toString().trim())
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
     }
 
     // Retrieve the token from SharedPreferences
@@ -84,13 +104,14 @@ class SearchPemasokActivity : AppCompatActivity() {
         }
     }
 
-    private fun getSupplier(token: String, supplierContainer: LinearLayout, supplierProductContainer: LinearLayout) {
+    private fun getSupplier(token: String) {
         RetrofitClient.instance.getSupplier(token)
             .enqueue(object : Callback<SupplierResponse> {
                 override fun onResponse(call: Call<SupplierResponse>, response: Response<SupplierResponse>) {
                     if (response.isSuccessful) {
                         val supplierData = response.body()?.data ?: emptyList()
                         Log.d("SupplierResponse", "Suppliers: $supplierData")
+                        allSuppliers = supplierData
                         // Get all products and reviews at once
                         getAllProductsAndReviews(token, supplierData)
                     } else {
@@ -182,7 +203,6 @@ class SearchPemasokActivity : AppCompatActivity() {
             } else {
                 baseUrl
             }
-
             Glide.with(this)
                 .load(imageUrl)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -234,19 +254,21 @@ class SearchPemasokActivity : AppCompatActivity() {
             supplierLocation.text = "${supplier.kota}, ${supplier.negara}"
             loadImageFromSupabase(supplier.buyer?.id.toString(), supplierImage)
 
+            val lihatToko = supplierView.findViewById<Button>(R.id.lihatToko)
+
             // Filter and display products for this supplier
             val supplierProducts = allProducts.filter { it.supplier_id == supplier.id.toString() }
             displaySupplierProducts(supplierProducts, allReviews, productContainer)
 
             // Set click listener for supplier card
-            supplierView.setOnClickListener {
-                val intent = Intent(this@SearchPemasokActivity, DashboardActivity::class.java).apply {
+            lihatToko.setOnClickListener {
+                val intent = Intent(this@SearchPemasokActivity, TokoActivity::class.java).apply {
                     putExtra("supplier_id", supplier.id)
                     putExtra("supplierName", supplier.nama_toko)
                     putExtra("supplierKota", supplier.kota)
                     putExtra("supplierNegara", supplier.negara)
                     putExtra("supplierProvinsi", supplier.provinsi)
-                    putExtra("supplierImage", supplier.id.toString())
+                    putExtra("supplierImage", supplier.buyer?.id.toString())
                 }
                 startActivity(intent)
             }
@@ -254,5 +276,19 @@ class SearchPemasokActivity : AppCompatActivity() {
             supplierContainer.addView(supplierView)
         }
     }
+
+    private fun filterSuppliers(token: String, query: String) {
+        val filteredSuppliers = if (query.isEmpty()) {
+            allSuppliers
+        } else {
+            allSuppliers.filter {
+                it.nama_toko?.contains(query, ignoreCase = true) == true
+            }
+        }
+
+        Log.d("FilteredSuppliers", "Filtered: $filteredSuppliers, Query: $query")
+        getAllProductsAndReviews(token, filteredSuppliers)
+    }
+
 
 }

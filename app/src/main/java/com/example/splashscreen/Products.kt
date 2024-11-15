@@ -34,6 +34,8 @@ data class ProductData(
     val harga: String,
     @SerializedName("rating")
     val rating: String,
+    @SerializedName("kategori")
+    val kategori: String,
     @SerializedName("kategori_id")
     val kategori_id: String,
     @SerializedName("supplier_id")
@@ -43,7 +45,7 @@ data class ProductData(
     @SerializedName("jumlah")
     val jumlah: String,
     @SerializedName("supplier")
-    val supplier: Supplier?,
+    val supplier: SupplierData?,
     @SerializedName("created_at")
     val created_at: Timestamp
 )

@@ -40,6 +40,7 @@
                         android:orientation="horizontal">
                         <!-- Search Input -->
                         <EditText
+                            android:id="@+id/searchInput"
                             android:layout_width="210dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"

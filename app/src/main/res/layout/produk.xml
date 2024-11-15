@@ -165,7 +165,7 @@
 
                 <!-- Seller Profile Image -->
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/seller_image"
+                    android:id="@+id/supplierImage"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:scaleType="centerCrop"

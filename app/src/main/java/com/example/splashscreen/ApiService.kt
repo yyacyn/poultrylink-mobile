@@ -103,7 +103,7 @@ interface ApiService {
     @GET("getprofile")
     fun getProfile(@Header("Authorization") token: String): Call<BuyerResponse>
 
-    @GET("produkall")
+    @GET("getallproducts")
     fun getProducts(@Header("Authorization") token: String): Call<ProductResponse>
 
     @GET("ulasanall")
