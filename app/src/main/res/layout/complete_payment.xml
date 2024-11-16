@@ -98,7 +98,8 @@
                 android:id="@+id/textViewConfirmation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="You will receive the order \n confirmation email shortly"
+                android:textAlignment="center"
+                android:text="Your order will be confirmed by the seller shortly by the seller"
                 android:textSize="18sp"
                 android:textColor="#000000" />
 
@@ -120,6 +121,7 @@
 
             <!-- Button Continue -->
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/continueBtn"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="5dp"

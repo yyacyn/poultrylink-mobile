@@ -154,6 +154,7 @@ class SearchProdukActivity : AppCompatActivity() {
                     putExtra("productPrice", product.harga.toLong())
                     putExtra("productDesc", product.deskripsi)
                     putExtra("supplierId", product.supplier_id)
+                    putExtra("productQty", product.jumlah)
                     product.supplier?.buyer?.let { it1 -> putExtra("supplierImage", it1.id) }
                     putExtra("supplierKota", product.supplier?.kota)
                     putExtra("supplierNegara", product.supplier?.negara)

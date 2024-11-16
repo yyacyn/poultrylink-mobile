@@ -11,8 +11,11 @@ import com.example.splashscreen.InsertUsers
 import com.example.splashscreen.InsertBuyer
 import com.example.splashscreen.InsertCart
 import com.example.splashscreen.InsertCartData
+import com.example.splashscreen.InsertOrder
 import com.example.splashscreen.InsertUser
 import com.example.splashscreen.LoginResponse
+import com.example.splashscreen.OrderDetailResponse
+import com.example.splashscreen.OrderResponse
 import com.example.splashscreen.ProductResponse
 import com.example.splashscreen.Products
 import com.example.splashscreen.RegisterResponse
@@ -125,10 +128,7 @@ interface ApiService {
     fun getReviewsByProductId(@Header("Authorization") token: String, @Query("product_id") productId: Long): Call<ReviewResponse>
 
     @POST("updateprofile")
-    suspend fun updateProfile(
-        @Header("Authorization") token: String,
-        @Body request: UpdateProfileRequest,
-    ): Response<Any>
+    suspend fun updateProfile(@Header("Authorization") token: String, @Body request: UpdateProfileRequest, ): Response<Any>
 
     @GET("getSupplier")
     fun getSupplier(@Header("Authorization") token: String): Call<SupplierResponse>
@@ -147,5 +147,11 @@ interface ApiService {
 
     @POST("updatecart")
     fun updateCart(@Header("Authorization") token: String, @Body request: UpdateCartRequest): Call<CartResponse>
+
+    @POST("order")
+    fun createOrder(@Header("Authorization") token: String, @Body request: InsertOrder): Call<OrderResponse>
+
+    @GET("orderdetailsall")
+    fun getOrderDetail(@Header("Authorization") token: String): Call<OrderDetailResponse>
 }
 

@@ -79,6 +79,7 @@ class ProdukActivity : AppCompatActivity() {
         val location = intent.getStringExtra("location")
         val supplierImageUrl = intent.getLongExtra("supplierImage", 0)
         val supplierRating = intent.getStringExtra("supplierRating")
+        val productQty = intent.getStringExtra("productQty")
 
         Log.d("product_id", "$product_id")
         Log.d("catproduct", "$productCategory")
@@ -100,6 +101,7 @@ class ProdukActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.product_price).text = "Rp. $value"
         findViewById<TextView>(R.id.product_rating).text = productRating.toString()
         findViewById<TextView>(R.id.product_desc).text = productDesc
+        findViewById<TextView>(R.id.product_stock).text = "Stock: $productQty"
 
         findViewById<CircleImageView>(R.id.supplierImage).setOnClickListener {
             val intent = Intent(this@ProdukActivity, TokoActivity::class.java).apply {

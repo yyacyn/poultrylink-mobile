@@ -98,13 +98,27 @@
                         android:layout_marginEnd="15dp"
                         />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Jl. Kumbang No.14, RT.02/RW.06, Babakan, Bogor, Indonesia"
-                        android:textSize="14sp"
-                        android:textColor="#000"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/address"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="Jl. Kumbang No.14, RT.02/RW.06, Babakan, Bogor, Indonesia"
+                            android:textSize="14sp"
+                            android:textColor="#000"/>
+                        <TextView
+                            android:id="@+id/kodepos"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="172322"
+                            android:textSize="14sp"
+                            android:textColor="#000"/>
+                    </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -233,6 +247,7 @@
                 android:foreground="?attr/selectableItemBackground">
 
                 <LinearLayout
+                    android:id="@+id/paymentContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -240,6 +255,7 @@
                     >
 
                     <ImageView
+                        android:id="@+id/paymentIcon"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:src="@drawable/paymenticon"
@@ -247,6 +263,7 @@
                         />
 
                     <TextView
+                        android:id="@+id/paymentMethod"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center"
@@ -325,7 +342,7 @@
             android:textAlignment="center"
             android:textColor="@color/white"
             android:backgroundTint="#00FFFFFF"
-            android:id="@+id/buttonSignUp"
+            android:id="@+id/buy"
             app:strokeWidth="1dp"
             app:strokeColor="@color/white"
             android:layout_marginEnd="20dp"

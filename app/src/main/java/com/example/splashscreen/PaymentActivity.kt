@@ -1,19 +1,30 @@
 package com.example.splashscreen
 
+import ApiService
+import android.content.Intent
 import android.media.Image
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.google.android.material.button.MaterialButton
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.yourapp.network.RetrofitClient
+import de.hdodenhof.circleimageview.CircleImageView
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.createSupabaseClient
@@ -21,20 +32,16 @@ import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
 import kotlinx.coroutines.launch
 import org.w3c.dom.Text
+import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class PaymentActivity : AppCompatActivity() {
 
     private val shippingFee: Long = 300000
-
-    private val supabase = createSupabaseClient(
-        supabaseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co",
-        supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhic3N5bHV1Y3J3c2JmenNweWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk2NTU4OTEsImV4cCI6MjA0NTIzMTg5MX0.o6fkro2tPKFoA9sxAp1nuseiHRGiDHs_HI4-ZoqOTfQ"
-    ) {
-        install(Auth)
-        install(Postgrest)
-        install(Storage)
-    }
+    private var cartIds = mutableListOf<Long>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,143 +52,182 @@ class PaymentActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        val token = "Bearer ${getStoredToken()}"
 
-        lifecycleScope.launch {
-            val userId = getUserIdByEmail(supabase.auth.retrieveUserForCurrentSession().email ?: return@launch)?.toLong()
-            if (userId != null) {
-                fetchCartItems(userId.toLong())
+        val methodPayment = intent.getStringExtra("method")
+        val imagePayment = intent.getStringExtra("image")
+
+        if (methodPayment != null && imagePayment != null) {
+            findViewById<TextView>(R.id.paymentMethod).text = methodPayment.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase() else it.toString()
+            }
+
+            // Dynamically load the drawable resource by name
+            val imageResourceId = resources.getIdentifier(imagePayment, "drawable", packageName)
+            if (imageResourceId != 0) { // Check if the resource exists
+                findViewById<ImageView>(R.id.paymentIcon).setImageResource(imageResourceId)
+            } else {
+                // Handle the case where the drawable resource is not found
+                findViewById<ImageView>(R.id.paymentIcon).setImageResource(R.drawable.paymenticon)
             }
         }
+
 
         findViewById<ImageButton>(R.id.backbutton).setOnClickListener {
             finish()
         }
+        getUser(token) { userId ->
+            if (userId != null) {
+                Log.d("MainActivity", "Fetched User ID: $userId")
+                fetchCartItems(token, userId)
+            } else {
+                Log.e("MainActivity", "Failed to fetch User ID")
+            }
+        }
+
+        findViewById<LinearLayout>(R.id.paymentContainer).setOnClickListener {
+            val intent = Intent(this, MethodPaymentActivity::class.java)
+            startActivity(intent)
+        }
+
+        getProfile(token)
+
+        setupBuyButton(token)
 
         findViewById<TextView>(R.id.shippingFee).text = "Rp. ${formatWithDots(shippingFee.toString())}"
     }
 
-    // Fetch user ID by email to retrieve the avatar's path
-    private suspend fun getUserIdByEmail(email: String): Int? {
-        val requestBody = mapOf("user_email" to email)
-        val response: Response<Int> = RetrofitClient.instance.getUserIdByEmail(requestBody)
-
-        return if (response.isSuccessful) {
-            Log.d("APIResponse", "User ID retrieved: ${response.body()}")
-            response.body() // Return the user ID directly
-        } else {
-            Log.e("APIError", "Failed to retrieve user ID: ${response.errorBody()?.string()}")
-            null
-        }
+    // Retrieve the token from SharedPreferences
+    private fun getStoredToken(): String? {
+        val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
+        return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
     }
 
-    // Merge cart items by grouping them based on product ID and summing quantities and prices
-    private fun mergeCartItems(cartItems: List<Map<String, Any>>): List<Map<String, Any>> {
-        val mergedItems = mutableListOf<Map<String, Any>>()
+    private fun getUser(token: String, callback: (Long?) -> Unit) {
+        RetrofitClient.instance.getUser(token)
+            .enqueue(object : Callback<Users> {
+                override fun onResponse(call: Call<Users>, response: Response<Users>) {
+                    if (response.isSuccessful) {
+                        val userId = response.body()?.id
+                        Log.d("getUser", "User ID: $userId")
+                        if (userId != null) {
+                            callback(userId.toLong())
+                        } // Return the user ID via callback
+                    } else {
+                        Log.e("FetchCarts", "Error: ${response.code()}")
+                        callback(null) // Return null if there's an error
+                    }
+                }
 
-        // Group items by product ID
-        val groupedItems = cartItems.groupBy { it["product_id"] }
-
-        for ((productId, items) in groupedItems) {
-            var totalBarang = 0
-            var totalHarga = 0L
-            var productName: String? = null
-            var productImage: String? = null
-            var productKategori: String? = null
-
-            // Sum the quantities and prices for each group
-            items.forEach { item ->
-                totalBarang += (item["total_barang"] as? String)?.toIntOrNull() ?: 0
-                totalHarga += (item["total_harga"] as? String)?.toLongOrNull() ?: 0L
-
-                // Extract product details
-                productName = item["product_name"] as? String
-                productImage = item["product_image"] as? String
-                productKategori = item["kategori_name"] as? String
-            }
-
-            // Create a merged item with the accumulated data
-            val mergedItem = mutableMapOf<String, Any>().apply {
-                put("product_id", productId ?: 0L)
-                put("product_name", productName ?: "Unknown Product")
-                put("total_barang", totalBarang.toString())
-                put("total_harga", totalHarga.toString())
-                put("product_image", productImage ?: "")
-                put("kategori_name", productKategori ?: "Unknown Category")
-            }
-
-            // Add the merged item to the result list
-            mergedItems.add(mergedItem)
-        }
-
-        return mergedItems
+                override fun onFailure(call: Call<Users>, t: Throwable) {
+                    Log.e("FetchCarts", "Network Error: ${t.message}")
+                    callback(null) // Return null if there's a failure
+                }
+            })
     }
 
-    // Fetch cart items from the API and process them
-    private suspend fun fetchCartItems(userId: Long) {
-        try {
-            val requestBody = mapOf("user_id_param" to userId)
-            val response = RetrofitClient.instance.getCartItems(requestBody)
+    private fun fetchCartItems(token: String, userId: Long) {
+        RetrofitClient.instance.getAllCarts(token)
+            .enqueue(object : Callback<CartResponse> {
+                override fun onResponse(call: Call<CartResponse>, response: Response<CartResponse>) {
+                    if (response.isSuccessful) {
+                        val carts = response.body()?.data ?: emptyList()
+                        Log.d("carts", "$carts")
+                        val filteredCarts = carts.filter { it.user_id == userId.toString() }
 
-            if (response.isSuccessful && response.body() != null) {
-                val cartItems = response.body()!!
+                        Log.d("filteredCarts", "$filteredCarts")
 
-                // Merge items with the same product_id
-                val mergedCartItems = mergeCartItems(cartItems)
+                        // Merge cart items with the same user_id and produk_id
+                        val mergedCarts = mergeCartItems(filteredCarts)
 
-                // Calculate the total price
-                val totalPrice = calculateTotalPrice(mergedCartItems)
+                        // Display the merged cart items
+                        val totalPrice = calculateTotalPrice(mergedCarts,shippingFee)
+                        displayCartItems(mergedCarts, totalPrice)
 
-                // Display the merged cart items
-                displayCartItems(mergedCartItems, totalPrice)
-            } else {
-                Log.e("CartFetchError", "Error fetching cart items: ${response.message()}")
-            }
-        } catch (e: Exception) {
-            Log.e("CartFetchError", "Exception: ${e.message}")
-        }
+                        Log.d("MergedCarts", "$mergedCarts")
+                    } else {
+                        Log.e("FetchCarts", "Error: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<CartResponse>, t: Throwable) {
+                    Log.e("FetchCarts", "Network Error: ${t.message}")
+                }
+            })
     }
 
-    // Update the calculateTotalPrice function to include the shipping fee
-    private fun calculateTotalPrice(cartItems: List<Map<String, Any>>): Long {
-        var subTotal: Long = 0
+    private fun mergeCartItems(cartItems: List<CartData>): List<CartData> {
+        val mergedItemsMap = mutableMapOf<String, CartData>()
+
         for (cartItem in cartItems) {
-            subTotal += (cartItem["total_harga"] as? String)?.toLongOrNull() ?: 0L
+            val key = "${cartItem.user_id}-${cartItem.produk_id}"
+
+            if (mergedItemsMap.containsKey(key)) {
+                val existingItem = mergedItemsMap[key]!!
+                val mergedTotalBarang = existingItem.total_barang.toInt() + cartItem.total_barang.toInt()
+                val mergedTotalHarga = existingItem.total_harga.toLong() + cartItem.total_harga.toLong()
+
+                // Update the existing item with new totals
+                mergedItemsMap[key] = existingItem.copy(
+                    total_barang = mergedTotalBarang.toString(),
+                    total_harga = mergedTotalHarga.toString()
+                )
+            } else {
+                // Add the new item to the map
+                mergedItemsMap[key] = cartItem
+            }
         }
-        findViewById<TextView>(R.id.subTotal).text = "Rp. ${formatWithDots(subTotal.toString())}"
-        return subTotal + shippingFee
+
+        return mergedItemsMap.values.toList()
     }
 
-    // Update the displayCartItems function to show the total price with shipping fee
-    private fun displayCartItems(cartItems: List<Map<String, Any>>, initialTotalPrice: Long) {
+    private fun calculateTotalPrice(cartItems: List<CartData>, shippingFee: Long = 3000): Long {
+        var subTotal: Long = 0
+
+        // Calculate subtotal from the cart items
+        for (cartItem in cartItems) {
+            subTotal += (cartItem.total_harga as? String)?.toLongOrNull() ?: 0L
+        }
+
+        // Format and display the subtotal in the TextView
+        findViewById<TextView>(R.id.subTotal).text = "Rp. ${formatWithDots(subTotal.toString())}"
+
+        // Add the shipping fee to the total
+        val totalPrice = subTotal + shippingFee
+        return totalPrice
+    }
+
+    private fun displayCartItems(cartItems: List<CartData>, initialTotalPrice: Long) {
         val cartContainer = findViewById<LinearLayout>(R.id.cart_container)
         cartContainer.removeAllViews()
         var subTotal = initialTotalPrice
+        cartIds.clear() // Clear previous IDs
 
         for (cartItem in cartItems) {
             val cartItemView = layoutInflater.inflate(R.layout.payment_products, cartContainer, false)
 
             // Extract product details
-            val productName = cartItem["product_name"] as? String ?: "Unknown Product"
-            val productPrice = cartItem["total_harga"] as? String ?: "0"
-            val productImage = cartItem["product_image"] as? String ?: ""
-            val productKategori = cartItem["kategori_name"] as? String ?: "Unknown Category"
-            val totalBarang = cartItem["total_barang"] as? String ?: "1"
-            val productId = (cartItem["product_id"] as? Number)?.toLong() ?: 0L
+            val productName = cartItem.barang.nama_produk
+            val productImage = cartItem.barang.image
+            val productKategori = cartItem.barang.kategori_id
+            val productId = cartItem.produk_id
+            val totalBarang = cartItem.total_barang.toInt()
+            val productPrice = cartItem.total_harga.toLong()
+            val suppliersName = cartItem.barang.supplier?.nama_toko
+            val userId = cartItem.user_id
+            val cartId = cartItem.id
 
-            // Parse price and quantity
-            var itemQuantity = totalBarang.toIntOrNull() ?: 1
-            val itemPrice = productPrice.toLongOrNull() ?: 0L
+            // Add the current cart ID to the list
+            cartIds.add(cartId)
 
             // Set UI data for product name, category, and price
             cartItemView.findViewById<TextView>(R.id.product_name).text = productName
             val quantityTextView = cartItemView.findViewById<TextView>(R.id.product_quantity)
-            quantityTextView.text = "Quantity: $itemQuantity"
-
-
+            quantityTextView.text = "Quantity: $totalBarang"
 
             // Display the initial calculated price for the item
             val produkPriceTextView = cartItemView.findViewById<TextView>(R.id.product_price)
-            produkPriceTextView.text = "Rp. ${formatWithDots((itemPrice).toString())}"
+            produkPriceTextView.text = "Rp. ${formatWithDots((productPrice).toString())}"
 
             // Load product image if available
             val productImageView = cartItemView.findViewById<ImageView>(R.id.product_image)
@@ -198,6 +244,69 @@ class PaymentActivity : AppCompatActivity() {
         updateTotalPrice(totalPrice)
     }
 
+    private fun addOrder(token: String, cartId: List<Long>, metodePembayaran: String) {
+        val gson = GsonBuilder().setLenient().create() // Create a lenient Gson instance
+
+        // Create a custom Retrofit instance for lenient parsing
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://poultrylink.ambatuwin.xyz/api/") // Replace with your API's base URL
+            .addConverterFactory(GsonConverterFactory.create(gson)) // Use lenient Gson
+            .build()
+
+        val apiService = retrofit.create(ApiService::class.java) // Define your Retrofit interface
+
+        val orderRequest = InsertOrder(
+            cartId,
+            metodePembayaran
+        )
+
+        val request = apiService.createOrder(token, orderRequest) // Replace with your API call
+        Log.d("InsertOrderRequest", Gson().toJson(orderRequest))
+
+        request.enqueue(object : Callback<OrderResponse> {
+            override fun onResponse(call: Call<OrderResponse>, response: Response<OrderResponse>) {
+                if (response.isSuccessful) {
+                    val orderResponse = response.body()
+                    if (orderResponse != null) {
+                        Toast.makeText(this@PaymentActivity, "Order created successfully!", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this@PaymentActivity, CompletePaymentActivity::class.java).apply {
+                            putExtra("orderId", orderResponse.order.id)}
+                        startActivity(intent)
+                        Log.d("order", "Order added successfully: $orderResponse")
+
+                    } else {
+                        Log.e("order", "Null response body")
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("order", "Error response: $errorBody")
+                    Toast.makeText(this@PaymentActivity, "Failed to create an order: ${response.message()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<OrderResponse>, t: Throwable) {
+                Log.e("order", "Failed to add order: ${t.message}")
+            }
+        })
+    }
+
+    private fun setupBuyButton(token: String) {
+        val buyButton = findViewById<MaterialButton>(R.id.buy)
+        val methodPayment = intent.getStringExtra("method")
+        buyButton.setOnClickListener {
+
+            // Call addOrder with the collected cart IDs
+            if (cartIds.isNotEmpty() && methodPayment != null) {
+                addOrder(token, cartIds, methodPayment)
+
+                Log.d("cartIds", "$cartIds")
+            } else {
+                Toast.makeText(this, "Please select the payment method", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
     // Update the total price displayed at the bottom of the cart
     private fun updateTotalPrice(totalPrice: Long) {
         val totalPriceTextView = findViewById<TextView>(R.id.totalPrice)
@@ -206,14 +315,27 @@ class PaymentActivity : AppCompatActivity() {
     }
 
     // Load product image from the URL
-    private fun loadProductImage(filePath: String, imageView: ImageView) {
-        val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/$filePath/1.jpg"
+    private fun loadProductImage(filePath: String, imageView: ImageView, forceRefresh: Boolean = false) {
 
-        Glide.with(this)
-            .load(imageUrl)
-            .placeholder(R.drawable.sekar) // Replace with your placeholder
-            .error(R.drawable.emiya) // Replace with your error image
-            .into(imageView)
+        try {
+            val baseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/$filePath/1.jpg"
+            val imageUrl = if (forceRefresh) {
+                "$baseUrl?t=${System.currentTimeMillis()}"
+            } else {
+                baseUrl
+            }
+
+            Glide.with(this)
+                .load(imageUrl)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .skipMemoryCache(false)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .priority(Priority.HIGH)
+                .error(R.drawable.sekar)
+                .into(imageView)
+        } catch (e: Exception) {
+            Log.e("ImageLoadError", "Failed to load product image: ${e.message}")
+        }
     }
 
     // Format the price with dots (e.g., 1000 => 1.000)
@@ -221,4 +343,28 @@ class PaymentActivity : AppCompatActivity() {
         return price.reversed().chunked(3).joinToString(".").reversed()
     }
 
+    private fun getProfile(token: String?) {
+        RetrofitClient.instance.getProfile(token ?: "")
+            .enqueue(object : Callback<BuyerResponse> {
+                override fun onResponse(call: Call<BuyerResponse>, response: Response<BuyerResponse>) {
+                    if (response.isSuccessful) {
+                        val buyerData = response.body()?.data
+                        val userkota = buyerData?.kota
+                        val usernegara = buyerData?.negara
+                        val useralamat = buyerData?.alamat
+                        val userprovinsi = buyerData?.provinsi
+                        val userkodepos = buyerData?.kodepos
+
+                        findViewById<TextView>(R.id.address).text = "$useralamat, $userkota, $userprovinsi, $usernegara"
+                        findViewById<TextView>(R.id.kodepos).text = userkodepos
+                    } else {
+                        // Handle error cases
+                    }
+                }
+
+                override fun onFailure(call: Call<BuyerResponse>, t: Throwable) {
+                    // Handle network errors
+                }
+            })
+    }
 }

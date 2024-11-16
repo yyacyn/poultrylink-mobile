@@ -382,6 +382,7 @@ class DashboardActivity : AppCompatActivity() {
                     putExtra("productTotalReviews", totalReviews)
                     putExtra("productPrice", product.harga.toLong())
                     putExtra("productDesc", product.deskripsi)
+                    putExtra("productQty", product.jumlah)
                     putExtra("supplierId", product.supplier_id)
                     product.supplier?.buyer?.let { it1 -> putExtra("supplierImage", it1.id) }
                     putExtra("supplierKota", product.supplier?.kota)

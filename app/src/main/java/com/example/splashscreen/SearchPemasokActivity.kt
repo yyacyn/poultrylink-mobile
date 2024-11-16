@@ -176,6 +176,7 @@ class SearchPemasokActivity : AppCompatActivity() {
                     putExtra("productTotalReviews", productReviews.size)
                     putExtra("productPrice", product.harga.toLong())
                     putExtra("productDesc", product.deskripsi)
+                    putExtra("productQty", product.jumlah)
                     putExtra("supplierId", product.supplier_id)
                     putExtra("supplierKota", product.supplier?.kota)
                     putExtra("supplierNegara", product.supplier?.negara)

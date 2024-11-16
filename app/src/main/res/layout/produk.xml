@@ -90,7 +90,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Rp 149.000"
                     android:textSize="25dp"
                     android:textStyle="bold"
                     android:textColor="@android:color/black"
@@ -120,7 +119,6 @@
                         android:id="@+id/product_rating"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="4.9"
                         android:textSize="25dp"
                         android:textStyle="bold"
                         android:textColor="@android:color/black" />
@@ -146,7 +144,13 @@
                     app:layout_constraintTop_toBottomOf="@+id/price_rating_container"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:text="Jual Ayam Cemani Premium Asli - Ayam Hitam Langka Berkualitas Terbaik"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginTop="8dp" />
+                <TextView
+                    android:id="@+id/product_stock"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:textColor="@android:color/black"
                     android:layout_marginTop="8dp" />
@@ -186,7 +190,6 @@
                         android:id="@+id/seller_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Poultrylink Store"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="@android:color/black" />
@@ -196,7 +199,6 @@
                         android:id="@+id/seller_location"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Bogor, Indonesia"
                         android:textSize="14sp"
                         android:textColor="@android:color/darker_gray" />
 
@@ -251,7 +253,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
-                    android:text="Lorem ipsum odor amet, consectetuer adipiscing elit. Elit mollis sit tristique tempor metus tincidunt mollis. Ad erat dictum imperdiet varius bibendum velit quisque tempus. Eu molestie sed tincidunt, hac morbi malesuada? Sit class ligula auctor hendrerit nascetur semper nec aliquam potenti. Tellus vitae gravida diam augue, penatibus enim neque. Faucibus ullamcorper tincidunt torquent arcu odio et. Habitant nam rutrum facilisi pellentesque dignissim risus. Varius conubia consectetur pharetra sem penatibus fringilla.\n\nMagna varius primis eget fames bibendum litora integer. Magnis efficitur nibh; sem nullam dictumst scelerisque. Massa fringilla sollicitudin class; sodales id sociosqu convallis inceptos sit. Fringilla inceptos et curae vestibulum enim vivamus dictum euismod. Mi suscipit tincidunt porta nullam fringilla sem a nostra. Blandit blandit interdum mollis enim porttitor. Vestibulum sociosqu natoque habitasse, malesuada bibendum luctus."
                     />
             </LinearLayout>
 

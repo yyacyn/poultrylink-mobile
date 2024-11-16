@@ -17,6 +17,7 @@
         android:layout_marginLeft="25dp">
 
         <ImageButton
+            android:id="@+id/backbtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/arrowbackblack"
@@ -36,6 +37,7 @@
             />
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/transfer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -73,6 +75,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cash"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -110,6 +113,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/indomaretPayment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -146,16 +150,16 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginTop="5dp"
-            android:text="Choose Payment"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:backgroundTint="@color/orange"
-            app:cornerRadius="10dp"
-            />
+<!--        <com.google.android.material.button.MaterialButton-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="60dp"-->
+<!--            android:layout_marginTop="5dp"-->
+<!--            android:text="Choose Payment"-->
+<!--            android:textAlignment="center"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:backgroundTint="@color/orange"-->
+<!--            app:cornerRadius="10dp"-->
+<!--            />-->
 
 
 

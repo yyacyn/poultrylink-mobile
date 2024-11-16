@@ -1,10 +1,12 @@
 package com.example.splashscreen
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.media.Image
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
+import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -21,6 +23,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.material.button.MaterialButton
 import com.yourapp.network.RetrofitClient
+import de.hdodenhof.circleimageview.CircleImageView
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.createSupabaseClient
@@ -68,7 +71,7 @@ class CartActivity : AppCompatActivity() {
 
 
         onprocess.setOnClickListener {
-            val intent = Intent(this, CartCompleteActivity::class.java)
+            val intent = Intent(this, CartOnprogressActivity::class.java)
             startActivity(intent)
         }
 
@@ -86,26 +89,6 @@ class CartActivity : AppCompatActivity() {
             }
         }
     }
-
-//    // Override the onBackPressed method to show an alert dialog before exiting
-//    override fun onBackPressed() {
-//        // Create an AlertDialog
-//        val alertDialog = AlertDialog.Builder(this)
-//            .setTitle("Confirm Exit")
-//            .setMessage("Any changes about the cart's quantity will be discarded, are you sure you want to exit?")
-//            .setCancelable(false) // Set to false so user must choose either Yes or No
-//            .setPositiveButton("Yes") { dialog, which ->
-//                // Proceed with finishing the activity if user confirms
-//                super.onBackPressed()
-//            }
-//            .setNegativeButton("No") { dialog, which ->
-//                // Dismiss the dialog if user cancels
-//                dialog.dismiss()
-//            }
-//
-//        // Show the alert dialog
-//        alertDialog.show()
-//    }
 
     // Retrieve the token from SharedPreferences
     private fun getStoredToken(): String? {
@@ -162,8 +145,6 @@ class CartActivity : AppCompatActivity() {
             })
     }
 
-
-
     private fun fetchCartItems(token: String, userId: Long) {
         RetrofitClient.instance.getAllCarts(token)
             .enqueue(object : Callback<CartResponse> {
@@ -204,9 +185,26 @@ class CartActivity : AppCompatActivity() {
         return totalPrice
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        // Retrieve the token and update profile
+        val token = "Bearer ${getStoredToken().toString()}"
+        getUser(token) { userId ->
+            if (userId != null) {
+                Log.d("MainActivity", "Fetched User ID: $userId")
+                fetchCartItems(token, userId)
+            } else {
+                Log.e("MainActivity", "Failed to fetch User ID")
+            }
+        }
+    }
+
+
     private fun displayCartItems(cartItems: List<CartData>, initialTotalPrice: Long) {
         this.cartItems = cartItems  // Store the cart items for later use
         val cartContainer = findViewById<LinearLayout>(R.id.cart_container)
+        val checkOut = findViewById<MaterialButton>(R.id.buttonPurchase)
         val noCartTextView = TextView(this).apply {
             text = "Your cart is empty. Add items to get started!"
             textSize = 16f
@@ -221,6 +219,16 @@ class CartActivity : AppCompatActivity() {
         }
 
         cartContainer.removeAllViews()
+
+        if (cartItems.isEmpty()) {
+            // Disable the checkout button and change its color when cart is empty
+            checkOut.isEnabled = false // Disable button
+            checkOut.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this@CartActivity, R.color.gray))) // Change to a gray color
+        } else {
+            // Enable the checkout button and set a different color when cart is not empty
+            checkOut.isEnabled = true // Enable button
+            checkOut.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this@CartActivity, R.color.orange))) // Change to active color
+        }
 
         // Get the first cart ID
 
@@ -343,18 +351,15 @@ class CartActivity : AppCompatActivity() {
                 }
             }
 
-            val checkOut = findViewById<MaterialButton>(R.id.buttonPurchase)
+            // Set up the checkout button
             checkOut.setOnClickListener {
-//                updateCartItemsForCheckout(token, cartId, currentQuantity)
-                val intent = Intent(this@CartActivity, DashboardActivity::class.java)
+                val intent = Intent(this@CartActivity, PaymentActivity::class.java)
                 startActivity(intent)
             }
-
 
             // Add the view to the container
             cartContainer.addView(cartItemView)
         }
-
         updateTotalPrice(currentTotalPrice)
 
     }
@@ -370,6 +375,14 @@ class CartActivity : AppCompatActivity() {
                     if (response.isSuccessful) {
                         Toast.makeText(this@CartActivity, "Cart deleted successfully", Toast.LENGTH_SHORT).show()
                         Log.d("DeleteCart", "Item deleted successfully")
+                        getUser(token) { userId ->
+                            if (userId != null) {
+                                Log.d("MainActivity", "Fetched User ID: $userId")
+                                fetchCartItems(token, userId)
+                            } else {
+                                Log.e("MainActivity", "Failed to fetch User ID")
+                            }
+                        }
                     } else {
                         Log.e("DeleteCart", "Error: ${response.code()}")
                     }
@@ -380,9 +393,6 @@ class CartActivity : AppCompatActivity() {
                 }
             })
     }
-
-
-
 
     private fun updateCartItemQuantity(productId: Long, quantity: Int) {
     }
