@@ -211,7 +211,7 @@ class SeedCategoryActivity : AppCompatActivity() {
             gridLayout.addView(cardView)
         }
     }
-    
+
     private fun getReviews(token: String, products: List<ProductData>, gridLayout: GridLayout) {
         RetrofitClient.instance.getReviews(token)
             .enqueue(object : Callback<ReviewResponse> {

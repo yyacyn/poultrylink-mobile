@@ -3,10 +3,14 @@ import com.example.splashscreen.BuyerData
 import com.example.splashscreen.BuyerDetails
 import com.example.splashscreen.BuyerProfileRequest
 import com.example.splashscreen.BuyerResponse
+import com.example.splashscreen.CartResponse
 import com.example.splashscreen.CartUpdateRequest
+import com.example.splashscreen.DeleteCartRequest
+import com.example.splashscreen.DeleteCartResponse
 import com.example.splashscreen.InsertUsers
 import com.example.splashscreen.InsertBuyer
 import com.example.splashscreen.InsertCart
+import com.example.splashscreen.InsertCartData
 import com.example.splashscreen.InsertUser
 import com.example.splashscreen.LoginResponse
 import com.example.splashscreen.ProductResponse
@@ -14,13 +18,17 @@ import com.example.splashscreen.Products
 import com.example.splashscreen.RegisterResponse
 import com.example.splashscreen.ReviewResponse
 import com.example.splashscreen.SupplierResponse
+import com.example.splashscreen.UpdateCartRequest
 import com.example.splashscreen.UpdateProfileRequest
 import com.example.splashscreen.UpdateProfileResponse
+import com.example.splashscreen.User
+import com.example.splashscreen.Users
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
@@ -90,9 +98,7 @@ interface ApiService {
         @Body buyerProfileRequest: BuyerProfileRequest): Call<BuyerResponse>
 
     @POST("postprofile")
-    fun createBuyerProfile(
-        @Header("Authorization") token: String,
-        @Body buyerProfileRequest: BuyerProfileRequest): Call<BuyerResponse>
+    fun createBuyerProfile(@Header("Authorization") token: String, @Body buyerProfileRequest: BuyerProfileRequest): Call<BuyerResponse>
 
     @POST("login")
     suspend fun loginUser(@Body credentials: Map<String, String>): Response<LoginResponse>
@@ -127,5 +133,19 @@ interface ApiService {
     @GET("getSupplier")
     fun getSupplier(@Header("Authorization") token: String): Call<SupplierResponse>
 
+    @GET("getallcarts")
+    fun getAllCarts(@Header("Authorization") token: String): Call<CartResponse>
+
+    @GET("me")
+    fun getUser(@Header("Authorization") token: String): Call<Users>
+
+    @POST("addtocart")
+    fun addToCart(@Header("Authorization") token: String, @Body insertCartRequest: InsertCartData): Call<CartResponse>
+
+    @POST("deletecartpost")
+    fun deleteCart(@Header("Authorization") token: String, @Body request: DeleteCartRequest): Call<DeleteCartResponse>
+
+    @POST("updatecart")
+    fun updateCart(@Header("Authorization") token: String, @Body request: UpdateCartRequest): Call<CartResponse>
 }
 

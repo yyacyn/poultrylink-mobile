@@ -99,42 +99,6 @@ class DashboardActivity : AppCompatActivity() {
         getProducts(storedtoken, gridLayout)
     }
 
-    override fun onStart() {
-        super.onStart()
-        EventBus.getDefault().register(this)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        EventBus.getDefault().unregister(this)
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onProfilePicUpdate(event: Event.ProfilePicUpdateEvent) {
-        // Get reference to the profile image view
-        val userPfp = findViewById<CircleImageView>(R.id.user_pfp)
-
-        // Get the token and make API call to refresh profile
-        val token = "Bearer ${getStoredToken().toString()}"
-
-        // Refresh profile data including the image
-        RetrofitClient.instance.getProfile(token)
-            .enqueue(object : Callback<BuyerResponse> {
-                override fun onResponse(call: Call<BuyerResponse>, response: Response<BuyerResponse>) {
-                    if (response.isSuccessful) {
-                        val buyerData = response.body()?.data
-                        val userId = buyerData?.id ?: 0
-                        // Force refresh the profile picture
-//                        updateImageFromSupabase("$userId/1.jpg", userPfp, forceRefresh = true)
-                    }
-                }
-
-                override fun onFailure(call: Call<BuyerResponse>, t: Throwable) {
-                    Log.e("ProfileUpdate", "Failed to update profile: ${t.message}")
-                }
-            })
-    }
-
     override fun onResume() {
         super.onResume()
 

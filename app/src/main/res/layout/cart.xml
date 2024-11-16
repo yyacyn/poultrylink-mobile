@@ -90,25 +90,25 @@
 
 
                 <!-- Toko 1 -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_margin="8dp">
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:src="@drawable/toko"
-                        />
+<!--                <LinearLayout-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:layout_margin="8dp">-->
+<!--                    <ImageView-->
+<!--                        android:layout_width="30dp"-->
+<!--                        android:layout_height="30dp"-->
+<!--                        android:src="@drawable/toko"-->
+<!--                        />-->
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="10dp"
-                        android:gravity="center_vertical"
-                        android:text="PoultryLink"
-                        />
-                </LinearLayout>
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:layout_marginStart="10dp"-->
+<!--                        android:gravity="center_vertical"-->
+<!--                        android:text="PoultryLink"-->
+<!--                        />-->
+<!--                </LinearLayout>-->
                 <LinearLayout
                     android:id="@+id/cart_container"
                     android:layout_width="match_parent"
@@ -131,34 +131,31 @@
         app:layout_constraintEnd_toEndOf="parent">
 
     <!-- Checkbox -->
-    <CheckBox
-        android:id="@+id/checkAll"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text="All"
-        android:textColor="@color/white"
-        android:buttonTint="@color/white"
-        android:padding="10dp"
-        />
+<!--    <CheckBox-->
+<!--        android:id="@+id/checkAll"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="20dp"-->
+<!--        android:text="All"-->
+<!--        android:textColor="@color/white"-->
+<!--        android:buttonTint="@color/white"-->
+<!--        android:padding="10dp"-->
+<!--        />-->
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1" />
 
      <LinearLayout
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:orientation="vertical">
+         android:orientation="vertical"
+         android:layout_marginLeft="20dp">
 
          <!-- Total Price -->
          <TextView
              android:id="@+id/total"
-             android:layout_width="match_parent"
+             android:layout_width="wrap_content"
              android:layout_height="wrap_content"
              android:gravity="end"
-             android:text="total"
+             android:text="Total:"
              android:textColor="@color/white"
              android:textSize="16sp"
              android:layout_marginEnd="15dp"/>
@@ -170,12 +167,18 @@
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
              android:gravity="end"
-             android:text="Rp. 149.000"
+             android:text="0"
+             android:textStyle="bold"
              android:textColor="@color/white"
              android:textSize="16sp"
              android:paddingEnd="15dp" />
 
      </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
 
     <!-- Buy Button -->

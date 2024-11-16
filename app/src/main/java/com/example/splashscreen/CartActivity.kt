@@ -1,16 +1,24 @@
 package com.example.splashscreen
 
 import android.content.Intent
+import android.media.Image
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.material.button.MaterialButton
 import com.yourapp.network.RetrofitClient
 import io.github.jan.supabase.auth.Auth
@@ -18,26 +26,19 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 import java.text.NumberFormat
 import java.util.Locale
 
 class CartActivity : AppCompatActivity() {
 
-    private val supabase = createSupabaseClient(
-        supabaseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co",
-        supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhic3N5bHV1Y3J3c2JmenNweWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk2NTU4OTEsImV4cCI6MjA0NTIzMTg5MX0.o6fkro2tPKFoA9sxAp1nuseiHRGiDHs_HI4-ZoqOTfQ"
-    ) {
-        install(Auth)
-        install(Postgrest)
-        install(Storage)
-    }
-
     private var totalPrice: Long = 0
-    private var cartItems: List<Map<String, Any>> = emptyList()
-
-
+    private var cartItems: List<CartData> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,14 +48,10 @@ class CartActivity : AppCompatActivity() {
         val onprocess = findViewById<TextView>(R.id.onprocess)
         val complete = findViewById<TextView>(R.id.complete)
 
+        val token = "Bearer ${getStoredToken()}"
+
         findViewById<ImageButton>(R.id.backbutton).setOnClickListener {
-            finish()
-        }
-        lifecycleScope.launch {
-            val userId = getUserIdByEmail(supabase.auth.retrieveUserForCurrentSession().email ?: return@launch)?.toLong()
-            if (userId != null) {
-                fetchCartItems(userId.toLong())
-            }
+            onBackPressed()
         }
 
 
@@ -69,16 +66,9 @@ class CartActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        checkOut.setOnClickListener {
-            lifecycleScope.launch {
-                updateCartItemsForCheckout() // Update items before proceeding
-                val intent = Intent(this@CartActivity, PaymentActivity::class.java)
-                startActivity(intent)
-            }
-        }
 
         onprocess.setOnClickListener {
-            val intent = Intent(this, CartOnprogressActivity::class.java)
+            val intent = Intent(this, CartCompleteActivity::class.java)
             startActivity(intent)
         }
 
@@ -86,121 +76,178 @@ class CartActivity : AppCompatActivity() {
             val intent = Intent(this, CartCompleteActivity::class.java)
             startActivity(intent)
         }
-    }
 
-    // get user's id by email to get their avatar's path
-    private suspend fun getUserIdByEmail(email: String): Int? {
-        val requestBody = mapOf("user_email" to email)
-        val response: Response<Int> = RetrofitClient.instance.getUserIdByEmail(requestBody)
-
-        if (response.isSuccessful) {
-            Log.d("APIResponse", "User ID retrieved: ${response.body()}")
-            return response.body() // Return the user ID directly
-        } else {
-            Log.e("APIError", "Failed to retrieve user ID: ${response.errorBody()?.string()}")
-            return null
-        }
-    }
-
-
-    private fun mergeCartItems(cartItems: List<Map<String, Any>>): List<Map<String, Any>> {
-        val mergedItems = mutableListOf<Map<String, Any>>()
-
-        // Group cart items by product_id
-        val groupedItems = cartItems.groupBy { it["product_id"] }
-
-        for ((productId, items) in groupedItems) {
-            var totalBarang = 0
-            var totalHarga = 0L
-            var productName: String? = null
-            var productImage: String? = null
-            var productKategori: String? = null
-
-            // Iterate through each group and sum the quantities and prices
-            for (item in items) {
-                totalBarang += (item["total_barang"] as? String)?.toIntOrNull() ?: 0
-                totalHarga += (item["total_harga"] as? String)?.toLongOrNull() ?: 0L
-
-                // Get product details (assume same for all items in the group)
-                productName = item["product_name"] as? String
-                productImage = item["product_image"] as? String
-                productKategori = item["kategori_name"] as? String
-            }
-
-            // Create a merged item for this product
-            val mergedItem = mutableMapOf<String, Any>().apply {
-                put("product_id", productId ?: 0L)
-                put("product_name", productName ?: "Unknown Product")
-                put("total_barang", totalBarang.toString())
-                put("total_harga", totalHarga.toString())
-                put("product_image", productImage ?: "")
-                put("kategori_name", productKategori ?: "Unknown Category")
-            }
-
-            // Add the merged item to the result list
-            mergedItems.add(mergedItem)
-        }
-
-        return mergedItems
-    }
-
-    private suspend fun fetchCartItems(userId: Long) {
-        try {
-            // Wrap the userId in a Map as expected by the API
-            val requestBody = mapOf("user_id_param" to userId)
-
-            // Make the API call to get cart items
-            val response = RetrofitClient.instance.getCartItems(requestBody)
-
-            if (response.isSuccessful && response.body() != null) {
-                val cartItems = response.body()!!
-
-                // Merge items with the same product_id
-                val mergedCartItems = mergeCartItems(cartItems)
-
-                // Calculate the total price
-                val totalPrice = calculateTotalPrice(mergedCartItems)
-
-                // Display the merged cart items
-                displayCartItems(mergedCartItems, totalPrice)
+        getUser(token) { userId ->
+            if (userId != null) {
+                Log.d("MainActivity", "Fetched User ID: $userId")
+                fetchCartItems(token, userId)
             } else {
-                Log.e("CartFetchError", "Error fetching cart items: ${response.message()}")
+                Log.e("MainActivity", "Failed to fetch User ID")
             }
-        } catch (e: Exception) {
-            Log.e("CartFetchError", "Exception: ${e.message}")
         }
     }
+
+//    // Override the onBackPressed method to show an alert dialog before exiting
+//    override fun onBackPressed() {
+//        // Create an AlertDialog
+//        val alertDialog = AlertDialog.Builder(this)
+//            .setTitle("Confirm Exit")
+//            .setMessage("Any changes about the cart's quantity will be discarded, are you sure you want to exit?")
+//            .setCancelable(false) // Set to false so user must choose either Yes or No
+//            .setPositiveButton("Yes") { dialog, which ->
+//                // Proceed with finishing the activity if user confirms
+//                super.onBackPressed()
+//            }
+//            .setNegativeButton("No") { dialog, which ->
+//                // Dismiss the dialog if user cancels
+//                dialog.dismiss()
+//            }
+//
+//        // Show the alert dialog
+//        alertDialog.show()
+//    }
+
+    // Retrieve the token from SharedPreferences
+    private fun getStoredToken(): String? {
+        val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
+        return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
+    }
+
+
+    private fun mergeCartItems(cartItems: List<CartData>): List<CartData> {
+        val mergedItemsMap = mutableMapOf<String, CartData>()
+
+        for (cartItem in cartItems) {
+            val key = "${cartItem.user_id}-${cartItem.produk_id}"
+
+            if (mergedItemsMap.containsKey(key)) {
+                val existingItem = mergedItemsMap[key]!!
+                val mergedTotalBarang = existingItem.total_barang.toInt() + cartItem.total_barang.toInt()
+                val mergedTotalHarga = existingItem.total_harga.toLong() + cartItem.total_harga.toLong()
+
+                // Update the existing item with new totals
+                mergedItemsMap[key] = existingItem.copy(
+                    total_barang = mergedTotalBarang.toString(),
+                    total_harga = mergedTotalHarga.toString()
+                )
+            } else {
+                // Add the new item to the map
+                mergedItemsMap[key] = cartItem
+            }
+        }
+
+        return mergedItemsMap.values.toList()
+    }
+
+    private fun getUser(token: String, callback: (Long?) -> Unit) {
+        RetrofitClient.instance.getUser(token)
+            .enqueue(object : Callback<Users> {
+                override fun onResponse(call: Call<Users>, response: Response<Users>) {
+                    if (response.isSuccessful) {
+                        val userId = response.body()?.id
+                        Log.d("getUser", "User ID: $userId")
+                        if (userId != null) {
+                            callback(userId.toLong())
+                        } // Return the user ID via callback
+                    } else {
+                        Log.e("FetchCarts", "Error: ${response.code()}")
+                        callback(null) // Return null if there's an error
+                    }
+                }
+
+                override fun onFailure(call: Call<Users>, t: Throwable) {
+                    Log.e("FetchCarts", "Network Error: ${t.message}")
+                    callback(null) // Return null if there's a failure
+                }
+            })
+    }
+
+
+
+    private fun fetchCartItems(token: String, userId: Long) {
+        RetrofitClient.instance.getAllCarts(token)
+            .enqueue(object : Callback<CartResponse> {
+                override fun onResponse(call: Call<CartResponse>, response: Response<CartResponse>) {
+                    if (response.isSuccessful) {
+                        val carts = response.body()?.data ?: emptyList()
+                        Log.d("carts", "$carts")
+                        val filteredCarts = carts.filter { it.user_id == userId.toString() }
+
+                        Log.d("filteredCarts", "$filteredCarts")
+
+                        // Merge cart items with the same user_id and produk_id
+                        val mergedCarts = mergeCartItems(filteredCarts)
+
+                        // Display the merged cart items
+                        val totalPrice = calculateTotalPrice(mergedCarts)
+                        displayCartItems(mergedCarts, totalPrice)
+
+                        Log.d("MergedCarts", "$mergedCarts")
+                    } else {
+                        Log.e("FetchCarts", "Error: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<CartResponse>, t: Throwable) {
+                    Log.e("FetchCarts", "Network Error: ${t.message}")
+                }
+            })
+    }
+
 
     // Calculate the total price by summing the total_harga of all cart items
-    private fun calculateTotalPrice(cartItems: List<Map<String, Any>>): Long {
+    private fun calculateTotalPrice(cartItems: List<CartData>): Long {
         var totalPrice: Long = 0
         for (cartItem in cartItems) {
-            totalPrice += (cartItem["total_harga"] as? String)?.toLongOrNull() ?: 0L
+            totalPrice += (cartItem.total_harga as? String)?.toLongOrNull() ?: 0L
         }
         return totalPrice
     }
 
-    private fun displayCartItems(cartItems: List<Map<String, Any>>, initialTotalPrice: Long) {
+    private fun displayCartItems(cartItems: List<CartData>, initialTotalPrice: Long) {
         this.cartItems = cartItems  // Store the cart items for later use
         val cartContainer = findViewById<LinearLayout>(R.id.cart_container)
+        val noCartTextView = TextView(this).apply {
+            text = "Your cart is empty. Add items to get started!"
+            textSize = 16f
+            setTextColor(ContextCompat.getColor(this@CartActivity, R.color.gray))
+            gravity = Gravity.CENTER
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                setMargins(16, 16, 16, 16)
+            }
+        }
+
         cartContainer.removeAllViews()
-        var currentTotalPrice = initialTotalPrice
+
+        // Get the first cart ID
 
         Log.d("CartDisplay", "Displaying ${cartItems.size} items")
+
+        // If the cart is empty
+        if (cartItems.isEmpty()) {
+            cartContainer.addView(noCartTextView)
+            return
+        }
+
+        var currentTotalPrice = initialTotalPrice
 
         for (cartItem in cartItems) {
             val cartItemView = layoutInflater.inflate(R.layout.cartcart, cartContainer, false)
 
-            // Extract data with better null handling
-            val productId = (cartItem["product_id"] as? Number)?.toLong() ?: run {
-                Log.e("CartError", "Invalid product_id for item: $cartItem")
-            }
+            val productName = cartItem.barang.nama_produk
+            val productImage = cartItem.barang.image
+            val productKategori = cartItem.barang.kategori_id
+            val productId = cartItem.produk_id
+            val totalBarang = cartItem.total_barang.toInt()
+            val productPrice = cartItem.total_harga.toLong()
+            val suppliersName = cartItem.barang.supplier?.nama_toko
+            val userId = cartItem.user_id
+            val cartId = cartItem.id
 
-            val productName = cartItem["product_name"] as? String ?: "Unknown Product"
-            val productPrice = (cartItem["total_harga"] as? String)?.toLongOrNull() ?: 0L
-            val totalBarang = (cartItem["total_barang"] as? String)?.toIntOrNull() ?: 1
-            val productKategori = cartItem["kategori_name"] as? String ?: "Unknown Category"
-            val productImage = cartItem["product_image"] as? String ?: ""
+            Log.d("CartItem", "Id form the merged cart: $cartId")
 
             Log.d("CartItem", "Processing item: $productId, Quantity: $totalBarang, Price: $productPrice")
 
@@ -208,9 +255,9 @@ class CartActivity : AppCompatActivity() {
             val quantityTextView = cartItemView.findViewById<TextView>(R.id.quantity)
             val produkPriceTextView = cartItemView.findViewById<TextView>(R.id.produkPrice)
 
-
             cartItemView.findViewById<TextView>(R.id.produkName).text = productName
             cartItemView.findViewById<TextView>(R.id.kategoriProduk).text = productKategori
+            cartItemView.findViewById<TextView>(R.id.suppliersName).text = suppliersName
 
             var currentQuantity = totalBarang
             val singleItemPrice = if (currentQuantity > 0) productPrice / currentQuantity else 0L
@@ -222,10 +269,48 @@ class CartActivity : AppCompatActivity() {
             if (productImage.isNotEmpty()) {
                 loadProductImage(productImage, productImageView)
             }
-
             // Update UI
             quantityTextView.text = currentQuantity.toString()
             updateItemPrice(produkPriceTextView, singleItemPrice, currentQuantity)
+
+            val token = "Bearer ${getStoredToken()}"
+            val deleteCartButton = cartItemView.findViewById<ImageButton>(R.id.deleteCart)
+
+            deleteCartButton.setOnClickListener {
+                // Create an AlertDialog
+                val alertDialog = AlertDialog.Builder(this)
+                    .setTitle("Confirm Delete")
+                    .setMessage("Are you sure you want to delete this cart?")
+                    .setCancelable(false) // Set to false so user must choose either Yes or No
+                    .setPositiveButton("Yes") { dialog, which ->
+                        // Proceed with finishing the activity if user confirms
+                        deleteCart(token, productId.toInt(), userId.toInt())
+
+                        // Remove the cart item view from the container
+                        cartContainer.removeView(cartItemView)
+
+                        // Update the total price and cart items
+                        currentTotalPrice -= singleItemPrice * currentQuantity
+                        updateTotalPrice(currentTotalPrice)
+
+                        // Remove the item from the cartItems list
+                        val updatedCartItems = this.cartItems.filterNot { it.produk_id == productId }
+                        this.cartItems = updatedCartItems
+
+                        // Show "cart is empty" message if the list is now empty
+                        if (updatedCartItems.isEmpty()) {
+                            cartContainer.addView(noCartTextView)
+                        }
+                    }
+                    .setNegativeButton("No") { dialog, which ->
+                        // Dismiss the dialog if user cancels
+                        dialog.dismiss()
+                    }
+
+                // Show the alert dialog
+                alertDialog.show()
+
+            }
 
             // Handle quantity changes
             cartItemView.findViewById<ImageButton>(R.id.plus).setOnClickListener {
@@ -236,6 +321,8 @@ class CartActivity : AppCompatActivity() {
                 updateItemPrice(produkPriceTextView, singleItemPrice, currentQuantity)
                 currentTotalPrice += singleItemPrice
                 updateTotalPrice(currentTotalPrice)
+
+                updateCartItemsForCheckout(token, cartId, currentQuantity)
 
                 Log.d("CartUpdate", "Increased quantity for product $productId to $currentQuantity")
             }
@@ -250,72 +337,77 @@ class CartActivity : AppCompatActivity() {
                     currentTotalPrice -= singleItemPrice
                     updateTotalPrice(currentTotalPrice)
 
+                    updateCartItemsForCheckout(token, cartId, currentQuantity)
+
                     Log.d("CartUpdate", "Decreased quantity for product $productId to $currentQuantity")
                 }
             }
+
+            val checkOut = findViewById<MaterialButton>(R.id.buttonPurchase)
+            checkOut.setOnClickListener {
+//                updateCartItemsForCheckout(token, cartId, currentQuantity)
+                val intent = Intent(this@CartActivity, DashboardActivity::class.java)
+                startActivity(intent)
+            }
+
 
             // Add the view to the container
             cartContainer.addView(cartItemView)
         }
 
         updateTotalPrice(currentTotalPrice)
+
     }
+
+    private fun deleteCart(token: String, productId: Int, userId: Int) {
+        val request = DeleteCartRequest(productId, userId)
+        RetrofitClient.instance.deleteCart(token, request)
+            .enqueue(object : Callback<DeleteCartResponse> {
+                override fun onResponse(
+                    call: Call<DeleteCartResponse>,
+                    response: Response<DeleteCartResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@CartActivity, "Cart deleted successfully", Toast.LENGTH_SHORT).show()
+                        Log.d("DeleteCart", "Item deleted successfully")
+                    } else {
+                        Log.e("DeleteCart", "Error: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<DeleteCartResponse>, t: Throwable) {
+                    Log.e("DeleteCart", "Network Error: ${t.message}")
+                }
+            })
+    }
+
+
+
 
     private fun updateCartItemQuantity(productId: Long, quantity: Int) {
-        lifecycleScope.launch {
-            try {
-                val request = CartUpdateRequest(
-                    p_cart_id = productId,
-                    p_quantity = quantity
-                )
-
-                Log.d("CartUpdate", "Sending update request: $request")
-
-                val response = RetrofitClient.instance.updateCartItem(request)
-                if (response.isSuccessful) {
-                    Log.d("CartUpdate", "Successfully updated cart item $productId to quantity $quantity")
-                } else {
-                    Log.e("CartUpdate", "Failed to update cart: ${response.errorBody()?.string()}")
-                }
-            } catch (e: Exception) {
-                Log.e("CartUpdate", "Exception updating cart: ${e.message}", e)
-            }
-        }
     }
 
-    private suspend fun updateCartItemsForCheckout() {
-        try {
-            Log.d("Checkout", "Starting checkout process with ${cartItems.size} items")
-
-            cartItems.forEach { cartItem ->
-                val productId = (cartItem["product_id"] as? Number)?.toLong() ?: run {
-                    Log.e("Checkout", "Invalid product_id in cart item: $cartItem")
-                    return@forEach
+    private fun updateCartItemsForCheckout(token: String, cartId: Long, quantity: Int) {
+        val updateCartRequest = UpdateCartRequest(
+            cartId.toInt(),
+            quantity
+        )
+        Log.d("CartUpdate", "Updating cart items for checkout: $updateCartRequest")
+        RetrofitClient.instance.updateCart(token, updateCartRequest)
+            .enqueue(object : Callback<CartResponse> {
+                override fun onResponse(call: Call<CartResponse>, response: Response<CartResponse>) {
+                    if (response.isSuccessful) {
+                        val messageResponse = response.body()?.message
+                        Log.d("CartUpdateSuccess", "$messageResponse")
+                    } else {
+                        Log.e("UpdateCartError", "Error: ${response.code()}")
+                    }
                 }
 
-                val quantity = (cartItem["total_barang"] as? String)?.toIntOrNull() ?: run {
-                    Log.e("Checkout", "Invalid quantity in cart item: $cartItem")
-                    return@forEach
+                override fun onFailure(call: Call<CartResponse>, t: Throwable) {
+                    Log.e("CartError", "Network Error: ${t.message}")
                 }
-
-                val request = CartUpdateRequest(
-                    p_cart_id = productId,
-                    p_quantity = quantity
-                )
-
-                Log.d("Checkout", "Updating item: $productId with quantity: $quantity")
-
-                val response = RetrofitClient.instance.updateCartItem(request)
-                if (response.isSuccessful) {
-                    Log.d("Checkout", "Successfully updated item $productId")
-                } else {
-                    val errorBody = response.errorBody()?.string() ?: "No error body"
-                    Log.e("Checkout", "Failed to update item $productId: $errorBody")
-                }
-            }
-        } catch (e: Exception) {
-            Log.e("Checkout", "Exception during checkout: ${e.message}", e)
-        }
+            })
     }
 
 
@@ -346,14 +438,26 @@ class CartActivity : AppCompatActivity() {
     }
 
     // Load product image from the URL
-    private fun loadProductImage(filePath: String, imageView: ImageView) {
+    private fun loadProductImage(filePath: String, imageView: ImageView, forceRefresh: Boolean = false) {
 
-        val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/$filePath/1.jpg"
+        try {
+            val baseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/$filePath/1.jpg"
+            val imageUrl = if (forceRefresh) {
+                "$baseUrl?t=${System.currentTimeMillis()}"
+            } else {
+                baseUrl
+            }
 
-        Glide.with(this)
-            .load(imageUrl)
-            .placeholder(R.drawable.sekar)
-            .error(R.drawable.emiya)
-            .into(imageView)
+            Glide.with(this)
+                .load(imageUrl)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .skipMemoryCache(false)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .priority(Priority.HIGH)
+                .error(R.drawable.sekar)
+                .into(imageView)
+        } catch (e: Exception) {
+            Log.e("ImageLoadError", "Failed to load product image: ${e.message}")
+        }
     }
 }

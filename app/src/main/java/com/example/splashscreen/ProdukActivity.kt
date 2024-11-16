@@ -128,12 +128,14 @@ class ProdukActivity : AppCompatActivity() {
         }
 
         val btnCard = findViewById<ImageButton>(R.id.cart)
+        btnCard.setOnClickListener {
+            addToCart(token, productId.toString())
+        }
         if (productCategory != null) {
             getProducts(token, findViewById<GridLayout>(R.id.gridLayout), productCategory, product_id.toInt())
             Log.d("testcategory", "$productCategory")
         }
 
-// Set up ImageSlider for multiple images
         val imageSlider = findViewById<ImageSlider>(R.id.imageSlider)
         val slideModels = arrayListOf(
             SlideModel("https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/$productImage/1.jpg", ScaleTypes.CENTER_CROP),
@@ -142,7 +144,7 @@ class ProdukActivity : AppCompatActivity() {
         )
 
 
-    // Track the number of completed loads (both success and failure)
+        // Track the number of completed loads (both success and failure)
         var processedCount = 0
         val validSlides = mutableListOf<SlideModel>()
 
@@ -444,5 +446,33 @@ class ProdukActivity : AppCompatActivity() {
                     // Handle network errors
                 }
             })
+    }
+
+    private fun addToCart(token: String, productId: String, totalBarang: Int = 1) {
+
+        val cartRequest = InsertCartData(
+            produk_id = productId,
+            total_barang = totalBarang.toString()
+        )
+
+        val request = RetrofitClient.instance.addToCart(token, cartRequest)
+
+        // Add Authorization header with the token
+        request.enqueue(object : Callback<CartResponse> {
+            override fun onResponse(call: Call<CartResponse>, response: Response<CartResponse>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(this@ProdukActivity, "One item added cart!", Toast.LENGTH_SHORT).show()
+                    Log.d("cart", "Cart added successfully: ${response.body()}")
+                } else {
+                    val errorBody = response.errorBody()?.string() // Debug server errors
+                    Toast.makeText(this@ProdukActivity, "Failed to add to cart: ${response.message()}", Toast.LENGTH_SHORT).show()
+                    Log.e("cart", "Failed to add cart: ${response.message()}, Error: $errorBody")
+                }
+            }
+
+            override fun onFailure(call: Call<CartResponse>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+        })
     }
 }
