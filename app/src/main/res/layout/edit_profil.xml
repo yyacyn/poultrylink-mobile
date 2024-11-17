@@ -49,6 +49,7 @@
             android:contentDescription="Profile Picture" />
 
         <ImageButton
+            android:id="@+id/changePfpButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="220dp"
@@ -387,7 +388,7 @@
                 android:text="Save"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:id="@+id/buttonSignUp" />
+                android:id="@+id/buttonSave" />
 
         </LinearLayout>
 
