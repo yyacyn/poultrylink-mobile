@@ -152,7 +152,7 @@ class CartActivity : AppCompatActivity() {
                     if (response.isSuccessful) {
                         val carts = response.body()?.data ?: emptyList()
                         Log.d("carts", "$carts")
-                        val filteredCarts = carts.filter { it.user_id == userId.toString() }
+                        val filteredCarts = carts.filter { it.deleted_at == null && it.user_id == userId.toString() }
 
                         Log.d("filteredCarts", "$filteredCarts")
 

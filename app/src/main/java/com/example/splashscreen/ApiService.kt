@@ -3,6 +3,8 @@ import com.example.splashscreen.BuyerData
 import com.example.splashscreen.BuyerDetails
 import com.example.splashscreen.BuyerProfileRequest
 import com.example.splashscreen.BuyerResponse
+import com.example.splashscreen.CancelOrderRequest
+import com.example.splashscreen.CancelOrderResponse
 import com.example.splashscreen.CartResponse
 import com.example.splashscreen.CartUpdateRequest
 import com.example.splashscreen.DeleteCartRequest
@@ -19,6 +21,7 @@ import com.example.splashscreen.OrderResponse
 import com.example.splashscreen.ProductResponse
 import com.example.splashscreen.Products
 import com.example.splashscreen.RegisterResponse
+import com.example.splashscreen.RetrieveOrderRequest
 import com.example.splashscreen.ReviewResponse
 import com.example.splashscreen.SupplierResponse
 import com.example.splashscreen.UpdateCartRequest
@@ -153,5 +156,11 @@ interface ApiService {
 
     @GET("orderdetailsall")
     fun getOrderDetail(@Header("Authorization") token: String): Call<OrderDetailResponse>
+
+    @POST("cancelordermobile")
+    fun cancelOrder(@Header("Authorization") token: String, @Body request: CancelOrderRequest): Call<CancelOrderResponse>
+
+    @POST("retrieveordermobile")
+    fun retrieveOrder(@Header("Authorization") token: String, @Body request: RetrieveOrderRequest): Call<OrderDetailResponse>
 }
 

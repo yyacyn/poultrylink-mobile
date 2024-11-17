@@ -65,6 +65,27 @@ data class OrderDetailData(
     val status: String,
     @SerializedName("supplier")
     val supplier: String,
+    @SerializedName("order_deleted")
+    val order_deleted: String?,
     @SerializedName("buyer")
     val buyer: BuyerData
+)
+
+data class RetrieveOrderRequest(
+    @SerializedName("id")
+    val id: Int,
+)
+
+data class CancelOrderRequest(
+    @SerializedName("order_id")
+    val order_id: Int,
+    @SerializedName("produk_id")
+    val produk_id: Int,
+)
+
+data class CancelOrderResponse(
+    @SerializedName("message")
+    val message: String?,
+    @SerializedName("order")
+    val order: OrderData?,
 )

@@ -52,6 +52,8 @@ data class CartData(
     val user_id: String,
     @SerializedName("barang")
     val barang: ProductData,
+    @SerializedName("deleted_at")
+    val deleted_at: String?
 )
 
 data class InsertCartData(

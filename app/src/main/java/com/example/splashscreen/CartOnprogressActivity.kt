@@ -9,7 +9,9 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -99,7 +101,7 @@ class CartOnprogressActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<OrderDetailResponse>, response: Response<OrderDetailResponse>) {
                     if (response.isSuccessful) {
                         val orderdetail = response.body()?.data
-                        val filteredOrderDetail = orderdetail?.filter { it.buyer.user.id.toLong() == userId}
+                        val filteredOrderDetail = orderdetail?.filter {it.order_deleted == null && it.status != "cancelled" && it.buyer.user.id.toLong() == userId && it.status != "retrieved"}
                         if (filteredOrderDetail != null) {
                             displayOrders(token, filteredOrderDetail)
                         }
@@ -176,12 +178,87 @@ class CartOnprogressActivity : AppCompatActivity() {
             produkPriceTextView.text = "Rp. ${formatWithDots((totalPrice).toString())}"
 
             if (status == "no" ){
-                statusTextView.text = "Pending"
-                doneBtn.isEnabled = false // Disable button
-                doneBtn.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this@CartOnprogressActivity, R.color.gray))) // Change to a gray color
-            } else {
+                statusTextView.text = "Unpaid"
+                doneBtn.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this@CartOnprogressActivity, R.color.red)))
+                doneBtn.text = "Cancel"
+                doneBtn.setOnClickListener {
+                    val alertDialog = AlertDialog.Builder(this)
+                        .setTitle("Confirm cancel order")
+                        .setMessage("Are you sure you want to cancel this order?")
+                        .setCancelable(false) // Set to false so user must choose either Yes or No
+                        .setPositiveButton("Yes") { dialog, which ->
+                            cancelOrder(token, orderId.toInt(), productImage.toInt())
+                            getUser(token) { userId ->
+                                if (userId != null) {
+                                    Log.d("MainActivity", "Fetched User ID: $userId")
+                                    fetchOrderDetail(token, userId)
+                                } else {
+                                    Log.e("MainActivity", "Failed to fetch User ID")
+                                }
+                            }
+                        }
+                        .setNegativeButton("No") { dialog, which ->
+                            // Dismiss the dialog if user cancels
+                            dialog.dismiss()
+                        }
+                    // Show the alert dialog
+                    alertDialog.show()
+                }
+            } else if (status == "yes") {
                 statusTextView.text = "Arrived"
                 doneBtn.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this@CartOnprogressActivity, R.color.orange))) // Change to a gray color
+                doneBtn.text = "Done"
+                doneBtn.setOnClickListener {
+                    val alertDialog = AlertDialog.Builder(this)
+                        .setTitle("Confirm finish order")
+                        .setMessage("Are you sure you want to finish and retrieve this order?")
+                        .setCancelable(false) // Set to false so user must choose either Yes or No
+                        .setPositiveButton("Yes") { dialog, which ->
+                            retrieveOrder(token, orderId.toInt(), productImage.toInt())
+                            getUser(token) { userId ->
+                                if (userId != null) {
+                                    Log.d("MainActivity", "Fetched User ID: $userId")
+                                    fetchOrderDetail(token, userId)
+                                } else {
+                                    Log.e("MainActivity", "Failed to fetch User ID")
+                                }
+                            }
+                        }
+                        .setNegativeButton("No") { dialog, which ->
+                            // Dismiss the dialog if user cancels
+                            dialog.dismiss()
+                        }
+                    // Show the alert dialog
+                    alertDialog.show()
+                }
+            }
+            else {
+                statusTextView.text = "On progress"
+                doneBtn.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this@CartOnprogressActivity, R.color.red))) // Change to a gray color
+                doneBtn.text = "Cancel"
+                doneBtn.setOnClickListener {
+                    val alertDialog = AlertDialog.Builder(this)
+                        .setTitle("Confirm cancel order")
+                        .setMessage("Are you sure you want to cancel this order?")
+                        .setCancelable(false) // Set to false so user must choose either Yes or No
+                        .setPositiveButton("Yes") { dialog, which ->
+                            cancelOrder(token, orderId.toInt(), productImage.toInt())
+                            getUser(token) { userId ->
+                                if (userId != null) {
+                                    Log.d("MainActivity", "Fetched User ID: $userId")
+                                    fetchOrderDetail(token, userId)
+                                } else {
+                                    Log.e("MainActivity", "Failed to fetch User ID")
+                                }
+                            }
+                        }
+                        .setNegativeButton("No") { dialog, which ->
+                            // Dismiss the dialog if user cancels
+                            dialog.dismiss()
+                        }
+                    // Show the alert dialog
+                    alertDialog.show()
+                }
             }
 
             if (productKategori == "Ayam" || productKategori == "Bebek") {
@@ -228,6 +305,48 @@ class CartOnprogressActivity : AppCompatActivity() {
             null,      // Right drawable
             null       // Bottom drawable
         )
+    }
+
+    private fun cancelOrder(token: String, orderId: Int, productImage: Int) {
+        Log.d("cancelOrder", "$orderId, $productImage")
+        val request = CancelOrderRequest(orderId,productImage)
+        Log.d("cancelOrder", "$request")
+        RetrofitClient.instance.cancelOrder(token, request)
+            .enqueue(object : Callback<CancelOrderResponse> {
+                override fun onResponse(call: Call<CancelOrderResponse>, response: Response<CancelOrderResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@CartOnprogressActivity, "Order cancelled successfully", Toast.LENGTH_SHORT).show()
+                        Log.d("CancelOrder", "Order cancelled successfully")
+                    } else {
+                        Log.e("CancelOrder", "Error: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<CancelOrderResponse>, t: Throwable) {
+                    Log.e("CancelOrder", "Network Error: ${t.message}")
+                }
+            })
+    }
+
+    private fun retrieveOrder(token: String, orderId: Int, productImage: Int) {
+        val request = RetrieveOrderRequest(orderId)
+        RetrofitClient.instance.retrieveOrder(token, request)
+            .enqueue(object : Callback<OrderDetailResponse> {
+                override fun onResponse(call: Call<OrderDetailResponse>, response: Response<OrderDetailResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@CartOnprogressActivity, "Order retrieved successfully", Toast.LENGTH_SHORT).show()
+                        Log.d("OrderRetrieve", "Order retrieved successfully")
+                    } else {
+                        Log.e("OrderRetrieve", "Error: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<OrderDetailResponse>, t: Throwable) {
+                    Log.e("OrderRetrieve", "Network Error: ${t.message}")
+                }
+            })
     }
 
 }

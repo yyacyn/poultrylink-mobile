@@ -91,6 +91,9 @@ dependencies {
     implementation ("org.springframework.security:spring-security-crypto:5.8.1")
     implementation ("org.greenrobot:eventbus:3.2.0")
 
+    implementation ("org.osmdroid:osmdroid-android:6.1.17")
+    implementation ("org.osmdroid:osmdroid-wms:6.1.17")
+
 //    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
 //    implementation("io.supabase:supabase-android:0.0.1")
