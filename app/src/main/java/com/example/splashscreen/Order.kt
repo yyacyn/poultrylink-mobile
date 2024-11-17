@@ -53,6 +53,8 @@ data class OrderDetailData(
     val produk: String,
     @SerializedName("produk_image")
     val produk_image: String,
+    @SerializedName("produk_kategori")
+    val produk_kategori: String,
     @SerializedName("quantity")
     val quantity: String,
     @SerializedName("price")

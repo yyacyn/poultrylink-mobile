@@ -11,324 +11,313 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/bgmyprofil">
-        <ImageButton
-            android:id="@+id/btn_back"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="16dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/arrowback2"
-            android:contentDescription="Back"
-            android:layout_gravity="start|top" />
-    </LinearLayout>
-
-    <!--  Profil  -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginRight="25dp"
-        android:layout_marginTop="-45dp"
-        android:gravity="center_horizontal"
-        android:layout_marginLeft="25dp">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginStart="30dp">
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/user_pfp"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/fotoprofil"
-                android:scaleType="centerCrop"
-                android:contentDescription="Profile Picture" />
-            <ImageButton
-                android:id="@+id/changePfpButton"
-                android:cropToPadding="true"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@android:color/transparent"
-                android:layout_marginTop="25dp"
-                android:src="@drawable/edit"
-                />
-        </LinearLayout>
-    </LinearLayout>
-
-
-    <!-- Personal Information -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="25dp"
-        android:layout_marginLeft="25dp"
-        android:orientation="vertical">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Personal Information"
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="10dp"/>
-    </LinearLayout>
-
-
-    <!--  First Name   -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="25dp"
-        android:layout_marginRight="25dp"
-        android:layout_marginBottom="20dp"
-        app:boxStrokeColor="@color/orange"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/FirstName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:padding="15dp" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-        <!--  Last Name   -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:layout_marginBottom="20dp"
-            app:boxStrokeColor="@color/orange"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/LastName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:padding="15dp" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-
-
-
-
-        <!--  Phone Number   -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:layout_marginBottom="20dp"
-            app:boxStrokeColor="@color/orange"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/PhoneNumber"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:padding="15dp" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-
-
-
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginLeft="25dp"-->
-<!--            android:layout_marginRight="25dp"-->
-<!--            android:orientation="horizontal"-->
-<!--            android:gravity="center_vertical">-->
-
-<!--            &lt;!&ndash; Label Gender &ndash;&gt;-->
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Gender"-->
-<!--                android:textColor="@color/gray"-->
-<!--                android:textStyle="bold"-->
-<!--                android:layout_marginEnd="16dp"/>-->
-
-<!--            &lt;!&ndash; RadioGroup untuk Pilihan Gender &ndash;&gt;-->
-<!--            <RadioGroup-->
-<!--                android:id="@+id/radioGroup"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:gravity="end"-->
-<!--                android:onClick="onRadioButtonClick"-->
-<!--                android:orientation="horizontal">-->
-
-<!--                &lt;!&ndash; RadioButton Pria &ndash;&gt;-->
-<!--                <RadioButton-->
-<!--                    android:id="@+id/radio_pria"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:button="@drawable/custom_radiobutton"-->
-<!--                    android:onClick="onRadioButtonClick"-->
-<!--                    android:paddingLeft="5dp"-->
-<!--                    android:text="Pria"-->
-<!--                    android:textColor="@color/black"-->
-<!--                    android:textStyle="bold"-->
-<!--                    android:layout_marginEnd="16dp"-->
-<!--                    android:theme="@style/RadioButtonStyle"/>-->
-
-<!--                &lt;!&ndash; RadioButton Wanita &ndash;&gt;-->
-<!--                <RadioButton-->
-<!--                    android:id="@+id/radio_wanita"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:button="@drawable/custom_radiobutton"-->
-<!--                    android:paddingLeft="5dp"-->
-<!--                    android:onClick="onRadioButtonClick"-->
-<!--                    android:text="Wanita"-->
-<!--                    android:textColor="@color/black"-->
-<!--                    android:textStyle="bold"-->
-<!--                    android:theme="@style/RadioButtonStyle"/>-->
-<!--            </RadioGroup>-->
-<!--        </LinearLayout>-->
-
-        <!-- Location  -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="25dp"
-            android:layout_marginLeft="25dp"
+            android:layout_height="match_parent"
             android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Location"
-                android:textSize="16sp"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="10dp"/>
-
-            <!--  Country   -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:boxStrokeColor="@color/orange"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/Country"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:padding="15dp" />
-            </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="20dp">
-                <!--  Provinsi   -->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
-                    app:boxStrokeColor="@color/orange"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/Provinsi"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:inputType="text"
-                        android:padding="15dp" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!--  Kota   -->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/City"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginBottom="20dp"
-                    app:boxStrokeColor="@color/orange"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/Kota"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:inputType="text"
-                        android:padding="15dp" />
-                </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="vertical"
+                android:background="@drawable/bgmyprofil">
+                <ImageButton
+                    android:id="@+id/btn_back"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="16dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/arrowback2"
+                    android:contentDescription="Back"
+                    android:layout_gravity="start|top" />
             </LinearLayout>
 
-            <!--  Kode Pos   -->
+            <!--  Profil  -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginRight="25dp"
+                android:layout_marginTop="-45dp"
+                android:gravity="center_horizontal"
+                android:layout_marginLeft="25dp">
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/user_pfp"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginStart="140dp"
+                    android:src="@drawable/fotoprofil"
+                    android:contentDescription="Profile Picture" />
+
+                <ImageButton
+                    android:id="@+id/changePfpButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="220dp"
+                    android:layout_marginTop="80dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/edit" />
+            </FrameLayout>
+
+
+            <!-- Personal Information -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="25dp"
+                android:layout_marginLeft="25dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Personal Information"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginBottom="10dp"/>
+            </LinearLayout>
+
+
+            <!--  First Name   -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:boxStrokeColor="@color/orange"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/KodePos"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:padding="15dp" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!--  Street   -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                app:boxStrokeColor="@color/orange"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/Street"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:padding="15dp" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-
-
-            <!-- Save Button -->
-            <com.google.android.material.button.MaterialButton
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:backgroundTint="@color/orange"
-                android:layout_marginTop="20dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
                 android:layout_marginBottom="20dp"
-                android:text="Save"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:id="@+id/buttonSave" />
+                app:boxStrokeColor="@color/orange"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/FirstName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:padding="15dp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <!--  Last Name   -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="20dp"
+                app:boxStrokeColor="@color/orange"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/LastName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:padding="15dp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+
+            <!--  Phone Number   -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="20dp"
+                app:boxStrokeColor="@color/orange"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/PhoneNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:padding="15dp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+            <!--        <LinearLayout-->
+            <!--            android:layout_width="match_parent"-->
+            <!--            android:layout_height="wrap_content"-->
+            <!--            android:layout_marginLeft="25dp"-->
+            <!--            android:layout_marginRight="25dp"-->
+            <!--            android:orientation="horizontal"-->
+            <!--            android:gravity="center_vertical">-->
+
+            <!--            &lt;!&ndash; Label Gender &ndash;&gt;-->
+            <!--            <TextView-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:text="Gender"-->
+            <!--                android:textColor="@color/gray"-->
+            <!--                android:textStyle="bold"-->
+            <!--                android:layout_marginEnd="16dp"/>-->
+
+            <!--            &lt;!&ndash; RadioGroup untuk Pilihan Gender &ndash;&gt;-->
+            <!--            <RadioGroup-->
+            <!--                android:id="@+id/radioGroup"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:gravity="end"-->
+            <!--                android:onClick="onRadioButtonClick"-->
+            <!--                android:orientation="horizontal">-->
+
+            <!--                &lt;!&ndash; RadioButton Pria &ndash;&gt;-->
+            <!--                <RadioButton-->
+            <!--                    android:id="@+id/radio_pria"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:button="@drawable/custom_radiobutton"-->
+            <!--                    android:onClick="onRadioButtonClick"-->
+            <!--                    android:paddingLeft="5dp"-->
+            <!--                    android:text="Pria"-->
+            <!--                    android:textColor="@color/black"-->
+            <!--                    android:textStyle="bold"-->
+            <!--                    android:layout_marginEnd="16dp"-->
+            <!--                    android:theme="@style/RadioButtonStyle"/>-->
+
+            <!--                &lt;!&ndash; RadioButton Wanita &ndash;&gt;-->
+            <!--                <RadioButton-->
+            <!--                    android:id="@+id/radio_wanita"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:button="@drawable/custom_radiobutton"-->
+            <!--                    android:paddingLeft="5dp"-->
+            <!--                    android:onClick="onRadioButtonClick"-->
+            <!--                    android:text="Wanita"-->
+            <!--                    android:textColor="@color/black"-->
+            <!--                    android:textStyle="bold"-->
+            <!--                    android:theme="@style/RadioButtonStyle"/>-->
+            <!--            </RadioGroup>-->
+            <!--        </LinearLayout>-->
+
+            <!-- Location  -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="25dp"
+                android:layout_marginLeft="25dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Location"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp"/>
+
+                <!--  Country   -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:boxStrokeColor="@color/orange"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/Country"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:padding="15dp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="20dp">
+                    <!--  Provinsi   -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="180dp"
+                        android:layout_height="wrap_content"
+                        app:boxStrokeColor="@color/orange"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/Provinsi"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:inputType="text"
+                            android:padding="15dp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!--  Kota   -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/City"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginBottom="20dp"
+                        app:boxStrokeColor="@color/orange"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/Kota"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:inputType="text"
+                            android:padding="15dp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <!--  Kode Pos   -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:boxStrokeColor="@color/orange"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/KodePos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:padding="15dp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!--  Street   -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    app:boxStrokeColor="@color/orange"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/Street"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:padding="15dp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+                <!-- Save Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:backgroundTint="@color/orange"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="Save"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:id="@+id/buttonSave" />
+
+            </LinearLayout>
+
 
         </LinearLayout>
-
-
-
-
-
-
-    </LinearLayout>
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -125,11 +125,13 @@ class ProfilActivity : AppCompatActivity() {
 
         btnFaq.setOnClickListener {
             startActivity(Intent(this, FaqActivity::class.java))
+
         }
 
         btnTransaction.setOnClickListener {
             startActivity(Intent(this, CartCompleteActivity::class.java))
         }
+
 
 //        btnBack.setOnClickListener {
 //            startActivity(Intent(this, HomeActivity::class.java))

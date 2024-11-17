@@ -35,6 +35,27 @@ class FaqActivity : AppCompatActivity() {
             findViewById(R.id.contentTextView3),
             findViewById(R.id.arrowImageView3)
         )
+
+        // Setup FAQ 4
+        setupFAQ(
+            findViewById(R.id.headerLayout4),
+            findViewById(R.id.contentTextView4),
+            findViewById(R.id.arrowImageView4)
+        )
+
+        // Setup FAQ 5
+        setupFAQ(
+            findViewById(R.id.headerLayout5),
+            findViewById(R.id.contentTextView5),
+            findViewById(R.id.arrowImageView5)
+        )
+
+        // Setup FAQ 6
+        setupFAQ(
+            findViewById(R.id.headerLayout6),
+            findViewById(R.id.contentTextView6),
+            findViewById(R.id.arrowImageView6)
+        )
     }
 
     private fun setupFAQ(headerLayout: LinearLayout, contentTextView: TextView, arrowImageView: ImageView) {

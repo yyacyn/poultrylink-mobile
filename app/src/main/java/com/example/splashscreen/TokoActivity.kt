@@ -36,6 +36,8 @@ import java.text.NumberFormat
 import java.util.Locale
 
 class TokoActivity : AppCompatActivity() {
+
+    private var diikuti: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -53,10 +55,22 @@ class TokoActivity : AppCompatActivity() {
         val supplierKota = intent.getStringExtra("supplierKota")
         val supplierNegara = intent.getStringExtra("supplierNegara")
         val supplierProvinsi = intent.getStringExtra("supplierProvinsi")
-        val supplierImage = intent.getLongExtra("supplierImage", 0)
+        val supplierImage = intent.getStringExtra("supplierImage")
         val supplierRating = intent.getStringExtra("supplierRating")
         Log.d("supplierId", "$supplierId")
         Log.d("supplierImage", "$supplierImage")
+
+        val ikutiSupplier = findViewById<Button>(R.id.ikutiSupplier)
+
+        ikutiSupplier.setOnClickListener {
+            if (diikuti == true) {
+                ikutiSupplier.text = "+ Ikuti"
+                diikuti = false
+            } else {
+                ikutiSupplier.text = "Diikuti"
+                diikuti = true
+            }
+        }
 
         val storeNameTextView = findViewById<TextView>(R.id.store_name)
         storeNameTextView.text = supplierName
@@ -104,6 +118,14 @@ class TokoActivity : AppCompatActivity() {
             } else {
                 false
             }
+        }
+
+        findViewById<Button>(R.id.chatSupplier).setOnClickListener {
+            val intent = Intent(this@TokoActivity, Lifechat2Activity::class.java).apply {
+                putExtra("receiverName", supplierName)
+                putExtra("receiverImage", supplierImage)
+            }
+            startActivity(intent)
         }
     }
 
@@ -207,6 +229,7 @@ class TokoActivity : AppCompatActivity() {
                     putExtra("productTotalReviews", totalReviews)
                     putExtra("productPrice", product.harga.toLong())
                     putExtra("productDesc", product.deskripsi)
+                    putExtra("productQty", product.jumlah)
                     putExtra("supplierId", product.supplier_id)
                     product.supplier?.buyer?.let { it1 -> putExtra("supplierImage", it1.id) }
                     putExtra("supplierKota", product.supplier?.kota)
@@ -280,6 +303,7 @@ class TokoActivity : AppCompatActivity() {
                     putExtra("productTotalReviews", totalReviews)
                     putExtra("productPrice", product.harga.toLong())
                     putExtra("productDesc", product.deskripsi)
+                    putExtra("productQty", product.jumlah)
                     putExtra("supplierId", product.supplier_id)
                     product.supplier?.buyer?.let { it1 -> putExtra("supplierImage", it1.id) }
                     putExtra("supplierKota", product.supplier?.kota)

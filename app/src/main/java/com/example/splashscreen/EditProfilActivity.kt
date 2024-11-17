@@ -225,10 +225,10 @@ class EditProfilActivity : AppCompatActivity() {
                     .load(imageUrl)
                     .override(200, 200)
                     .placeholder(R.drawable.fotoprofil)
-                    .transition(DrawableTransitionOptions.withCrossFade())
+//                    .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.fotoprofil) // Add an error image
                     .into(findViewById<CircleImageView>(R.id.user_pfp))
-                Log.d("ImageLoad", "Image loaded successfully from $imageUrl")
+                Log.d("ImageLoadEditProfile", "Image loaded successfully from $imageUrl")
             } catch (e: Exception) {
                 Log.e("ImageLoadError", "Failed to load image: ${e.message}")
             }

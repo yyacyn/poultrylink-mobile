@@ -3,5 +3,6 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">poultrylink.ambatuwin.xyz</domain>
         <domain includeSubdomains="true">192.168.3.233</domain>
+        <domain includeSubdomains="true">ambatuwin.xyz</domain>
     </domain-config>
 </network-security-config>

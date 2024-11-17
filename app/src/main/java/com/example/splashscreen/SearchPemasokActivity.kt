@@ -179,8 +179,9 @@ class SearchPemasokActivity : AppCompatActivity() {
                     putExtra("productQty", product.jumlah)
                     putExtra("supplierId", product.supplier_id)
                     putExtra("supplierKota", product.supplier?.kota)
+                    product.supplier?.buyer?.let { it1 -> putExtra("supplierImage", it1.id) }
                     putExtra("supplierNegara", product.supplier?.negara)
-                    putExtra("supplierToko", product.supplier?.nama_toko)
+                    putExtra("supplierName", product.supplier?.nama_toko)
                     putExtra("productCategory", product.kategori_id)
                 }
                 startActivity(intent)
@@ -264,11 +265,12 @@ class SearchPemasokActivity : AppCompatActivity() {
             // Set click listener for supplier card
             lihatToko.setOnClickListener {
                 val intent = Intent(this@SearchPemasokActivity, TokoActivity::class.java).apply {
-                    putExtra("supplier_id", supplier.id)
+                    putExtra("supplierId", supplier.id.toString())
                     putExtra("supplierName", supplier.nama_toko)
                     putExtra("supplierKota", supplier.kota)
                     putExtra("supplierNegara", supplier.negara)
                     putExtra("supplierProvinsi", supplier.provinsi)
+                    putExtra("supplierRating", supplier.rating)
                     putExtra("supplierImage", supplier.buyer?.id.toString())
                 }
                 startActivity(intent)
