@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.google.gson.Gson
 import com.yourapp.network.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -101,7 +102,7 @@ class CartOnprogressActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<OrderDetailResponse>, response: Response<OrderDetailResponse>) {
                     if (response.isSuccessful) {
                         val orderdetail = response.body()?.data
-                        val filteredOrderDetail = orderdetail?.filter {it.order_deleted == null && it.status != "cancelled" && it.buyer.user.id.toLong() == userId && it.status != "retrieved"}
+                        val filteredOrderDetail = orderdetail?.filter { it.order_deleted == null && it.status != "cancelled" && it.buyer.user.id.toLong() == userId && it.status != "retrieved" }
                         if (filteredOrderDetail != null) {
                             displayOrders(token, filteredOrderDetail)
                         }
@@ -166,7 +167,7 @@ class CartOnprogressActivity : AppCompatActivity() {
             val statusTextView = orderItemView.findViewById<TextView>(R.id.status)
             val doneBtn = orderItemView.findViewById<Button>(R.id.doneBtn)
 
-            orderItemView.findViewById<TextView>(R.id.orderDate).text = "Ordered at: $date"
+            orderItemView.findViewById<TextView>(R.id.orderDate).text = "#$orderId - $date"
 
             // Set UI data for product name, category, and price
             orderItemView.findViewById<TextView>(R.id.productName).text = productName
@@ -239,7 +240,7 @@ class CartOnprogressActivity : AppCompatActivity() {
                 doneBtn.setOnClickListener {
                     val alertDialog = AlertDialog.Builder(this)
                         .setTitle("Confirm cancel order")
-                        .setMessage("Are you sure you want to cancel this order?")
+                        .setMessage("Are you sure you want to cancel this order? Cancelling this order will cancel the same product within the same order")
                         .setCancelable(false) // Set to false so user must choose either Yes or No
                         .setPositiveButton("Yes") { dialog, which ->
                             cancelOrder(token, orderId.toInt(), productImage.toInt())
@@ -308,18 +309,23 @@ class CartOnprogressActivity : AppCompatActivity() {
     }
 
     private fun cancelOrder(token: String, orderId: Int, productImage: Int) {
-        Log.d("cancelOrder", "$orderId, $productImage")
-        val request = CancelOrderRequest(orderId,productImage)
-        Log.d("cancelOrder", "$request")
+        Log.d("cancelOrder", "orderId: $orderId, productImage: $productImage")
+
+        val request = CancelOrderRequest(orderId)
+
+        // Log JSON representation of the request
+        val gson = Gson()
+        val jsonRequest = gson.toJson(request)
+        Log.d("cancelOrder", "Request JSON: $jsonRequest")
+
         RetrofitClient.instance.cancelOrder(token, request)
             .enqueue(object : Callback<CancelOrderResponse> {
-                override fun onResponse(call: Call<CancelOrderResponse>, response: Response<CancelOrderResponse>
-                ) {
+                override fun onResponse(call: Call<CancelOrderResponse>, response: Response<CancelOrderResponse>) {
                     if (response.isSuccessful) {
                         Toast.makeText(this@CartOnprogressActivity, "Order cancelled successfully", Toast.LENGTH_SHORT).show()
                         Log.d("CancelOrder", "Order cancelled successfully")
                     } else {
-                        Log.e("CancelOrder", "Error: ${response.code()}")
+                        Log.e("CancelOrder", "Error: ${response.code()} - ${response.errorBody()?.string()}")
                     }
                 }
 
@@ -328,6 +334,7 @@ class CartOnprogressActivity : AppCompatActivity() {
                 }
             })
     }
+
 
     private fun retrieveOrder(token: String, orderId: Int, productImage: Int) {
         val request = RetrieveOrderRequest(orderId)

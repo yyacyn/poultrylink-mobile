@@ -151,7 +151,7 @@ interface ApiService {
     @POST("updatecart")
     fun updateCart(@Header("Authorization") token: String, @Body request: UpdateCartRequest): Call<CartResponse>
 
-    @POST("order")
+    @POST("ordermobile")
     fun createOrder(@Header("Authorization") token: String, @Body request: InsertOrder): Call<OrderResponse>
 
     @GET("orderdetailsall")

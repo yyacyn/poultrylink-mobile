@@ -264,7 +264,15 @@ class CartActivity : AppCompatActivity() {
             val produkPriceTextView = cartItemView.findViewById<TextView>(R.id.produkPrice)
 
             cartItemView.findViewById<TextView>(R.id.produkName).text = productName
-            cartItemView.findViewById<TextView>(R.id.kategoriProduk).text = productKategori
+            if (productKategori == "1" || productKategori == "2" ){
+                cartItemView.findViewById<TextView>(R.id.kategoriProduk).text = "Poultry"
+            } else if (productKategori == "3" || productKategori == "4"){
+                cartItemView.findViewById<TextView>(R.id.kategoriProduk).text = "Meat"
+            } else if (productKategori == "5" || productKategori == "6"){
+                cartItemView.findViewById<TextView>(R.id.kategoriProduk).text = "Egg"
+            } else {
+                cartItemView.findViewById<TextView>(R.id.kategoriProduk).text = "Seed"
+            }
             cartItemView.findViewById<TextView>(R.id.suppliersName).text = suppliersName
 
             var currentQuantity = totalBarang
