@@ -39,6 +39,13 @@ data class CartResponse(
     val message: String?
 )
 
+data class InsertCartResponse(
+    @SerializedName("data")
+    val data: CartData,
+    @SerializedName("message")
+    val message: String?
+)
+
 data class CartData(
     @SerializedName("id")
     val id: Long,

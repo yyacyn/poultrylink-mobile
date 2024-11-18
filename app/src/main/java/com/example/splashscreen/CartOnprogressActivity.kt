@@ -185,7 +185,7 @@ class CartOnprogressActivity : AppCompatActivity() {
                 doneBtn.setOnClickListener {
                     val alertDialog = AlertDialog.Builder(this)
                         .setTitle("Confirm cancel order")
-                        .setMessage("Are you sure you want to cancel this order?")
+                        .setMessage("Are you sure you want to cancel this order? Cancelling this order will cancel the same product within the same order?")
                         .setCancelable(false) // Set to false so user must choose either Yes or No
                         .setPositiveButton("Yes") { dialog, which ->
                             cancelOrder(token, orderId.toInt(), productImage.toInt())
@@ -285,7 +285,6 @@ class CartOnprogressActivity : AppCompatActivity() {
             if (productImage.isNotEmpty()) {
                 loadProductImage(productImage, productImageView)
             }
-
             // Add the view to the container
             orderContainer.addView(orderItemView)
         }

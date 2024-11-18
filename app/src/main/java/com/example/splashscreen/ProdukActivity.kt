@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.GridLayout
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -57,6 +58,7 @@ import java.util.Locale
 
 class ProdukActivity : AppCompatActivity() {
 
+    private var cartIdBuyNow: Long = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.produk)
@@ -85,9 +87,16 @@ class ProdukActivity : AppCompatActivity() {
         Log.d("catproduct", "$productCategory")
         Log.d("productSupplierId", "$productSupplierId")
 
+        val token = "Bearer ${getStoredToken().toString()}"
+
+        val buyNow = findViewById<Button>(R.id.buyNow)
+
+        buyNow.setOnClickListener {
+            addToCartBuyNow(token, product_id.toString())
+        }
+
         Navigation(productId,location.toString())
 
-        val token = "Bearer ${getStoredToken().toString()}"
         Log.d("tokenproduk", "$token")
 
         val supplierImageView = findViewById<CircleImageView>(R.id.supplierImage)
@@ -194,7 +203,6 @@ class ProdukActivity : AppCompatActivity() {
                 })
                 .preload()
         }
-
     }
 
     // nav
@@ -460,8 +468,8 @@ class ProdukActivity : AppCompatActivity() {
         val request = RetrofitClient.instance.addToCart(token, cartRequest)
 
         // Add Authorization header with the token
-        request.enqueue(object : Callback<CartResponse> {
-            override fun onResponse(call: Call<CartResponse>, response: Response<CartResponse>) {
+        request.enqueue(object : Callback<InsertCartResponse> {
+            override fun onResponse(call: Call<InsertCartResponse>, response: Response<InsertCartResponse>) {
                 if (response.isSuccessful) {
                     Toast.makeText(this@ProdukActivity, "One item added cart!", Toast.LENGTH_SHORT).show()
                     Log.d("cart", "Cart added successfully: ${response.body()}")
@@ -472,8 +480,58 @@ class ProdukActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<CartResponse>, t: Throwable) {
-                TODO("Not yet implemented")
+            override fun onFailure(call: Call<InsertCartResponse>, t: Throwable) {
+                Log.e("cart", "Failed to add cart: ${t.message}")
+            }
+        })
+    }
+
+    private fun addToCartBuyNow(token: String, productId: String, totalBarang: Int = 1) {
+        val cartRequest = InsertCartData(
+            produk_id = productId,
+            total_barang = totalBarang.toString()
+        )
+
+        val request = RetrofitClient.instance.addToCart(token, cartRequest)
+
+        request.enqueue(object : Callback<InsertCartResponse> {
+            override fun onResponse(call: Call<InsertCartResponse>, response: Response<InsertCartResponse>) {
+                if (response.isSuccessful) {
+                    Log.d("cart", "Cart added successfully: ${response.body()}")
+
+                    // Get the cart ID from the response
+                    val cartId = response.body()?.data?.id
+
+                    if (cartId != null) {
+                        // Directly navigate to BuyNow Activity with the cart ID
+                        val productName = intent.getStringExtra("productName")
+                        val productImage = intent.getStringExtra("productImage")
+                        val productPrice = intent.getLongExtra("productPrice", 0)
+                        val product_id = intent.getLongExtra("product_id", 0)
+
+                        val intent = Intent(this@ProdukActivity, BuyNowActivity::class.java).apply {
+                            putExtra("productName", productName)
+                            putExtra("productImage", productImage)
+                            putExtra("productPrice", productPrice)
+                            putExtra("productQty", 1)
+                            putExtra("productId", product_id)
+                            putExtra("cartId", cartId)
+                        }
+                        Log.d("cartIdreal", "$cartId")
+                        startActivity(intent)
+                    } else {
+                        Toast.makeText(this@ProdukActivity, "Failed to get cart ID", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Toast.makeText(this@ProdukActivity, "Failed to add to cart: ${response.message()}", Toast.LENGTH_SHORT).show()
+                    Log.e("cart", "Failed to add cart: ${response.message()}, Error: $errorBody")
+                }
+            }
+
+            override fun onFailure(call: Call<InsertCartResponse>, t: Throwable) {
+                Log.e("cart", "Failed to add cart: ${t.message}")
+                Toast.makeText(this@ProdukActivity, "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }

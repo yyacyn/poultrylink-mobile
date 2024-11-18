@@ -13,6 +13,7 @@ import com.example.splashscreen.InsertUsers
 import com.example.splashscreen.InsertBuyer
 import com.example.splashscreen.InsertCart
 import com.example.splashscreen.InsertCartData
+import com.example.splashscreen.InsertCartResponse
 import com.example.splashscreen.InsertOrder
 import com.example.splashscreen.InsertUser
 import com.example.splashscreen.LoginResponse
@@ -142,8 +143,8 @@ interface ApiService {
     @GET("me")
     fun getUser(@Header("Authorization") token: String): Call<Users>
 
-    @POST("addtocart")
-    fun addToCart(@Header("Authorization") token: String, @Body insertCartRequest: InsertCartData): Call<CartResponse>
+    @POST("addtocartmobile")
+    fun addToCart(@Header("Authorization") token: String, @Body insertCartRequest: InsertCartData): Call<InsertCartResponse>
 
     @POST("deletecartpost")
     fun deleteCart(@Header("Authorization") token: String, @Body request: DeleteCartRequest): Call<DeleteCartResponse>
@@ -151,7 +152,7 @@ interface ApiService {
     @POST("updatecart")
     fun updateCart(@Header("Authorization") token: String, @Body request: UpdateCartRequest): Call<CartResponse>
 
-    @POST("ordermobile")
+    @POST("order")
     fun createOrder(@Header("Authorization") token: String, @Body request: InsertOrder): Call<OrderResponse>
 
     @GET("orderdetailsall")
@@ -162,5 +163,8 @@ interface ApiService {
 
     @POST("retrieveordermobile")
     fun retrieveOrder(@Header("Authorization") token: String, @Body request: RetrieveOrderRequest): Call<OrderDetailResponse>
+
+    @POST("confirmordermobile")
+    fun confirmOrder(@Header("Authorization") token: String, @Body request: RetrieveOrderRequest): Call<CancelOrderResponse>
 }
 

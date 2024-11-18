@@ -27,7 +27,9 @@ data class OrderData(
     @SerializedName("updated_at")
     val updatedAt: String,
     @SerializedName("created_at")
-    val createdAt: String
+    val createdAt: String,
+    @SerializedName("invoice")
+    val invoice: String,
 )
 
 data class InsertOrder(
@@ -70,7 +72,9 @@ data class OrderDetailData(
     @SerializedName("buyer")
     val buyer: BuyerData,
     @SerializedName("status_order_detail")
-    val status_order_detail: String?
+    val status_order_detail: String?,
+    @SerializedName("method")
+    val method: String?,
 )
 
 data class RetrieveOrderRequest(

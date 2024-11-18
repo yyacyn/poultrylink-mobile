@@ -43,5 +43,47 @@
             android:layout_height="wrap_content"
             android:textSize="14sp"
             android:textColor="#808080" />
+
+        <!-- plus dan minus button -->
+        <LinearLayout
+            android:id="@+id/plusminus"
+            android:layout_width="70dp"
+            android:visibility="gone"
+            android:layout_height="30dp"
+            android:orientation="horizontal"
+            android:background="@drawable/buttoncart"
+            android:gravity="center"
+            android:padding="8dp"
+            android:elevation="8dp">
+
+            <!-- Minus Button -->
+            <ImageButton
+                android:id="@+id/minus"
+                android:layout_width="20dp"
+                android:layout_height="40dp"
+                android:src="@drawable/minus"
+                android:textColor="#FFFFFF"
+                android:background="@android:color/transparent"/>
+
+            <!-- jumlah -->
+            <TextView
+                android:id="@+id/quantity"
+                android:layout_width="5dp"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:textSize="10sp"
+                android:textColor="#FFFFFF"
+                android:layout_marginHorizontal="8dp"/>
+
+            <!-- Plus Button -->
+            <ImageButton
+                android:id="@+id/plus"
+                android:layout_width="20dp"
+                android:layout_height="40dp"
+                android:src="@drawable/plus"
+                android:textColor="#FFFFFF"
+                android:background="@android:color/transparent"/>
+
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.widget.CheckBox
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -42,6 +43,7 @@ class CartActivity : AppCompatActivity() {
 
     private var totalPrice: Long = 0
     private var cartItems: List<CartData> = emptyList()
+    private val selectedItems = mutableListOf<CartData>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

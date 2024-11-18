@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".PaymentActivity">
+    tools:context=".BuyNowActivity">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -61,6 +61,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <include layout="@layout/payment_products"/>
+
             </LinearLayout>
 
             <!-- Alamat -->

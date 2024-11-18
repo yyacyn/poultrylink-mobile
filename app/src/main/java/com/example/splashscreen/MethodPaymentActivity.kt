@@ -20,31 +20,87 @@ class MethodPaymentActivity : AppCompatActivity() {
             insets
         }
 
-        findViewById<CardView>(R.id.transfer).setOnClickListener{
-            val intent = Intent(this@MethodPaymentActivity, PaymentActivity::class.java).apply {
-                putExtra("method", "transfer")
-                putExtra("image", "visa")
-            }
-            startActivity(intent)
-        }
+        val buyNow = intent.getBooleanExtra("buyNow", false)
 
-        findViewById<CardView>(R.id.cash).setOnClickListener{
-            val intent = Intent(this@MethodPaymentActivity, PaymentActivity::class.java).apply {
-                putExtra("method", "cash")
-                putExtra("image", "cash")
-            }
-            startActivity(intent)
-        }
-        findViewById<CardView>(R.id.indomaretPayment).setOnClickListener{
-            val intent = Intent(this@MethodPaymentActivity, PaymentActivity::class.java).apply {
-                putExtra("method", "indomaret")
-                putExtra("image", "indomaret")
-            }
-            startActivity(intent)
-        }
+        val productName = intent.getStringExtra("productName")
+        val productImage = intent.getStringExtra("productImage")
+        val productPrice = intent.getLongExtra("productPrice", 0)
+        val productQty = intent.getIntExtra("productQty", 0)
+        val productId = intent.getLongExtra("productId",0)
+        val cartId = intent.getLongExtra("cartId",0)
 
-        findViewById<ImageButton>(R.id.backbtn).setOnClickListener {
-            finish()
+        if (!buyNow) {
+            findViewById<CardView>(R.id.transfer).setOnClickListener{
+                val intent = Intent(this@MethodPaymentActivity, PaymentActivity::class.java).apply {
+                    putExtra("method", "transfer")
+                    putExtra("image", "visa")
+                }
+                startActivity(intent)
+            }
+
+            findViewById<CardView>(R.id.cash).setOnClickListener{
+                val intent = Intent(this@MethodPaymentActivity, PaymentActivity::class.java).apply {
+                    putExtra("method", "cash")
+                    putExtra("image", "cash")
+                }
+                startActivity(intent)
+            }
+            findViewById<CardView>(R.id.indomaretPayment).setOnClickListener{
+                val intent = Intent(this@MethodPaymentActivity, PaymentActivity::class.java).apply {
+                    putExtra("method", "indomaret")
+                    putExtra("image", "indomaret")
+                }
+                startActivity(intent)
+            }
+
+            findViewById<ImageButton>(R.id.backbtn).setOnClickListener {
+                finish()
+            }
+        } else {
+            findViewById<CardView>(R.id.transfer).setOnClickListener{
+                val intent = Intent(this@MethodPaymentActivity, BuyNowActivity::class.java).apply {
+                    putExtra("method", "transfer")
+                    putExtra("image", "visa")
+                    putExtra("productName", productName)
+                    putExtra("productImage", productImage)
+                    putExtra("productPrice", productPrice)
+                    putExtra("productQty", productQty)
+                    putExtra("productId", productId)
+                    putExtra("cartId", cartId)
+                }
+                startActivity(intent)
+            }
+
+            findViewById<CardView>(R.id.cash).setOnClickListener{
+                val intent = Intent(this@MethodPaymentActivity, BuyNowActivity::class.java).apply {
+                    putExtra("method", "cash")
+                    putExtra("image", "cash")
+                    putExtra("productName", productName)
+                    putExtra("productImage", productImage)
+                    putExtra("productPrice", productPrice)
+                    putExtra("productQty", productQty)
+                    putExtra("productId", productId)
+                    putExtra("cartId", cartId)
+                }
+                startActivity(intent)
+            }
+            findViewById<CardView>(R.id.indomaretPayment).setOnClickListener{
+                val intent = Intent(this@MethodPaymentActivity, BuyNowActivity::class.java).apply {
+                    putExtra("method", "indomaret")
+                    putExtra("image", "indomaret")
+                    putExtra("productName", productName)
+                    putExtra("productImage", productImage)
+                    putExtra("productPrice", productPrice)
+                    putExtra("productQty", productQty)
+                    putExtra("productId", productId)
+                    putExtra("cartId", cartId)
+                }
+                startActivity(intent)
+            }
+
+            findViewById<ImageButton>(R.id.backbtn).setOnClickListener {
+                finish()
+            }
         }
 
     }

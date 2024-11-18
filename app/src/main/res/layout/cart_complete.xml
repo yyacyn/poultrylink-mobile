@@ -86,8 +86,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:id="@+id/historyContainer">
-                <include layout="@layout/historycard"/>
+                android:id="@+id/historyContainer"
+                android:layout_marginBottom="100dp">
+                <include layout="@layout/orderprogresscard"/>
             </LinearLayout>
 
         </LinearLayout>

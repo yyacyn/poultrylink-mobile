@@ -2,10 +2,9 @@ package com.example.splashscreen
 
 import ApiService
 import android.content.Intent
-import android.media.Image
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
+import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -15,7 +14,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -24,14 +22,6 @@ import com.google.android.material.button.MaterialButton
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.yourapp.network.RetrofitClient
-import de.hdodenhof.circleimageview.CircleImageView
-import io.github.jan.supabase.auth.Auth
-import io.github.jan.supabase.auth.auth
-import io.github.jan.supabase.createSupabaseClient
-import io.github.jan.supabase.postgrest.Postgrest
-import io.github.jan.supabase.storage.Storage
-import kotlinx.coroutines.launch
-import org.w3c.dom.Text
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -71,7 +61,6 @@ class PaymentActivity : AppCompatActivity() {
                 findViewById<ImageView>(R.id.paymentIcon).setImageResource(R.drawable.paymenticon)
             }
         }
-
 
         findViewById<ImageButton>(R.id.backbutton).setOnClickListener {
             finish()
@@ -140,6 +129,7 @@ class PaymentActivity : AppCompatActivity() {
                         // Merge cart items with the same user_id and produk_id
                         val mergedCarts = mergeCartItems(filteredCarts)
 
+
                         // Display the merged cart items
                         val totalPrice = calculateTotalPrice(mergedCarts,shippingFee)
                         displayCartItems(mergedCarts, totalPrice)
@@ -181,7 +171,7 @@ class PaymentActivity : AppCompatActivity() {
         return mergedItemsMap.values.toList()
     }
 
-    private fun calculateTotalPrice(cartItems: List<CartData>, shippingFee: Long = 3000): Long {
+    private fun calculateTotalPrice(cartItems: List<CartData>, shippingFee: Long = 300000): Long {
         var subTotal: Long = 0
 
         // Calculate subtotal from the cart items
@@ -205,6 +195,7 @@ class PaymentActivity : AppCompatActivity() {
 
         for (cartItem in cartItems) {
             val cartItemView = layoutInflater.inflate(R.layout.payment_products, cartContainer, false)
+
 
             // Extract product details
             val productName = cartItem.barang.nama_produk
@@ -269,8 +260,10 @@ class PaymentActivity : AppCompatActivity() {
                     val orderResponse = response.body()
                     if (orderResponse != null) {
                         Toast.makeText(this@PaymentActivity, "Order created successfully!", Toast.LENGTH_SHORT).show()
-                        val intent = Intent(this@PaymentActivity, CompletePaymentActivity::class.java).apply {
-                            putExtra("orderId", orderResponse.order.id)}
+                        val intent = Intent(this@PaymentActivity, ConfirmPaymentActivity::class.java).apply {
+                            putExtra("orderId", orderResponse.order.id.toString())
+                            putExtra("orderInvoice", orderResponse.order.invoice)
+                        }
                         startActivity(intent)
                         Log.d("order", "Order added successfully: $orderResponse")
 
