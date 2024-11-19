@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".FaqActivity">
 
     <ScrollView
@@ -70,7 +71,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Apa itu Poultrylink?"
+                            android:text="Apa saja produk yang tersedia di PoultryLink?"
                             android:textColor="#000"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -89,7 +90,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Aplikasi ini adalah platform yang menghubungkan peternak atau supplier ayam dengan konsumen, baik individu maupun bisnis. Peternak dapat membuat profil, mengunggah produk seperti ayam potong, telur, ayam hidup, atau pakan ayam, dan menentukan harga serta informasi lain. Konsumen dapat mencari produk yang mereka butuhkan, melakukan pemesanan, dan mengatur pengiriman atau pengambilan. Aplikasi ini memudahkan proses transaksi antara peternak dan konsumen, mengoptimalkan distribusi produk."
+                        android:text="PoultryLink menyediakan berbagai produk terkait unggas yang dibagi dalam beberapa kategori utama, seperti unggas hidup (ayam dan bebek), telur, daging ayam, dan pakan ternak. Pembeli bisa membeli produk secara langsung atau melakukan pemesanan dalam jumlah besar untuk kebutuhan bisnis."
                         android:visibility="gone" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -124,7 +125,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Apakah ada biaya menggunakan aplikasi ini?"
+                            android:text="Bagaimana cara mengetahui lokasi toko yang bekerja sama dengan PoultryLink?"
                             android:textColor="#000"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -143,11 +144,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Aplikasi ini adalah platform yang menghubungkan peternak atau supplier ayam dengan konsumen, baik individu maupun bisnis. Peternak dapat membuat profil, mengunggah produk seperti ayam potong, telur, ayam hidup, atau pakan ayam, dan menentukan harga serta informasi lain. Konsumen dapat mencari produk yang mereka butuhkan, melakukan pemesanan, dan mengatur pengiriman atau pengambilan. Aplikasi ini memudahkan proses transaksi antara peternak dan konsumen, mengoptimalkan distribusi produk."
+                        android:text="PoultryLink memiliki fitur integrasi peta yang memungkinkan pengguna untuk melihat toko-toko yang bekerja sama dengan platform ini. Pengguna dapat menemukan toko terdekat yang menjual produk unggas."
                         android:visibility="gone" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+<<<<<<< HEAD
 
 
             <!--   FAQ 3  -->
@@ -179,7 +181,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Bagaimana jika terjadi masalah dengan produk yang diterima oleh konsumen ?"
+                            android:text="Apakah saya bisa berkomunikasi langsung dengan penjual melalui aplikasi?"
                             android:textColor="#000"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -198,12 +200,180 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Jika konsumen mengalami masalah dengan produk yang diterima, seperti kualitas produk yang tidak sesuai atau kerusakan saat pengiriman, mereka dapat menghubungi tim dukungan aplikasi melalui fitur bantuan atau layanan pelanggan. Aplikasi ini menyediakan kebijakan pengembalian atau penyelesaian masalah untuk melindungi konsumen dan menjaga kepercayaan. Setelah laporan diterima, tim dukungan akan memediasi antara peternak dan konsumen untuk mencari solusi terbaik, baik itu penggantian produk, pengembalian dana, atau solusi lainnya sesuai kebijakan aplikasi."
+                        android:text="Yap benar, PoultryLink menyediakan fitur live chat yang memungkinkan pembeli untuk berkomunikasi langsung dengan penjual, sehingga memudahkan dalam proses negosiasi atau tanya jawab terkait produk."
                         android:visibility="gone" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
 
+
+            <!--   FAQ 4  -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@android:color/white"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Header -->
+                    <LinearLayout
+                        android:id="@+id/headerLayout4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <!-- Question -->
+                        <TextView
+                            android:id="@+id/titleTextView4"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Bagaimana cara mendaftar menjadi merchant atau reseller di PoultryLink?"
+                            android:textColor="#000"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <!-- Arrow -->
+                        <ImageView
+                            android:id="@+id/arrowImageView4"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/arrow_down" />
+                    </LinearLayout>
+
+                    <!-- Isi Konten -->
+                    <TextView
+                        android:id="@+id/contentTextView4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Pengguna yang ingin bergabung sebagai merchant atau reseller PoultryLink dapat mendaftar langsung melalui aplikasi. Setelah diverifikasi, Anda dapat mulai menjual produk unggas melalui platform ini."
+                        android:visibility="gone" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+            <!--   FAQ 5  -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@android:color/white"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Header -->
+                    <LinearLayout
+                        android:id="@+id/headerLayout5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <!-- Question -->
+                        <TextView
+                            android:id="@+id/titleTextView5"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Apa itu fitur Simulation Farm dan siapa yang bisa menggunakannya?"
+                            android:textColor="#000"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <!-- Arrow -->
+                        <ImageView
+                            android:id="@+id/arrowImageView5"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/arrow_down" />
+                    </LinearLayout>
+
+                    <!-- Isi Konten -->
+                    <TextView
+                        android:id="@+id/contentTextView5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Fitur Simulation Farm adalah alat yang terintegrasi dengan AI untuk membantu peternak unggas dalam menjalankan operasional sehari-hari. Fitur ini hanya tersedia untuk peternak yang terdaftar di PoultryLink dan dirancang untuk memberikan solusi cerdas dalam manajemen peternakan unggas."
+                        android:visibility="gone" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+
+
+            <!--   FAQ 5  -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@android:color/white"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Header -->
+                    <LinearLayout
+                        android:id="@+id/headerLayout6"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <!-- Question -->
+                        <TextView
+                            android:id="@+id/titleTextView6"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Apakah PoultryLink mendukung kerjasama dengan peternak luar negeri?"
+                            android:textColor="#000"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <!-- Arrow -->
+                        <ImageView
+                            android:id="@+id/arrowImageView6"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/arrow_down" />
+                    </LinearLayout>
+
+                    <!-- Isi Konten -->
+                    <TextView
+                        android:id="@+id/contentTextView6"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Saat ini, PoultryLink belum mendukung kerjasama dengan peternak dari luar negeri. Namun, ke depannya, kami berencana untuk memperluas jaringan agar peternak dapat bekerja sama dengan mitra internasional."
+                        android:visibility="gone" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+=======
+            </LinearLayout>
+>>>>>>> 814e9adb99b7001d00814c5c116f6ed94d9f4426
         </LinearLayout>
     </LinearLayout>
     </ScrollView>

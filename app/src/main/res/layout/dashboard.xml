@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/white"
     tools:context=".ForgotPasswordActivity">
 
     <!-- LinearLayout Profil -->
@@ -36,7 +37,6 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="16dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/fotoprofil"
                 android:id="@+id/user_pfp"
                 android:contentDescription="Profile Picture" />
 
@@ -51,29 +51,61 @@
                     android:id="@+id/greet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Hello, Jenny!"
+                    android:text=""
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
                     android:textStyle="bold"/>
 
                 <!-- Location -->
                 <TextView
+                    android:id="@+id/user_location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Bogor, Indonesia"
                     android:textColor="@android:color/white"
                     android:textSize="14sp"
                     android:drawablePadding="4dp"/>
             </LinearLayout>
 
-            <!-- Notification Icon -->
-            <ImageButton
-                android:id="@+id/notification"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="@drawable/notif"
-                android:padding="8dp"
-                android:scaleType="center"/>
+            <!-- Notification -->
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageButton
+                    android:id="@+id/notification"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/notif"
+                    android:padding="8dp"
+                    android:scaleType="center" />
+
+                <!-- unread notifications -->
+                <TextView
+                    android:id="@+id/notification_badge"
+                    android:layout_width="17dp"
+                    android:layout_height="17dp"
+                    android:layout_gravity="end"
+                    android:background="@drawable/badge_bg"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textColor="@android:color/white"
+                    android:textSize="10sp" />
+
+<!--                <TextView-->
+<!--                    android:id="@+id/notification_badge"-->
+<!--                    android:layout_width="9dp"-->
+<!--                    android:layout_height="9dp"-->
+<!--                    android:layout_gravity="end"-->
+<!--                    android:layout_marginTop="13dp"-->
+<!--                    android:layout_marginRight="13dp"-->
+<!--                    android:background="@drawable/badge_bg"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text="1"-->
+<!--                    android:textColor="@android:color/white"-->
+<!--                    android:textSize="6sp" />-->
+
+            </FrameLayout>
+
         </LinearLayout>
 
         <!-- Search dan Cart -->
@@ -92,6 +124,7 @@
                 android:orientation="horizontal">
                 <!-- Search Input -->
                 <EditText
+                    android:id="@+id/searchInput"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -236,6 +269,7 @@
                 android:orientation="horizontal">
                 <!-- Kategori 1 -->
                 <LinearLayout
+                    android:id="@+id/egg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -256,6 +290,7 @@
 
                 <!-- Kategori 2 -->
                 <LinearLayout
+                    android:id="@+id/poultry"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -272,11 +307,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="Chicken" />
+                        android:text="Poultry" />
                 </LinearLayout>
 
                 <!-- Kategori 3 -->
                 <LinearLayout
+                    android:id="@+id/meat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -298,6 +334,7 @@
 
                 <!-- Kategori 4 -->
                 <LinearLayout
+                    android:id="@+id/seed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -327,6 +364,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_marginBottom="80dp"
             app:layout_constraintStart_toStartOf="@id/kategoriLayout"
             app:layout_constraintTop_toBottomOf="@id/kategoriLayout"
             android:layout_marginTop="15dp">
@@ -349,12 +387,13 @@
                 android:layout_height="wrap_content"
                 android:columnCount="2"
                 android:orientation="horizontal"
+                android:layout_marginBottom="20dp"
+                android:paddingBottom="20dp"
                 app:layout_constraintTop_toBottomOf="@id/textforyou">
 
                 <!-- Include product_card layout -->
                 <include layout="@layout/product_card" />
 
-                <include layout="@layout/product_card" />
 
                 <!-- Add more product cards as needed -->
             </GridLayout>
@@ -364,9 +403,56 @@
         </LinearLayout>
     </ScrollView>
 
+    <LinearLayout
+        android:id="@+id/fixedLayout"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/navbar_home"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <ImageButton
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="54dp"
+            android:layout_marginBottom="15dp"
+            android:src="@drawable/home"
+            android:background="@android:color/transparent"
+            />
 
+        <ImageButton
+            android:id="@+id/btnmarket"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="70dp"
+            android:src="@drawable/location"
+            android:background="@android:color/transparent"
+            />
 
+        <ImageButton
+            android:id="@+id/btnhistory"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="70dp"
+            android:src="@drawable/history"
+            android:background="@android:color/transparent"
+            />
 
+        <ImageButton
+            android:id="@+id/btnprofil"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="70dp"
+            android:src="@drawable/profil"
+            android:background="@android:color/transparent"
+            />
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

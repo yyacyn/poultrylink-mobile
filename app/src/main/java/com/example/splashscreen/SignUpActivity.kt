@@ -10,40 +10,32 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider.NewInstanceFactory.Companion.instance
 import androidx.lifecycle.lifecycleScope
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.homepage.HomeActivity
-import com.google.firebase.Timestamp
 import com.yourapp.network.RetrofitClient
 import io.github.jan.supabase.auth.Auth
-import io.github.jan.supabase.auth.auth
-import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
-import io.github.jan.supabase.postgrest.from
-import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.storage.Storage
 import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.LocalDateTime
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Serializer
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.put
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.ByteArrayOutputStream
-import java.time.format.DateTimeFormatter
-import kotlin.math.log
+import org.mindrot.jbcrypt.BCrypt
 
+class SignUpActivity : AppCompatActivity() {
 
-class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
+    private val supabase = createSupabaseClient(
+        supabaseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co",
+        supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhic3N5bHV1Y3J3c2JmenNweWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk2NTU4OTEsImV4cCI6MjA0NTIzMTg5MX0.o6fkro2tPKFoA9sxAp1nuseiHRGiDHs_HI4-ZoqOTfQ"
+    ) {
+        install(Storage)
+    }
+
     private lateinit var buttonSignUp: Button
     private lateinit var emailInput: EditText
     private lateinit var nameInput: EditText
@@ -51,49 +43,22 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
     private lateinit var confirmPasswordInput: EditText
     private lateinit var buttonBack: ImageButton
 
-    private val supabase = createSupabaseClient(
-        supabaseUrl = "https://hbssyluucrwsbfzspyfp.supabase.co",
-        supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhic3N5bHV1Y3J3c2JmenNweWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk2NTU4OTEsImV4cCI6MjA0NTIzMTg5MX0.o6fkro2tPKFoA9sxAp1nuseiHRGiDHs_HI4-ZoqOTfQ"
-    ) {
-        install(Auth)
-        install(Postgrest)
-        install(Storage)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.sign_up)
 
         initializeViews()
         setupClickListeners()
+
         buttonSignUp.setOnClickListener {
             val email = emailInput.text.toString().trim()
-            val name = nameInput.text.toString().trim()
+            val username = nameInput.text.toString().trim()
             val password = passwordInput.text.toString().trim()
             val confirmPassword = confirmPasswordInput.text.toString().trim()
 
-            // Call validateInputs function, and if true, proceed with signup
-            if (validateInputs(email, name, password, confirmPassword)) {
-                authSupabase(email, password, name)
+            if (validateInputs(email, username, password, confirmPassword)) {
+                registerUser(email, username, password, confirmPassword)
             }
-        }
-    }
-
-    private fun validateInputs(email: String, name: String, password: String, confirmPassword: String): Boolean {
-        return when {
-            email.isEmpty() || name.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() -> {
-                showError("Please fill in all fields")
-                false
-            }
-            password != confirmPassword -> {
-                showError("Passwords do not match")
-                false
-            }
-            password.length < 8 -> {
-                showError("Password must be at least 8 characters")
-                false
-            }
-            else -> true
         }
     }
 
@@ -108,105 +73,163 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
 
     private fun setupClickListeners() {
         buttonBack.setOnClickListener {
-            val intent = Intent(this, PilihanLoginActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, PilihanLoginActivity::class.java))
             finish()
         }
     }
 
-    private fun handleSignUpError(error: Exception) {
-        showError("Sign up failed: ${error.message}")
-    }
-
-    private fun showError(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showSuccess(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun navigateToDashboard() {
-        val intent = Intent(this, DashboardActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
-
-    private fun authSupabase(email: String, password: String, username: String) {
-        lifecycleScope.launch {
-            try {
-                val result = supabase.auth.signUpWith(Email) {
-                    this.email = email
-                    this.password = password
-                }
-
-                val session = supabase.auth.retrieveUserForCurrentSession()
-                val userId = session.id
-                val userEmail = session.email
-                insertUser(email, password, username, userId)
-
-                // Upload default profile picture
-                uploadDefaultAvatar(userEmail.toString())
-            } catch (e: Exception) {
-                handleSignUpError(e)
+    private fun validateInputs(email: String, username: String, password: String, confirmPassword: String): Boolean {
+        return when {
+            email.isEmpty() || username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() -> {
+                showToast("Please fill in all fields")
+                false
             }
+            password != confirmPassword -> {
+                showToast("Passwords do not match")
+                false
+            }
+            password.length < 8 -> {
+                showToast("Password must be at least 8 characters")
+                false
+            }
+            else -> true
         }
     }
 
-    fun insertUser(email: String, password: String, username: String, userId: String) {
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
 
-        val request = InsertUsers(
-            p_uid =  userId,
-            p_username = username,
-            p_email = email,
-            p_password = password
+    private fun registerUser(email: String, username: String, password: String, confirmPassword: String) {
+
+        val request = InsertUser(
+            email = email,
+            username = username,
+            password = password,
+            confirm_password = password
         )
 
-        RetrofitClient.instance.insertUser(request).enqueue(object : Callback<Boolean> {
-            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+        RetrofitClient.instance.registerUser(request).enqueue(object : Callback<RegisterResponse> {
+            override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
                 if (response.isSuccessful) {
-                    val success = response.body()
-                    if (success == true) {
-                        Log.d("InsertUser", "User inserted successfully")
-                        Toast.makeText(this@SignUpActivity, "Sign up successful", Toast.LENGTH_SHORT).show()
-                        navigateToDashboard()
-                    } else {
-                        Log.d("InsertUser", "User insertion failed")
+                    response.body()?.let { registerResponse ->
+                        Log.d("registerresponse", "Response: $registerResponse")
+                        if (registerResponse.success) {
+                            // Retrieve user ID from the registration response
+                            val userId = registerResponse.data?.user_id
+                            val token = registerResponse.data?.token
+                            if (userId != null) {
+                                if (token != null) {
+                                    storeToken(token)
+                                }
+                                uploadDefaultAvatar(userId.toString())
+                                createBuyerProfile(userId.toString())
+                            }
+                        } else {
+                            showToast("Sign up failed: ${registerResponse.message}")
+                        }
+                    } ?: run {
+                        Log.e("registerresponse", "Response body is null")
+                        showToast("Sign up failed: Empty response")
                     }
                 } else {
-                    Log.d("InsertUser", "Server error: ${response.errorBody()?.string()}")
+                    Log.e("registerresponse", "Server error: ${response.errorBody()?.string()}")
+                    showToast("Server error: ${response.errorBody()?.string()}")
                 }
             }
-            override fun onFailure(call: Call<Boolean>, t: Throwable) {
-                Log.e("InsertUser", "Network error: ${t.message}")
+
+            override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
+                Log.e("registerresponse", "Network error: ${t.message}")
+                showToast("Network error: ${t.message}")
             }
         })
     }
 
-    private fun uploadDefaultAvatar(userEmail: String) {
+
+
+
+    private fun createBuyerProfile(userId: String) {
+        val token = "Bearer ${getStoredToken()}"
+        Log.d("tokenforbuyer", token)// Retrieve the token from SharedPreferences
+        if (token != null) {
+            val buyerProfileRequest = BuyerProfileRequest(
+//                user_id = userId.toLong(),
+                default_avatar = userId
+            )
+
+            val request = RetrofitClient.instance.createBuyerProfile(token, buyerProfileRequest)
+
+            // Add Authorization header with the token
+            request.enqueue(object : Callback<BuyerResponse> {
+                override fun onResponse(call: Call<BuyerResponse>, response: Response<BuyerResponse>) {
+                    if (response.isSuccessful) {
+                        Log.d("Buyer", "Buyer profile created successfully")
+                        showToast("Sign up successful")
+                        navigateToHome(token)
+                    } else {
+                        Log.e("Buyer", "Failed to create buyer profile: ${response.message()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<BuyerResponse>, t: Throwable) {
+                    Log.e("Buyer", "Error creating buyer profile: ${t.message}")
+                }
+            })
+        } else {
+            Log.e("Auth", "No token found in SharedPreferences")
+            showToast("Error: No token available")
+        }
+    }
+
+    // Retrieve the token from SharedPreferences
+    private fun getStoredToken(): String? {
+        val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
+        return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
+    }
+
+    // Navigate to home activity after successful login
+    private fun navigateToHome(token: String) {
+        val intent = Intent(this, DashboardActivity::class.java)
+        intent.putExtra("TOKEN", token)
+        startActivity(intent)
+        finish()
+    }
+
+    // Store the token in SharedPreferences
+    private fun storeToken(token: String) {
+        val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("TOKEN", token)
+        editor.apply()
+    }
+
+    private fun navigateToHome() {
+        startActivity(Intent(this, HomeActivity::class.java))
+        finish()
+    }
+
+
+    private fun uploadDefaultAvatar(userId: String) {
         lifecycleScope.launch {
-            val userId = getUserIdByEmail(userEmail)
-            if (userId != null) {
-                val defaultAvatar = R.drawable.fotoprofil  // Your drawable resource
-                val avatarPath = "avatars/$userId/avatar.jpg"  // Use user ID for folder
-                val imageData = getDrawableAsByteArray(defaultAvatar)
+            try {
+                val avatarPath = "$userId/1.jpg"
+                val imageData = getDrawableAsByteArray(R.drawable.fotoprofil)
 
                 withContext(Dispatchers.IO) {
                     try {
                         supabase.storage.from("avatar").upload(avatarPath, imageData)
-                        updateUserAvatarPath(userEmail, avatarPath)
-                        Log.d("Supabase", "Default avatar uploaded: $avatarPath")
+                        Log.d("Supabase", "Avatar upload successful")
                     } catch (e: Exception) {
                         Log.e("SupabaseUploadError", "Failed to upload avatar: ${e.message}")
                     }
                 }
-            } else {
-                Log.e("AvatarUploadError", "User ID not found for email: $userEmail")
+            } catch (e: Exception) {
+                Log.e("AvatarUploadError", "Error during avatar upload process: ${e.message}")
             }
         }
     }
 
-
+    // converts image into bytearray to store it into supabase storage
     private fun getDrawableAsByteArray(drawableId: Int): ByteArray {
         val drawable = resources.getDrawable(drawableId, null) as android.graphics.drawable.BitmapDrawable
         val bitmap = drawable.bitmap
@@ -215,64 +238,4 @@ class SignUpActivity<BitmapDrawable> : AppCompatActivity() {
         return outputStream.toByteArray()
     }
 
-    private suspend fun updateUserAvatarPath(email: String, filePath: String) {
-        supabase.postgrest["users"].update(mapOf("avatar_path" to filePath)) {
-            filter { eq("email", email) }
-        }
-    }
-
-    private fun uploadAndDisplayAvatar(filename: String, drawableId: Int) {
-        lifecycleScope.launch {
-            val currentEmail = supabase.auth.retrieveUserForCurrentSession().email ?: return@launch
-            val avatarPath = "avatars/$currentEmail/$filename"
-
-            try {
-                // Switch to background thread for network operations
-                withContext(Dispatchers.IO) {
-                    // Check if the user already has an avatar
-                    val existingFiles = supabase.storage.from("avatar").list("avatars/$currentEmail")
-                    val imageData = getDrawableAsByteArray(drawableId)
-
-                    if (existingFiles.isNotEmpty()) {
-                        // Update the existing file
-                        supabase.storage.from("avatar").update(avatarPath, imageData)
-                        Log.d("Supabase", "Existing avatar updated: $avatarPath")
-                    } else {
-                        // Upload a new avatar
-                        supabase.storage.from("avatar").upload(avatarPath, imageData)
-                        Log.d("Supabase", "New avatar uploaded: $avatarPath")
-                    }
-
-                    // Update avatar path in user's database record
-                    updateUserAvatarPath(currentEmail, avatarPath)
-                }
-
-                // Load the image from Supabase Storage URL into ImageView with Glide
-                val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$avatarPath"
-                Glide.with(this@SignUpActivity)
-                    .load(imageUrl)
-                    .skipMemoryCache(true) // skip memory cache
-                    .diskCacheStrategy(DiskCacheStrategy.NONE) // skip disk cache
-                    .into(findViewById(R.id.user_pfp))
-                Log.d("Supabase", "Avatar displayed successfully")
-
-            } catch (e: Exception) {
-                Log.e("SupabaseUploadError", "Failed to upload or display avatar: ${e.message}")
-            }
-        }
-    }
-
-    private suspend fun getUserIdByEmail(email: String): Int? {
-        val requestBody = mapOf("p_email" to email)
-        val response: Response<Int> = RetrofitClient.instance.getUserIdByEmail(requestBody)
-
-        if (response.isSuccessful) {
-            // Log the raw response to see if you are receiving the correct ID
-            Log.d("APIResponse", "User ID retrieved: ${response.body()}")
-            return response.body() // This will be the user ID directly
-        } else {
-            Log.e("APIError", "Failed to retrieve user ID: ${response.errorBody()?.string()}")
-            return null
-        }
-    }
 }

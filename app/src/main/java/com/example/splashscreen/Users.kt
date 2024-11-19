@@ -2,7 +2,7 @@ package com.example.splashscreen
 
 import kotlinx.serialization.Serializable
 
-//@Serializable
+@Serializable
 data class Users(
     val id: String? = null,
     val uid: String,
@@ -20,5 +20,12 @@ data class InsertUsers(
 
 data class GetUserByEmail(
     val p_email: String,
+)
+
+@Serializable
+data class UserResponse(
+    val email: String,
+    val password: String  // This will be the hashed password from database
+    // Add other fields as needed
 )
 

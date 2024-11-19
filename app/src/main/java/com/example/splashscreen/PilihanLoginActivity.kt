@@ -59,5 +59,17 @@ class PilihanLoginActivity : AppCompatActivity() {
             val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
         }
+
+        val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
+        val token = sharedPreferences.getString("TOKEN", null)
+
+        if (token.isNullOrEmpty()) {
+            // Token is empty or doesn't exist, redirect to LoginActivity
+        } else {
+            // Token exists, redirect to MainActivity
+            val intent = Intent(this, DashboardActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 }

@@ -4,6 +4,9 @@
         <item name="colorAccent">@android:color/holo_red_light</item>
         <!-- default color of radio button -->
         <item name="android:textColorPrimary">@android:color/darker_gray</item>
+        <!-- Aktifkan navigasi translucent -->
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
 
     </style>
 </resources>

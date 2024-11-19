@@ -31,6 +31,7 @@
                     android:layout_marginRight="25dp"
                     android:layout_marginLeft="25dp">
                     <ImageButton
+                        android:id="@+id/backbutton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/arrowbackblack"
@@ -82,460 +83,70 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-
-
-            <!-- Produk 1 -->
-            <androidx.cardview.widget.CardView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:cardElevation="4dp"
-                app:cardCornerRadius="8dp"
-                android:background="@android:color/white"
-                android:layout_marginBottom="16dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center">
-
-
-                        <!-- Kategori -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Chicken"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:drawableLeft="@drawable/ayamlogo"
-                            android:drawablePadding="8dp"
-                            android:textColor="@android:color/black"
-                            android:gravity="center"/>
-
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1" />
-
-                        <!-- Status -->
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Complete"
-                            android:textStyle="bold"
-                            android:backgroundTint="#FF6600"
-                            app:cornerRadius="10dp"
-                            android:textColor="@android:color/white"
-                            android:paddingHorizontal="16dp"/>
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_weight="1"
-                        android:background="@color/gray" />
-
-
-
-                    <!-- Isi Produk  -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="16dp">
-
-                        <!-- Gambar Produk -->
-                        <ImageView
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:src="@drawable/ayam"
-                            android:scaleType="centerCrop"
-                            android:layout_marginEnd="16dp"/>
-
-                        <!-- Detail Produk -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_weight="1">
-
-                            <!-- Nama Produk -->
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Cemani Chicken Premium"
-                                android:textSize="16sp"
-                                android:textStyle="bold"
-                                android:textColor="@android:color/black" />
-
-                            <!-- Deskripsi -->
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="1 Barang"
-                                android:textSize="12sp"
-                                android:textColor="@android:color/darker_gray"
-                                android:layout_marginTop="4dp"/>
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:layout_marginTop="16dp">
-
-                                <!-- Harga -->
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="Total"
-                                        android:textColor="@android:color/black"
-                                        android:textSize="14sp"
-                                        android:layout_marginEnd="90dp"/>
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="Rp 149.000"
-                                        android:textColor="@android:color/black"
-                                        android:textSize="14sp"
-                                        android:layout_marginEnd="90dp"/>
-                                </LinearLayout>
-
-                                <!-- Tombol Done -->
-                                <Button
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textAlignment="center"
-                                    android:textColor="@color/orange"
-                                    android:paddingHorizontal="10dp"
-                                    android:text="Buy Again"
-                                    android:backgroundTint="#00FFFFFF"
-                                    app:strokeWidth="1dp"
-                                    app:strokeColor="@color/orange"
-                                    app:cornerRadius="10dp"/>
-                            </LinearLayout>
-                        </LinearLayout>
-                    </LinearLayout>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Produk 2 -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:cardElevation="4dp"
-                app:cardCornerRadius="8dp"
-                android:background="@android:color/white"
-                android:layout_marginBottom="16dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center">
-
-
-                        <!-- Kategori -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Chicken"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:drawableLeft="@drawable/ayamlogo"
-                            android:drawablePadding="8dp"
-                            android:textColor="@android:color/black"
-                            android:gravity="center"/>
-
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1" />
-
-                        <!-- Status -->
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Complete"
-                            android:textStyle="bold"
-                            android:backgroundTint="#FF6600"
-                            app:cornerRadius="10dp"
-                            android:textColor="@android:color/white"
-                            android:paddingHorizontal="16dp"/>
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_weight="1"
-                        android:background="@color/gray" />
-
-
-
-                    <!-- Isi Produk  -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="16dp">
-
-                        <!-- Gambar Produk -->
-                        <ImageView
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:src="@drawable/ayam"
-                            android:scaleType="centerCrop"
-                            android:layout_marginEnd="16dp"/>
-
-                        <!-- Detail Produk -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_weight="1">
-
-                            <!-- Nama Produk -->
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Cemani Chicken Premium"
-                                android:textSize="16sp"
-                                android:textStyle="bold"
-                                android:textColor="@android:color/black" />
-
-                            <!-- Deskripsi -->
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="1 Barang"
-                                android:textSize="12sp"
-                                android:textColor="@android:color/darker_gray"
-                                android:layout_marginTop="4dp"/>
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:layout_marginTop="16dp">
-
-                                <!-- Harga -->
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="Total"
-                                        android:textColor="@android:color/black"
-                                        android:textSize="14sp"
-                                        android:layout_marginEnd="90dp"/>
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="Rp 149.000"
-                                        android:textColor="@android:color/black"
-                                        android:textSize="14sp"
-                                        android:layout_marginEnd="90dp"/>
-                                </LinearLayout>
-
-                                <!-- Tombol Done -->
-                                <Button
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textAlignment="center"
-                                    android:textColor="@color/orange"
-                                    android:paddingHorizontal="10dp"
-                                    android:text="Buy Again"
-                                    android:backgroundTint="#00FFFFFF"
-                                    app:strokeWidth="1dp"
-                                    app:strokeColor="@color/orange"
-                                    app:cornerRadius="10dp"/>
-                            </LinearLayout>
-                        </LinearLayout>
-                    </LinearLayout>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Produk 3 -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:cardElevation="4dp"
-                app:cardCornerRadius="8dp"
-                android:background="@android:color/white"
-                android:layout_marginBottom="16dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center">
-
-
-                        <!-- Kategori -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Chicken"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:drawableLeft="@drawable/ayamlogo"
-                            android:drawablePadding="8dp"
-                            android:textColor="@android:color/black"
-                            android:gravity="center"/>
-
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1" />
-
-                        <!-- Status -->
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Complete"
-                            android:textStyle="bold"
-                            android:backgroundTint="#FF6600"
-                            app:cornerRadius="10dp"
-                            android:textColor="@android:color/white"
-                            android:paddingHorizontal="16dp"/>
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_weight="1"
-                        android:background="@color/gray" />
-
-
-
-                    <!-- Isi Produk  -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="16dp">
-
-                        <!-- Gambar Produk -->
-                        <ImageView
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:src="@drawable/ayam"
-                            android:scaleType="centerCrop"
-                            android:layout_marginEnd="16dp"/>
-
-                        <!-- Detail Produk -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_weight="1">
-
-                            <!-- Nama Produk -->
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Cemani Chicken Premium"
-                                android:textSize="16sp"
-                                android:textStyle="bold"
-                                android:textColor="@android:color/black" />
-
-                            <!-- Deskripsi -->
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="1 Barang"
-                                android:textSize="12sp"
-                                android:textColor="@android:color/darker_gray"
-                                android:layout_marginTop="4dp"/>
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:layout_marginTop="16dp">
-
-                                <!-- Harga -->
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="Total"
-                                        android:textColor="@android:color/black"
-                                        android:textSize="14sp"
-                                        android:layout_marginEnd="90dp"/>
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="Rp 149.000"
-                                        android:textColor="@android:color/black"
-                                        android:textSize="14sp"
-                                        android:layout_marginEnd="90dp"/>
-                                </LinearLayout>
-
-                                <!-- Tombol Done -->
-                                <Button
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textAlignment="center"
-                                    android:textColor="@color/orange"
-                                    android:paddingHorizontal="10dp"
-                                    android:text="Buy Again"
-                                    android:backgroundTint="#00FFFFFF"
-                                    app:strokeWidth="1dp"
-                                    app:strokeColor="@color/orange"
-                                    app:cornerRadius="10dp"/>
-                            </LinearLayout>
-                        </LinearLayout>
-                    </LinearLayout>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:id="@+id/historyContainer"
+                android:layout_marginBottom="100dp">
+                <include layout="@layout/orderprogresscard"/>
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/fixedLayout"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/navbar_history"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <ImageButton
+            android:id="@+id/home"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="54dp"
+            android:src="@drawable/home"
+            android:background="@android:color/transparent"
+            />
+
+        <ImageButton
+            android:id="@+id/market"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="70dp"
+            android:src="@drawable/location"
+            android:background="@android:color/transparent"
+            />
+
+        <ImageButton
+            android:id="@+id/history"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginBottom="15dp"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="70dp"
+            android:src="@drawable/history"
+            android:background="@android:color/transparent"
+            />
+
+        <ImageButton
+            android:id="@+id/profile"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="70dp"
+            android:src="@drawable/profil"
+            android:background="@android:color/transparent"
+            />
+
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

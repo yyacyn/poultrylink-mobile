@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Splash Screen</string>
+    <string name="app_name">Poultry Link</string>
     <string-array name="country_codes">
         <item>+62</item> <!-- Indonesia -->
         <item>+1</item>  <!-- USA -->

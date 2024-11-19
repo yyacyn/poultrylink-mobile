@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".PaymentActivity">
     <ScrollView
         android:layout_width="match_parent"
@@ -15,9 +16,11 @@
             android:orientation="vertical"
             android:layout_marginTop="25dp"
             android:layout_marginRight="25dp"
-            android:layout_marginLeft="25dp">
+            android:layout_marginLeft="25dp"
+            android:layout_marginBottom="100dp">
 
             <ImageButton
+                android:id="@+id/backbutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/arrowbackblack"
@@ -42,6 +45,56 @@
                 android:layout_marginBottom="20dp"
                 android:textColor="@color/orange" />
 
+<!--            &lt;!&ndash; Metode Pembayaran &ndash;&gt;-->
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Payment method"-->
+<!--                android:textSize="16sp"-->
+<!--                android:textStyle="bold"/>-->
+
+<!--            <androidx.cardview.widget.CardView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="5dp"-->
+<!--                android:layout_marginBottom="50dp"-->
+<!--                app:cardElevation="4dp"-->
+<!--                app:cardCornerRadius="8dp"-->
+<!--                app:cardBackgroundColor="@android:color/white"-->
+<!--                app:cardForegroundColor="@drawable/card_selector"-->
+<!--                android:clickable="true"-->
+<!--                android:focusable="true"-->
+<!--                android:foreground="?attr/selectableItemBackground">-->
+
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/paymentContainer"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:padding="15dp"-->
+<!--                    >-->
+
+<!--                    <ImageView-->
+<!--                        android:id="@+id/paymentIcon"-->
+<!--                        android:layout_width="30dp"-->
+<!--                        android:layout_height="30dp"-->
+<!--                        android:src="@drawable/paymenticon"-->
+<!--                        android:layout_marginEnd="15dp"-->
+<!--                        />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/paymentMethod"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:gravity="center"-->
+<!--                        android:layout_marginStart="8dp"-->
+<!--                        android:text="Select Payment method"-->
+<!--                        android:textSize="14sp"-->
+<!--                        android:textStyle="bold"-->
+<!--                        android:textColor="@color/black"/>-->
+<!--                </LinearLayout>-->
+<!--            </androidx.cardview.widget.CardView>-->
+
             <!-- Estimated delivery -->
             <TextView
                 android:layout_width="wrap_content"
@@ -50,46 +103,14 @@
                 android:textSize="14sp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
-                android:layout_marginTop="4dp"/>
+                android:layout_marginTop="30dp"/>
 
-            <!-- Gambar dan Detail Produk -->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/cart_container"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="10dp">
-
-                <!-- Gambar Produk -->
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/ayam"
-                    android:scaleType="centerCrop"
-                    android:layout_gravity="center_vertical"/>
-
-                <!-- Detail Produk -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="16dp"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Cemani Chicken Premium"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="#000"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Jumlah Pesanan : 20"
-                        android:textSize="14sp"
-                        android:textColor="#808080"/>
-                </LinearLayout>
+                android:orientation="vertical">
+                <include layout="@layout/payment_products"/>
             </LinearLayout>
 
             <!-- Alamat -->
@@ -128,13 +149,25 @@
                         android:layout_marginEnd="15dp"
                         />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Jl. Kumbang No.14, RT.02/RW.06, Babakan, Bogor, Indonesia"
-                        android:textSize="14sp"
-                        android:textColor="#000"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/address"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:textSize="14sp"
+                            android:textColor="#000"/>
+                        <TextView
+                            android:id="@+id/kodepos"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:textSize="14sp"
+                            android:textColor="#000"/>
+                    </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -162,17 +195,17 @@
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Item Total"
-                        android:textSize="14sp"
-                        android:textColor="#000"/>
+                        android:layout_height="match_parent"
+                        android:text="Sub Total"
+                        android:textColor="#000"
+                        android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/subTotal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="end"
-                        android:text="Rp 2.980.000"
                         android:textSize="14sp"
                         android:textColor="#000"/>
                 </LinearLayout>
@@ -193,11 +226,11 @@
 
 
                     <TextView
+                        android:id="@+id/shippingFee"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="end"
-                        android:text="Rp 20.000"
                         android:textSize="14sp"
                         android:textColor="#000"/>
                 </LinearLayout>
@@ -226,11 +259,11 @@
                         android:textColor="#000"/>
 
                     <TextView
+                        android:id="@+id/total"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="end"
-                        android:text="Rp 3.000.000"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:textColor="#000"/>
@@ -241,16 +274,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
                 android:text="Payment method"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginTop="24dp"/>
+                android:textStyle="bold"/>
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="50dp"
                 app:cardElevation="4dp"
                 app:cardCornerRadius="8dp"
                 app:cardBackgroundColor="@android:color/white"
@@ -260,6 +293,7 @@
                 android:foreground="?attr/selectableItemBackground">
 
                 <LinearLayout
+                    android:id="@+id/paymentContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -267,6 +301,7 @@
                     >
 
                     <ImageView
+                        android:id="@+id/paymentIcon"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:src="@drawable/paymenticon"
@@ -274,6 +309,7 @@
                         />
 
                     <TextView
+                        android:id="@+id/paymentMethod"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center"
@@ -314,7 +350,6 @@
 
             <!-- Total Price -->
             <TextView
-                android:id="@+id/total"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start"
@@ -327,10 +362,9 @@
             <!-- Total Price -->
             <TextView
                 android:id="@+id/totalPrice"
-                android:layout_width="wrap_content"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:text="Rp. 149.000"
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 android:textSize="16sp"
@@ -354,7 +388,7 @@
             android:textAlignment="center"
             android:textColor="@color/white"
             android:backgroundTint="#00FFFFFF"
-            android:id="@+id/buttonSignUp"
+            android:id="@+id/buy"
             app:strokeWidth="1dp"
             app:strokeColor="@color/white"
             android:layout_marginEnd="20dp"

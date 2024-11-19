@@ -5,6 +5,100 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".EggCategoryActivity">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/orange">
+                    <!-- Top Menu -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="25dp">
+                        <ImageButton
+                            android:id="@+id/btn_back"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@android:color/transparent"
+                            android:src="@drawable/arrowback2"
+                            android:contentDescription="Back"
+                            android:layout_gravity="start|top" />
+
+                        <LinearLayout
+                            android:layout_marginStart="20dp"
+                            android:layout_width="300dp"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/searrch"
+                            android:orientation="horizontal">
+                            <!-- Search Input -->
+                            <EditText
+                                android:id="@+id/searchInput"
+                                android:layout_width="210dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:paddingLeft="30dp"
+                                android:layout_marginTop="10dp"
+                                android:hint="Cari di Poltrylink"
+                                android:background="@android:color/transparent"
+                                android:textColorHint="#CCCCCC"
+                                android:textSize="14sp"/>
+
+                            <!-- Search Icon -->
+                            <ImageView
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:src="@drawable/searchlogo"
+                                android:padding="5dp"
+                                android:scaleType="center" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp">
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="10dp"
+                        android:src="@drawable/kategori_egg_transparent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="Egg"
+                        android:textSize="20dp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+
+
+
+                <GridLayout
+                    android:id="@+id/gridLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="2"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/textforyou">
+
+                    <include layout="@layout/product_card" />
+
+                </GridLayout>
+
+            </LinearLayout>
+        </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

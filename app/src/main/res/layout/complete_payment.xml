@@ -1,140 +1,256 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".CompletePaymentActivity">
-    <LinearLayout
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginTop="25dp"
-        android:layout_marginRight="25dp"
-        android:layout_marginLeft="25dp">
-
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/arrowbackblack"
-            android:background="#00FFFFFF"
-            android:layout_marginBottom="20dp"
-            />
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:src="@drawable/confirmimage"
-            android:layout_marginBottom="20dp"
-            />
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center_horizontal"
-            >
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Confirm"
-                android:textStyle="bold"
-                android:textColor="@color/orange"
-                android:textSize="25dp"
-                android:gravity="center"
-                android:layout_marginBottom="20dp"
-                />
+            android:padding="16dp">
 
-
-            <!-- Succes Icon -->
-            <ImageView
+            <!-- Close Button -->
+            <ImageButton
+                android:id="@+id/closeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="60dp"
-                android:src="@drawable/success"
-                android:layout_marginBottom="20dp"
-                />
+                android:src="@drawable/x"
+                android:background="@null" />
 
-            <TextView
+            <!-- Header -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Successful !"
-                android:textStyle="bold"
-                android:textColor="@color/orange"
-                android:textSize="20dp"
-                android:gravity="center"
-                android:layout_marginBottom="20dp"
-                />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="16dp">
+
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/logo" />
+
+                <LinearLayout
+                    android:layout_marginBottom="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Invoice"
+                        android:textStyle="bold"
+                        android:textSize="32sp" />
+
+                    <TextView
+                        android:id="@+id/orderFor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Loading invoice..."
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/orderDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp" />
+                    <!-- Payment Method -->
+                    <TextView
+                        android:id="@+id/paymentMethod"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray"
+                android:layout_marginTop="16dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_marginTop="50dp"
-                >
-                <!-- Text label -->
-                <TextView
-                    android:id="@+id/textViewOrderLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="Your order number is"
-                    android:textSize="18sp"
-                    android:textColor="#000000" />
+                android:orientation="horizontal"
+                android:paddingVertical="8dp">
 
-                <!-- Text nomor order -->
                 <TextView
-                    android:id="@+id/textViewOrderNumber"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:text="Qty" />
+
+                <TextView
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:text="Product" />
+
+                <TextView
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:text="Supplier" />
+
+                <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text=" #000000"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="#FF5722" />
+                    android:layout_height="wrap_content"
+                    android:text="Amount" />
             </LinearLayout>
 
-            <!-- Text -->
-            <TextView
-                android:id="@+id/textViewConfirmation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="You will receive the order \n confirmation email shortly"
-                android:textSize="18sp"
-                android:textColor="#000000" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray" />
 
-
-            <TextView
+            <!-- Product Details -->
+            <LinearLayout
+                android:id="@+id/productContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Thank you for shopping with us "
-                android:textStyle="bold"
-                android:textColor="@color/black"
-                android:textSize="18dp"
-                android:layout_marginTop="80dp"
-                android:gravity="center"
-                android:layout_marginBottom="10dp"
-                />
+                android:orientation="vertical">
 
+                <!-- Example Product Item -->
+                <include layout="@layout/invoice_product" />
+            </LinearLayout>
 
-
-
-            <!-- Button Continue -->
-            <com.google.android.material.button.MaterialButton
+            <!-- Divider -->
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="5dp"
-                android:text="Continue"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:backgroundTint="@color/orange"
-                app:cornerRadius="10dp"
-                />
+                android:layout_height="1dp"
+                android:background="@color/gray"
+                android:layout_marginTop="10dp" />
 
+            <!-- Qty count -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-    </LinearLayout>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Item count:"
+                    android:textSize="16sp"
+                    android:paddingTop="16dp" />
 
+                <TextView
+                    android:id="@+id/itemCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:paddingTop="16dp" />
+            </LinearLayout>
 
-    </LinearLayout>
+            <!-- Subtotal -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Subtotal:"
+                    android:textSize="16sp"
+                    android:paddingTop="16dp" />
 
+                <TextView
+                    android:id="@+id/subTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:paddingTop="16dp" />
+            </LinearLayout>
+
+            <!-- Shipping Fee -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Shipping fee:"
+                    android:textSize="16sp"
+                    android:paddingTop="16dp" />
+
+                <TextView
+                    android:id="@+id/shippingFee"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:paddingTop="16dp" />
+            </LinearLayout>
+
+            <!-- Total Price -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Total price:"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:paddingTop="16dp" />
+
+                <TextView
+                    android:id="@+id/totalPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="24sp"
+                    android:paddingTop="16dp" />
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray"
+                android:layout_marginVertical="16dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end|center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Download invoice" />
+                <ImageButton
+                    android:id="@+id/download"
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/download"
+                    android:background="@null" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
