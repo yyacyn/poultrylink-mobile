@@ -112,7 +112,7 @@ class ProfilActivity : AppCompatActivity() {
         }
 
         btnLifechat.setOnClickListener {
-            startActivity(Intent(this, LifechatActivity::class.java))
+            startActivity(Intent(this, Lifechat2Activity::class.java))
         }
 
         btnNotif.setOnClickListener {

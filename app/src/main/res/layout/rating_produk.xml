@@ -34,6 +34,7 @@
 
             <!-- Product Image -->
             <ImageView
+                android:id="@+id/productImage"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:scaleType="centerCrop"
@@ -48,18 +49,18 @@
                 android:paddingStart="8dp">
 
                 <TextView
+                    android:id="@+id/productName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cemani Chicken Premium Cemani Chicken Premium Cemani Chicken Premium "
                     android:textStyle="bold"
                     android:textSize="16sp"
                     android:maxLines="2"
                     android:ellipsize="end" />
 
                 <TextView
+                    android:id="@+id/productCategory"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Varian: Grey"
                     android:textSize="14sp"
                     android:textColor="#666666" />
             </LinearLayout>
@@ -104,7 +105,7 @@
         android:textSize="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="25dp"
-        android:text="Berikan Komentar anda" />
+        android:text="Give your review" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -121,10 +122,11 @@
         android:focusable="true"
         android:foreground="?attr/selectableItemBackground">
         <EditText
+            android:id="@+id/reviewInput"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:textSize="15dp"
-            android:hint="Yuk, ceritain kepuasanmu tentang kualitas barang dan pelayanan penjual."
+            android:hint="Please tell us about your satisfaction with the quality of the goods and the seller's service."
             android:background="@android:color/transparent"
             android:gravity="top"
             android:padding="15dp"
@@ -132,11 +134,12 @@
     </androidx.cardview.widget.CardView>
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/submitButton"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginLeft="25dp"
             android:layout_marginRight="25dp"
-            android:text="Kirim"
+            android:text="Submit"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:backgroundTint="@color/orange"

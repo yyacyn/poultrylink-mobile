@@ -31,6 +31,7 @@
                     android:layout_marginRight="25dp"
                     android:layout_marginLeft="25dp">
                     <ImageButton
+                        android:id="@+id/backbutton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/arrowbackblack"
@@ -105,6 +106,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
         <ImageButton
+            android:id="@+id/home"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:scaleType="centerCrop"
@@ -114,6 +116,7 @@
             />
 
         <ImageButton
+            android:id="@+id/market"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:scaleType="centerCrop"
@@ -123,6 +126,7 @@
             />
 
         <ImageButton
+            android:id="@+id/history"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_marginBottom="15dp"
@@ -133,6 +137,7 @@
             />
 
         <ImageButton
+            android:id="@+id/profile"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:scaleType="centerCrop"

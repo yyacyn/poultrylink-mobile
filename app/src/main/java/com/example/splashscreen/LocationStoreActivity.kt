@@ -1,11 +1,14 @@
 package com.example.splashscreen
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
+import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.yourapp.network.RetrofitClient
@@ -21,16 +24,13 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
 class LocationStoreActivity : AppCompatActivity() {
 
     private var allSuppliers: List<SupplierData> = listOf()
-
     private lateinit var map: MapView
     private lateinit var locationOverlay: MyLocationNewOverlay
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
 
-    // Approximate coordinates for Indonesian cities
     private val cityCoordinates = mapOf(
         "Bogor" to GeoPoint(-6.5971, 106.8060),
         "Jakarta" to GeoPoint(-6.2088, 106.8456),
@@ -44,56 +44,66 @@ class LocationStoreActivity : AppCompatActivity() {
         "Bekasi" to GeoPoint(-6.2383, 106.9756)
     )
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Initialize OSMdroid configuration
         Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this))
         setContentView(R.layout.location_store)
 
-        // Initialize map
         map = findViewById(R.id.mapView)
         setupMap()
 
-        // Request permissions
         requestPermissionsIfNecessary(
             arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             )
         )
-        // Fetch suppliers
-        val token = "Bearer ${getStoredToken()}" // Replace with actual token retrieval
-        getSupplier(token)
 
+        val token = "Bearer ${getStoredToken()}"
+        getSupplier(token)
+        Navigation()
     }
 
-    // Retrieve the token from SharedPreferences
     private fun getStoredToken(): String? {
         val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
-        return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
+        return sharedPreferences.getString("TOKEN", null)
     }
 
     private fun setupMap() {
         map.setTileSource(TileSourceFactory.MAPNIK)
         map.setMultiTouchControls(true)
 
-        // Add location overlay
         locationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(this), map)
         locationOverlay.enableMyLocation()
         map.overlays.add(locationOverlay)
 
-        // Add compass
         val compassOverlay = CompassOverlay(this, map)
         compassOverlay.enableCompass()
         map.overlays.add(compassOverlay)
 
-        // Set default zoom and center on Indonesia
         val mapController = map.controller
         mapController.setZoom(6.0)
-        val indonesiaCenter = GeoPoint(-2.5489, 118.0149) // Center of Indonesia
+        val indonesiaCenter = GeoPoint(-2.5489, 118.0149)
         mapController.setCenter(indonesiaCenter)
+    }
+
+    private fun Navigation() {
+        val buttonProduk = findViewById<CardView>(R.id.home)
+        val buttonProfile = findViewById<ImageButton>(R.id.profile)
+        val buttonHistory = findViewById<ImageButton>(R.id.history)
+
+        buttonProduk.setOnClickListener {
+            startActivity(Intent(this, DashboardActivity::class.java))
+        }
+
+        buttonHistory.setOnClickListener {
+            startActivity(Intent(this, CartCompleteActivity::class.java))
+        }
+
+        buttonProfile.setOnClickListener {
+            startActivity(Intent(this, ProfilActivity::class.java))
+        }
+
     }
 
     private fun getSupplier(token: String) {
@@ -103,7 +113,7 @@ class LocationStoreActivity : AppCompatActivity() {
                     if (response.isSuccessful) {
                         allSuppliers = response.body()?.data ?: emptyList()
                         Log.d("SupplierResponse", "Suppliers: $allSuppliers")
-                        addStoreMarkers() // Add markers after data is fetched
+                        addStoreMarkers()
                     } else {
                         Log.e("SupplierError", "Failed to fetch supplier data: ${response.message()}")
                     }
@@ -116,26 +126,37 @@ class LocationStoreActivity : AppCompatActivity() {
     }
 
     private fun addStoreMarkers() {
-        allSuppliers.forEach { store ->
-            val coordinates = cityCoordinates[store.kota]
+        allSuppliers.forEach { supplier ->
+            val coordinates = cityCoordinates[supplier.kota]
             if (coordinates != null) {
-                addMarker(
-                    coordinates,
-                    store.nama_toko,
-                    "${store.alamat}\n${store.deskripsi}\nRating: ${store.rating}/5"
-                )
+                addMarker(coordinates, supplier)
             } else {
-                Log.w("LocationWarning", "Coordinates not found for city: ${store.kota}")
+                Log.w("LocationWarning", "Coordinates not found for city: ${supplier.kota}")
             }
         }
     }
 
-    private fun addMarker(point: GeoPoint, title: String, snippet: String) {
+    private fun addMarker(point: GeoPoint, supplier: SupplierData) {
         val marker = Marker(map).apply {
             position = point
             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-            this.title = title
-            this.snippet = snippet
+            title = supplier.nama_toko
+            snippet = "${supplier.alamat}\n${supplier.deskripsi}\nRating: ${supplier.rating}/5"
+
+            // Set click listener for the marker
+            setOnMarkerClickListener { marker, mapView ->
+                val intent = Intent(this@LocationStoreActivity, TokoActivity::class.java).apply {
+                    putExtra("supplierId", supplier.id.toString())
+                    putExtra("supplierName", supplier.nama_toko)
+                    putExtra("supplierKota", supplier.kota)
+                    putExtra("supplierNegara", supplier.negara)
+                    putExtra("supplierProvinsi", supplier.provinsi)
+                    putExtra("supplierRating", supplier.rating)
+                    putExtra("supplierImage", supplier.buyer?.id.toString())
+                }
+                startActivity(intent)
+                true // Consume the event
+            }
         }
         map.overlays.add(marker)
     }

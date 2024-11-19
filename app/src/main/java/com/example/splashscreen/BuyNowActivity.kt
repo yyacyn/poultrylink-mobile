@@ -12,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -33,6 +34,7 @@ class BuyNowActivity : AppCompatActivity() {
 
     private var cartIds = mutableListOf<Long>()
     private val shippingFee: Long = 300000
+    private var currentQuantity: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,9 +51,12 @@ class BuyNowActivity : AppCompatActivity() {
         val productName = intent.getStringExtra("productName")
         val productImage = intent.getStringExtra("productImage")
         val productPrice = intent.getLongExtra("productPrice", 0)
-        val productQty = intent.getIntExtra("productQty", 0)
+        currentQuantity = intent.getIntExtra("productQty", 0)
         val productId = intent.getLongExtra("productId", 0)
         val cartId = intent.getLongExtra("cartId", 0)
+
+
+        findViewById<TextView>(R.id.quantity).text = currentQuantity.toString()
 
         Log.d("cartIds", "$cartId")
 
@@ -83,18 +88,33 @@ class BuyNowActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<ImageButton>(R.id.backbutton).setOnClickListener {
-            finish()
-        }
         getUser(token) { userId ->
             if (userId != null) {
                 Log.d("MainActivity", "Fetched User ID: $userId")
                 getProfile(token)
                 displayCheckoutItems(token)
+                findViewById<ImageButton>(R.id.backbutton).setOnClickListener {
+                    val alertDialog = AlertDialog.Builder(this)
+                        .setTitle("Confirm checkout")
+                        .setMessage("Are you sure you want to cancel checkout? All progress will be discarded")
+                        .setCancelable(false) // Set to false so user must choose either Yes or No
+                        .setPositiveButton("Yes") { dialog, which ->
+                            // Proceed with finishing the activity if user confirms
+                            deleteCart(token, productId.toInt(), userId.toInt())
+                        }
+                        .setNegativeButton("No") { dialog, which ->
+                            // Dismiss the dialog if user cancels
+                            dialog.dismiss()
+                        }
+
+                    // Show the alert dialog
+                    alertDialog.show()
+                }
             } else {
                 Log.e("MainActivity", "Failed to fetch User ID")
             }
         }
+
 
         findViewById<LinearLayout>(R.id.paymentContainer).setOnClickListener {
             val intent = Intent(this, MethodPaymentActivity::class.java).apply {
@@ -102,15 +122,41 @@ class BuyNowActivity : AppCompatActivity() {
                 putExtra("productName", productName)
                 putExtra("productImage", productImage)
                 putExtra("productPrice", productPrice)
-                putExtra("productQty", productQty)
+                putExtra("productQty", currentQuantity)
                 putExtra("productId", productId)
                 putExtra("cartId", cartId)
             }
             startActivity(intent)
         }
-
         setupBuyButton(token)
 
+    }
+
+    private fun deleteCart(token: String, productId: Int, userId: Int) {
+        val request = DeleteCartRequest(productId, userId)
+        RetrofitClient.instance.deleteCart(token, request)
+            .enqueue(object : Callback<DeleteCartResponse> {
+                override fun onResponse(
+                    call: Call<DeleteCartResponse>,
+                    response: Response<DeleteCartResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@BuyNowActivity, "Checkout cancelled", Toast.LENGTH_SHORT).show()
+                        Log.d("DeleteCart", "Item deleted successfully")
+
+                        // Navigate to ConfirmPaymentActivity with order details
+                        val intent = Intent(this@BuyNowActivity, DashboardActivity::class.java)
+                        startActivity(intent)
+
+                    } else {
+                        Log.e("DeleteCart", "Error: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<DeleteCartResponse>, t: Throwable) {
+                    Log.e("DeleteCart", "Network Error: ${t.message}")
+                }
+            })
     }
 
     // Retrieve the token from SharedPreferences
@@ -193,10 +239,10 @@ class BuyNowActivity : AppCompatActivity() {
         val productName = intent.getStringExtra("productName")
         val productImage = intent.getStringExtra("productImage")
         val productPrice = intent.getLongExtra("productPrice", 0)
-        val productQty = intent.getIntExtra("productQty", 0)
+        currentQuantity = intent.getIntExtra("productQty", 0)
         val productId = intent.getLongExtra("productId", 0)
 
-        Log.d("IntentData", "Product Name: $productName, Image: $productImage, Price: $productPrice, Quantity: $productQty")
+        Log.d("IntentData", "Product Name: $productName, Image: $productImage, Price: $productPrice, Quantity: $currentQuantity")
 
         if (productName != null) {
             findViewById<LinearLayout>(R.id.plusminus).visibility = View.VISIBLE
@@ -206,7 +252,9 @@ class BuyNowActivity : AppCompatActivity() {
         checkoutItemView.findViewById<TextView>(R.id.product_name).text = productName
         val quantityTextView = checkoutItemView.findViewById<TextView>(R.id.product_quantity)
         val plusMinusQty = checkoutItemView.findViewById<TextView>(R.id.quantity)
-        quantityTextView.text = "Quantity: $productQty"
+        quantityTextView.text = "Quantity: $currentQuantity"
+
+        plusMinusQty.text = currentQuantity.toString()
 
         val produkPriceTextView = checkoutItemView.findViewById<TextView>(R.id.product_price)
         produkPriceTextView.text = "Rp. ${formatWithDots((productPrice).toString())}"
@@ -218,8 +266,8 @@ class BuyNowActivity : AppCompatActivity() {
             }
         }
 
-        var currentQuantity = productQty
         val singleItemPrice = if (currentQuantity > 0) productPrice / currentQuantity else 0L
+        val methodPayment = intent.getStringExtra("method")
 
         checkoutItemView.findViewById<ImageButton>(R.id.plus).setOnClickListener {
             currentQuantity++
@@ -228,7 +276,7 @@ class BuyNowActivity : AppCompatActivity() {
             updateItemPrice(produkPriceTextView, singleItemPrice, currentQuantity)
             currentTotalPrice += singleItemPrice
             updateTotalPrice(currentTotalPrice)
-            addToCart(token, productId.toString(), currentQuantity)
+            updateCartItemsForCheckout(token, cartIds[0], currentQuantity)
             Log.d("CartUpdate", "Increased quantity for product $productImage to $currentQuantity")
         }
 
@@ -240,7 +288,7 @@ class BuyNowActivity : AppCompatActivity() {
                 updateItemPrice(produkPriceTextView, singleItemPrice, currentQuantity)
                 currentTotalPrice -= singleItemPrice
                 updateTotalPrice(currentTotalPrice)
-                addToCart(token, productId.toString(), currentQuantity)
+                updateCartItemsForCheckout(token, cartIds[0], currentQuantity)
                 Log.d("CartUpdate", "Decreased quantity for product $productImage to $currentQuantity")
             }
         }
@@ -290,37 +338,27 @@ class BuyNowActivity : AppCompatActivity() {
         })
     }
 
-
-    private fun addToCart(token: String, productId: String, totalBarang: Int = 1) {
-
-        val cartRequest = InsertCartData(
-            produk_id = productId,
-            total_barang = totalBarang.toString()
+    private fun updateCartItemsForCheckout(token: String, cartId: Long, quantity: Int) {
+        val updateCartRequest = UpdateCartRequest(
+            cartId.toInt(),
+            quantity
         )
-
-        val request = RetrofitClient.instance.addToCart(token, cartRequest)
-
-        // Add Authorization header with the token
-        request.enqueue(object : Callback<InsertCartResponse> {
-            override fun onResponse(call: Call<InsertCartResponse>, response: Response<InsertCartResponse>) {
-                if (response.isSuccessful) {
-                    val cartDataList = response.body()?.data
-                    Log.d("cartDataList", "$cartDataList")
-                    val cartId = cartDataList?.id // Access the first cart item's ID
-                    Log.d("cart", "Cart ID: $cartId")
-                    if (cartId != null) {
-                        cartIds.add(cartId)
-                    } // Add the cart ID to the list
-                } else {
-                    val errorBody = response.errorBody()?.string() // Debug server errors
-                    Log.e("cart", "Failed to add cart: ${response.message()}, Error: $errorBody")
+        Log.d("CartUpdate", "Updating cart items for checkout: $updateCartRequest")
+        RetrofitClient.instance.updateCart(token, updateCartRequest)
+            .enqueue(object : Callback<CartResponse> {
+                override fun onResponse(call: Call<CartResponse>, response: Response<CartResponse>) {
+                    if (response.isSuccessful) {
+                        val messageResponse = response.body()?.message
+                        Log.d("CartUpdateSuccess", "$messageResponse")
+                    } else {
+                        Log.e("UpdateCartError", "Error: ${response.code()}")
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<InsertCartResponse>, t: Throwable) {
-                Log.e("cart", "Failed to add cart: ${t.message}")
-            }
-        })
+                override fun onFailure(call: Call<CartResponse>, t: Throwable) {
+                    Log.e("CartError", "Network Error: ${t.message}")
+                }
+            })
     }
 
     // Update the total price displayed at the bottom of the cart

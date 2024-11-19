@@ -45,6 +45,56 @@
                 android:layout_marginBottom="20dp"
                 android:textColor="@color/orange" />
 
+<!--            &lt;!&ndash; Metode Pembayaran &ndash;&gt;-->
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Payment method"-->
+<!--                android:textSize="16sp"-->
+<!--                android:textStyle="bold"/>-->
+
+<!--            <androidx.cardview.widget.CardView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="5dp"-->
+<!--                android:layout_marginBottom="50dp"-->
+<!--                app:cardElevation="4dp"-->
+<!--                app:cardCornerRadius="8dp"-->
+<!--                app:cardBackgroundColor="@android:color/white"-->
+<!--                app:cardForegroundColor="@drawable/card_selector"-->
+<!--                android:clickable="true"-->
+<!--                android:focusable="true"-->
+<!--                android:foreground="?attr/selectableItemBackground">-->
+
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/paymentContainer"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:padding="15dp"-->
+<!--                    >-->
+
+<!--                    <ImageView-->
+<!--                        android:id="@+id/paymentIcon"-->
+<!--                        android:layout_width="30dp"-->
+<!--                        android:layout_height="30dp"-->
+<!--                        android:src="@drawable/paymenticon"-->
+<!--                        android:layout_marginEnd="15dp"-->
+<!--                        />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/paymentMethod"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:gravity="center"-->
+<!--                        android:layout_marginStart="8dp"-->
+<!--                        android:text="Select Payment method"-->
+<!--                        android:textSize="14sp"-->
+<!--                        android:textStyle="bold"-->
+<!--                        android:textColor="@color/black"/>-->
+<!--                </LinearLayout>-->
+<!--            </androidx.cardview.widget.CardView>-->
+
             <!-- Estimated delivery -->
             <TextView
                 android:layout_width="wrap_content"
@@ -53,7 +103,7 @@
                 android:textSize="14sp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
-                android:layout_marginTop="4dp"/>
+                android:layout_marginTop="30dp"/>
 
             <LinearLayout
                 android:id="@+id/cart_container"
@@ -224,16 +274,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
                 android:text="Payment method"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginTop="24dp"/>
+                android:textStyle="bold"/>
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="50dp"
                 app:cardElevation="4dp"
                 app:cardCornerRadius="8dp"
                 app:cardBackgroundColor="@android:color/white"

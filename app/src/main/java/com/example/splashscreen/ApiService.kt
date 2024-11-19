@@ -19,10 +19,12 @@ import com.example.splashscreen.InsertUser
 import com.example.splashscreen.LoginResponse
 import com.example.splashscreen.OrderDetailResponse
 import com.example.splashscreen.OrderResponse
+import com.example.splashscreen.PostReviewResponse
 import com.example.splashscreen.ProductResponse
 import com.example.splashscreen.Products
 import com.example.splashscreen.RegisterResponse
 import com.example.splashscreen.RetrieveOrderRequest
+import com.example.splashscreen.ReviewPostRequest
 import com.example.splashscreen.ReviewResponse
 import com.example.splashscreen.SupplierResponse
 import com.example.splashscreen.UpdateCartRequest
@@ -166,5 +168,8 @@ interface ApiService {
 
     @POST("confirmordermobile")
     fun confirmOrder(@Header("Authorization") token: String, @Body request: RetrieveOrderRequest): Call<CancelOrderResponse>
+
+    @POST("ulasan")
+    fun postReview(@Header("Authorization") token: String, @Body request: ReviewPostRequest): Call<PostReviewResponse>
 }
 

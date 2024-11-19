@@ -149,6 +149,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+<<<<<<< HEAD
 
 
             <!--   FAQ 3  -->
@@ -370,6 +371,9 @@
             </androidx.cardview.widget.CardView>
 
 
+=======
+            </LinearLayout>
+>>>>>>> 814e9adb99b7001d00814c5c116f6ed94d9f4426
         </LinearLayout>
     </LinearLayout>
     </ScrollView>
