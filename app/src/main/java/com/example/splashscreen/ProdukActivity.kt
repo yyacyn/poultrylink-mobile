@@ -94,7 +94,7 @@ class ProdukActivity : AppCompatActivity() {
         //follow button
         findViewById<ImageButton>(R.id.follow_button).setOnClickListener {
             val followButton = findViewById<ImageButton>(R.id.follow_button)
-            followButton.setImageResource(R.drawable.fotoprofil)
+            followButton.setImageResource(R.drawable.followed)
         }
 
         Log.d("product_id", "$product_id")

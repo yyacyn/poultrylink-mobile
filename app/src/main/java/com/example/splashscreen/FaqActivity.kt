@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat
 class FaqActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.faq)
         enableEdgeToEdge()
 
         // Setup FAQ 1
