@@ -29,6 +29,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
         <ImageButton
+            android:id="@+id/home"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:scaleType="centerCrop"
@@ -48,6 +49,7 @@
             />
 
         <ImageButton
+            android:id="@+id/history"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:scaleType="centerCrop"
@@ -57,6 +59,7 @@
             />
 
         <ImageButton
+            android:id="@+id/profile"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:scaleType="centerCrop"

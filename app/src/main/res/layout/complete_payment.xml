@@ -59,6 +59,7 @@
                         android:id="@+id/orderFor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="Loading invoice..."
                         android:textSize="14sp" />
 
                     <TextView

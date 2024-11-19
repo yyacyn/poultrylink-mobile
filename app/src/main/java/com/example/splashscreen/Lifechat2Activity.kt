@@ -37,13 +37,16 @@ class Lifechat2Activity : AppCompatActivity() {
         val receiverName = intent.getStringExtra("receiverName")
         val receiverImage = intent.getStringExtra("receiverImage")
 
-        findViewById<TextView>(R.id.receiverName).text = receiverName
         findViewById<ImageButton>(R.id.backbtn).setOnClickListener {
             finish()
         }
 
         if (receiverImage != null) {
-            loadImageFromSupabase(receiverImage,receiverImageView)
+            loadImageFromSupabase(receiverImage, receiverImageView)
+            findViewById<TextView>(R.id.receiverName).text = receiverName
+        } else {
+            receiverImageView.setImageResource(R.drawable.fotoprofil)
+            findViewById<TextView>(R.id.receiverName).text = "Poultry Admin"
         }
 
         // Handle send button click

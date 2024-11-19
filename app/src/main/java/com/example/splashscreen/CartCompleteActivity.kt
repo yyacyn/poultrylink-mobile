@@ -5,12 +5,14 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -32,6 +34,7 @@ class CartCompleteActivity : AppCompatActivity() {
         val mycart = findViewById<TextView>(R.id.mycart)
         val onprocess = findViewById<TextView>(R.id.onprocess)
         val complete = findViewById<TextView>(R.id.complete)
+        val backbuton = findViewById<ImageButton>(R.id.backbutton)
 
         window.navigationBarColor = resources.getColor(R.color.orange)
 
@@ -50,18 +53,43 @@ class CartCompleteActivity : AppCompatActivity() {
         mycart.setOnClickListener {
             val intent = Intent(this, CartActivity::class.java)
             startActivity(intent)
+            finish()
         }
 
         onprocess.setOnClickListener {
             val intent = Intent(this, CartOnprogressActivity::class.java)
             startActivity(intent)
+            finish()
         }
 
         complete.setOnClickListener {
             val intent = Intent(this, CartCompleteActivity::class.java)
             startActivity(intent)
+            finish()
         }
 
+        backbuton.setOnClickListener {
+            finish()
+        }
+
+    }
+
+    private fun Navigation() {
+        val buttonProduk = findViewById<CardView>(R.id.home)
+        val buttonMarket = findViewById<ImageButton>(R.id.market)
+        val buttonProfile = findViewById<ImageButton>(R.id.profile)
+
+        buttonProduk.setOnClickListener {
+            startActivity(Intent(this, DashboardActivity::class.java))
+        }
+
+        buttonProfile.setOnClickListener {
+            startActivity(Intent(this, ProfilActivity::class.java))
+        }
+
+        buttonMarket.setOnClickListener {
+            startActivity(Intent(this, LocationStoreActivity::class.java))
+        }
     }
 
     // Retrieve the token from SharedPreferences
@@ -204,6 +232,14 @@ class CartCompleteActivity : AppCompatActivity() {
 
                 doneBtn.text = "Review"
                 doneBtn.setOnClickListener {
+                    val intent = Intent(this@CartCompleteActivity, RatingProdukActivity::class.java).apply {
+                        putExtra("productCategory", orderItem.produk_kategori)
+                        putExtra("productId", orderItem.produk_image.toLong())
+                        putExtra("productName", orderItem.produk)
+                        putExtra("productImage", orderItem.produk_image)
+                        putExtra("orderId", orderId)
+                    }
+                    startActivity(intent)
                     // Action for review
                 }
             } else {

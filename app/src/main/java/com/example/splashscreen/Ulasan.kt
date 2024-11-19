@@ -12,7 +12,20 @@ data class Ulasan(
 
 data class ReviewResponse(
     @SerializedName("data")
-    val data: List<ReviewData>
+    val data: List<ReviewData>,
+    @SerializedName("success")
+    val success: Boolean,
+    @SerializedName("message")
+    val message: String?,
+)
+
+data class PostReviewResponse(
+    @SerializedName("data")
+    val data: ReviewData,
+    @SerializedName("success")
+    val success: Boolean,
+    @SerializedName("message")
+    val message: String?,
 )
 
 data class ReviewData(
@@ -46,4 +59,13 @@ data class UlasanBuyer(
     val id: Long,
     @SerializedName("avatar_path")
     val avatar_path: String
+)
+
+data class ReviewPostRequest(
+    @SerializedName("produk_id")
+    val produk_id: Long,
+    @SerializedName("ulasan")
+    val ulasan: String,
+    @SerializedName("rating")
+    val rating: Int,
 )
