@@ -60,6 +60,8 @@ class DashboardActivity : AppCompatActivity() {
 
         Navigation()
 
+        window.navigationBarColor = resources.getColor(R.color.orange)
+
         val greetUser = findViewById<TextView>(R.id.greet)
         val userLocation = findViewById<TextView>(R.id.user_location)
         val userpfp = findViewById<CircleImageView>(R.id.user_pfp)
@@ -343,7 +345,7 @@ class DashboardActivity : AppCompatActivity() {
             val productPrice = cardView.findViewById<TextView>(R.id.productPrice)
             val productLocation = cardView.findViewById<TextView>(R.id.productLocation)
 
-            loadProductImage(product.image, productImage)
+            loadProductImage(product.id.toString(), productImage)
 
             productName.text = product.nama_produk
 

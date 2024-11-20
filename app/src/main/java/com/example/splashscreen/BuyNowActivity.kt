@@ -29,6 +29,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class BuyNowActivity : AppCompatActivity() {
 
@@ -247,6 +250,22 @@ class BuyNowActivity : AppCompatActivity() {
         if (productName != null) {
             findViewById<LinearLayout>(R.id.plusminus).visibility = View.VISIBLE
         }
+
+        // Find the TextView by its ID
+        val estDeliveryTextView = findViewById<TextView>(R.id.estDelivery)
+
+        // Get today's date
+        val calendar = Calendar.getInstance()
+
+        // Add 7 days to the current date
+        calendar.add(Calendar.DAY_OF_YEAR, 7)
+
+        // Format the date to a readable string
+        val dateFormat = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
+        val formattedDate = dateFormat.format(calendar.time)
+
+        // Set the formatted date to the TextView
+        estDeliveryTextView.text = "Estimated delivery: $formattedDate"
 
         var currentTotalPrice = productPrice
         checkoutItemView.findViewById<TextView>(R.id.product_name).text = productName

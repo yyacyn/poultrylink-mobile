@@ -71,7 +71,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Apa saja produk yang tersedia di PoultryLink?"
+                                android:text="What products are available at PoultryLink?"
                                 android:textColor="#000"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
@@ -90,7 +90,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="PoultryLink menyediakan berbagai produk terkait unggas yang dibagi dalam beberapa kategori utama, seperti unggas hidup (ayam dan bebek), telur, daging ayam, dan pakan ternak. Pembeli bisa membeli produk secara langsung atau melakukan pemesanan dalam jumlah besar untuk kebutuhan bisnis."
+                            android:text="PoultryLink provides various poultry-related products divided into several main categories, such as live poultry (chicken and duck), eggs, chicken meat, and animal feed. Buyers can buy products directly or make large orders for business needs."
                             android:visibility="gone" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
@@ -125,7 +125,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Bagaimana cara mengetahui lokasi toko yang bekerja sama dengan PoultryLink?"
+                                android:text="How do I find out the locations of stores that work with PoultryLink?"
                                 android:textColor="#000"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
@@ -144,7 +144,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="PoultryLink memiliki fitur integrasi peta yang memungkinkan pengguna untuk melihat toko-toko yang bekerja sama dengan platform ini. Pengguna dapat menemukan toko terdekat yang menjual produk unggas."
+                            android:text="PoultryLink has a map integration feature that allows users to view stores that are partnered with the platform. Users can find the nearest store that sells poultry products."
                             android:visibility="gone" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
@@ -180,7 +180,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Apakah saya bisa berkomunikasi langsung dengan penjual melalui aplikasi?"
+                                android:text="How do I register as a merchant or reseller at PoultryLink?"
                                 android:textColor="#000"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
@@ -199,7 +199,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Yap benar, PoultryLink menyediakan fitur live chat yang memungkinkan pembeli untuk berkomunikasi langsung dengan penjual, sehingga memudahkan dalam proses negosiasi atau tanya jawab terkait produk."
+                            android:text="Pengguna yang ingin bergabung sebagai merchant atau reseller PoultryLink dapat mendaftar langsung melalui aplikasi. Setelah diverifikasi, Anda dapat mulai menjual produk unggas melalui platform ini."
                             android:visibility="gone" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>

@@ -64,10 +64,10 @@ class TokoActivity : AppCompatActivity() {
 
         ikutiSupplier.setOnClickListener {
             if (diikuti == true) {
-                ikutiSupplier.text = "+ Ikuti"
+                ikutiSupplier.text = "+ Follow"
                 diikuti = false
             } else {
-                ikutiSupplier.text = "Diikuti"
+                ikutiSupplier.text = "Followed"
                 diikuti = true
             }
         }
@@ -78,8 +78,8 @@ class TokoActivity : AppCompatActivity() {
         val storeLocationTextView = findViewById<TextView>(R.id.store_location)
         storeLocationTextView.text = supplierKota + ", " + supplierProvinsi + ", " + supplierNegara
 
-        val storeRatingTextView = findViewById<TextView>(R.id.rating_text)
-        storeRatingTextView.text = supplierRating
+//        val storeRatingTextView = findViewById<TextView>(R.id.rating_text)
+//        storeRatingTextView.text = supplierRating
 
         val storeImageView = findViewById<CircleImageView>(R.id.user_pfp)
         loadImageFromSupabase(supplierImage.toString(), storeImageView)

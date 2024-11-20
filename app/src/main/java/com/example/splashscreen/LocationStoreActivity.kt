@@ -87,13 +87,13 @@ class LocationStoreActivity : AppCompatActivity() {
         "Batam" to GeoPoint(1.0456, 104.0305)
     )
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this))
         setContentView(R.layout.location_store)
 
         map = findViewById(R.id.mapView)
+        window.navigationBarColor = resources.getColor(R.color.orange)
         setupMap()
 
         requestPermissionsIfNecessary(

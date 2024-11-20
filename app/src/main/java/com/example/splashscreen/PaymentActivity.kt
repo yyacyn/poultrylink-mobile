@@ -27,6 +27,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class PaymentActivity : AppCompatActivity() {
 
@@ -46,6 +49,20 @@ class PaymentActivity : AppCompatActivity() {
 
         val methodPayment = intent.getStringExtra("method")
         val imagePayment = intent.getStringExtra("image")
+
+        // Find the TextView by its ID
+        val estDeliveryTextView = findViewById<TextView>(R.id.estDelivery)
+
+        // Get today's date
+        val calendar = Calendar.getInstance()
+
+        // Add 7 days to the current date
+        calendar.add(Calendar.DAY_OF_YEAR, 7)
+
+        // Format the date to a readable string
+        val dateFormat = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
+        val formattedDate = dateFormat.format(calendar.time)
+
 
         if (methodPayment != null && imagePayment != null) {
             findViewById<TextView>(R.id.paymentMethod).text = methodPayment.replaceFirstChar {

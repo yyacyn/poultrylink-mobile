@@ -47,7 +47,7 @@
                                 android:paddingLeft="30dp"
                                 android:layout_marginTop="10dp"
                                 android:id="@+id/searchInput"
-                                android:hint="Cari di Poltrylink"
+                                android:hint="Search in PoultryLink"
                                 android:background="@android:color/transparent"
                                 android:textColorHint="#CCCCCC"
                                 android:textSize="14sp"/>

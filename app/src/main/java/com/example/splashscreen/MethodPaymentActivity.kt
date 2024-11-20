@@ -98,6 +98,20 @@ class MethodPaymentActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
+            findViewById<CardView>(R.id.alfamartPayment).setOnClickListener{
+                val intent = Intent(this@MethodPaymentActivity, BuyNowActivity::class.java).apply {
+                    putExtra("method", "alfamart")
+                    putExtra("image", "alfamartpayment")
+                    putExtra("productName", productName)
+                    putExtra("productImage", productImage)
+                    putExtra("productPrice", productPrice)
+                    putExtra("productQty", productQty)
+                    putExtra("productId", productId)
+                    putExtra("cartId", cartId)
+                }
+                startActivity(intent)
+            }
+
             findViewById<ImageButton>(R.id.backbtn).setOnClickListener {
                 finish()
             }

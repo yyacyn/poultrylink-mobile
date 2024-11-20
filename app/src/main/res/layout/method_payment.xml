@@ -150,6 +150,44 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/alfamartPayment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:cardElevation="2dp"
+            android:layout_margin="10dp"
+            app:cardCornerRadius="8dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardForegroundColor="@drawable/card_selector"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="25dp"
+                >
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/alfamartpayment"
+                    android:layout_marginEnd="20dp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Alfamart Payment"
+                    android:textSize="20dp"
+                    android:textColor="@color/orange"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
 <!--        <com.google.android.material.button.MaterialButton-->
 <!--            android:layout_width="match_parent"-->
 <!--            android:layout_height="60dp"-->

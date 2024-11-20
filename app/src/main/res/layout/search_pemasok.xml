@@ -46,7 +46,7 @@
                             android:layout_weight="1"
                             android:paddingLeft="30dp"
                             android:layout_marginTop="10dp"
-                            android:hint="Cari di Poltrylink"
+                            android:hint="Search in PoultryLink"
                             android:background="@android:color/transparent"
                             android:textColorHint="#CCCCCC"
                             android:textSize="14sp"/>
@@ -81,7 +81,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:onClick="Produk"
-                        android:text="Produk"
+                        android:text="Products"
                         android:textSize="17dp"
                         android:layout_marginEnd="100dp"
                         />
@@ -91,7 +91,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:onClick="pemasok"
-                        android:text="Pemasok"
+                        android:text="Supplier"
                         android:textSize="17dp"
                         />
                 </LinearLayout>

@@ -46,7 +46,7 @@
                 android:layout_weight="1"
                 android:paddingLeft="30dp"
                 android:layout_marginTop="10dp"
-                android:hint="Cari di Poltrylink"
+                android:hint="Search in PoultryLink"
                 android:background="@android:color/transparent"
                 android:textColorHint="#CCCCCC"
                 android:textSize="14sp"/>
@@ -125,16 +125,16 @@
                     android:layout_marginTop="4dp">
 
                     <!-- Rating -->
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/star" />
-                    <TextView
-                        android:id="@+id/rating_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/white"
-                        android:textSize="14sp"/>
+<!--                    <ImageView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:src="@drawable/star" />-->
+<!--                    <TextView-->
+<!--                        android:id="@+id/rating_text"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:textColor="@color/white"-->
+<!--                        android:textSize="14sp"/>-->
 
                     <!-- Follower -->
                     <TextView
@@ -161,7 +161,7 @@
                     android:textAlignment="center"
                     android:textColor="@color/white"
                     android:paddingHorizontal="15dp"
-                    android:text="+ Ikuti"
+                    android:text="+ Follow"
                     android:backgroundTint="@android:color/transparent"
                     app:strokeWidth="1dp"
                     app:strokeColor="@color/white"
@@ -193,7 +193,7 @@
             android:id="@+id/textkategori"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Populer"
+            android:text="Popular"
             android:textSize="20dp"
             android:layout_marginLeft="10dp"
             android:textStyle="bold" />
@@ -218,7 +218,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Produk"
+            android:text="Products"
             android:textSize="20dp"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="10dp"

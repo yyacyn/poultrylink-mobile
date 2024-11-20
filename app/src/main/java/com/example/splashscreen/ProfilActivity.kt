@@ -63,6 +63,8 @@ class ProfilActivity : AppCompatActivity() {
 
         Navigation()
 
+        window.navigationBarColor = resources.getColor(R.color.orange)
+
     }
 
     override fun onResume() {

@@ -38,7 +38,11 @@ class CartCompleteActivity : AppCompatActivity() {
 
         window.navigationBarColor = resources.getColor(R.color.orange)
 
+        Navigation()
+
         val token = "Bearer ${getStoredToken()}"
+
+//        Navigation()
 
         getUser(token) { userId ->
             if (userId != null) {
@@ -75,7 +79,7 @@ class CartCompleteActivity : AppCompatActivity() {
     }
 
     private fun Navigation() {
-        val buttonProduk = findViewById<CardView>(R.id.home)
+        val buttonProduk = findViewById<ImageButton>(R.id.home)
         val buttonMarket = findViewById<ImageButton>(R.id.market)
         val buttonProfile = findViewById<ImageButton>(R.id.profile)
 
@@ -90,8 +94,6 @@ class CartCompleteActivity : AppCompatActivity() {
         buttonMarket.setOnClickListener {
             startActivity(Intent(this, LocationStoreActivity::class.java))
         }
-
-
     }
 
     // Retrieve the token from SharedPreferences

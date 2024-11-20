@@ -130,7 +130,7 @@
                     android:layout_weight="1"
                     android:paddingLeft="30dp"
                     android:layout_marginTop="10dp"
-                    android:hint="Cari di Poltrylink"
+                    android:hint="Search in PoultryLink"
                     android:background="@android:color/transparent"
                     android:textColorHint="#CCCCCC"
                     android:textSize="14sp"/>
@@ -188,7 +188,7 @@
                     android:layout_marginLeft="15dp"
                     android:textStyle="bold"
                     android:textSize="20dp"
-                    android:text="Special Produk" />
+                    android:text="Special Products" />
 
                 <!-- Banner Scroll -->
                 <HorizontalScrollView

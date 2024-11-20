@@ -97,6 +97,7 @@
 
             <!-- Estimated delivery -->
             <TextView
+                android:id="@+id/estDelivery"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Estimated delivery by 8-Oct 24"

@@ -61,7 +61,7 @@
                 android:textAlignment="center"
                 android:textColor="@color/orange"
                 android:paddingHorizontal="10dp"
-                android:text="Lihat Toko"
+                android:text="See More"
                 android:backgroundTint="#00FFFFFF"
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/orange"

@@ -46,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Aplikasi ini adalah platform yang menghubungkan peternak atau supplier ayam dengan konsumen, baik individu maupun bisnis. Peternak dapat membuat profil, mengunggah produk seperti ayam potong, telur, atau pakan ayam, serta menentukan harga. Konsumen dapat mencari produk, memesan, dan memilih opsi pengiriman atau pengambilan.\n\n Dikembangkan oleh Ambatuwin untuk tugas akhir kuliah, aplikasi ini memudahkan transaksi antara peternak dan konsumen, serta membantu mengoptimalkan distribusi produk ayam."
+            android:text="This application is a platform that connects chicken farmers or suppliers with consumers, both individuals and businesses. Farmers can create profiles, upload products such as broiler chickens, eggs, or chicken feed, and determine prices. Consumers can search for products, order, and choose delivery or pick-up options.\n\n Developed by Ambatuwin for his final assignment, this application facilitates transactions between farmers and consumers, and helps optimize the distribution of chicken products."
             android:textColor="@color/black"
             android:textSize="14sp" />
 
