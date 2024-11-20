@@ -90,6 +90,8 @@ class CartCompleteActivity : AppCompatActivity() {
         buttonMarket.setOnClickListener {
             startActivity(Intent(this, LocationStoreActivity::class.java))
         }
+
+
     }
 
     // Retrieve the token from SharedPreferences
@@ -207,6 +209,15 @@ class CartCompleteActivity : AppCompatActivity() {
 
             val statusTextView = orderItemView.findViewById<TextView>(R.id.status)
             val doneBtn = orderItemView.findViewById<Button>(R.id.doneBtn)
+
+            val invoiceBtn = orderItemView.findViewById<Button>(R.id.invoiceBtn)
+
+            invoiceBtn.setOnClickListener {
+                val intent = Intent(this@CartCompleteActivity, CompletePaymentActivity::class.java).apply {
+                    putExtra("orderId", orderId.toString())
+                }
+                startActivity(intent)
+            }
 
             orderItemView.findViewById<TextView>(R.id.orderDate).text = "#$orderId - $date"
 

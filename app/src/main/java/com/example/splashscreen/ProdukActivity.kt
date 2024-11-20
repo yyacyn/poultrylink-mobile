@@ -124,7 +124,7 @@ class ProdukActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.product_price).text = "Rp. $value"
         findViewById<TextView>(R.id.product_rating).text = productRating.toString()
         findViewById<TextView>(R.id.product_desc).text = productDesc
-        findViewById<TextView>(R.id.product_stock).text = "Stock: $productQty"
+        findViewById<TextView>(R.id.product_stock).text = "Stock: $productQty pcs"
 
         findViewById<CircleImageView>(R.id.supplierImage).setOnClickListener {
             val intent = Intent(this@ProdukActivity, TokoActivity::class.java).apply {

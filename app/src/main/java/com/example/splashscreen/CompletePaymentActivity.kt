@@ -51,6 +51,8 @@ class CompletePaymentActivity : AppCompatActivity() {
         }
         val orderId = intent.getStringExtra("orderId")
 
+
+
         val token = "Bearer ${getStoredToken()}"
 
         getUser(token) { userId ->

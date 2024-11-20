@@ -167,6 +167,15 @@ class CartOnprogressActivity : AppCompatActivity() {
             val statusTextView = orderItemView.findViewById<TextView>(R.id.status)
             val doneBtn = orderItemView.findViewById<Button>(R.id.doneBtn)
 
+            val invoiceBtn = orderItemView.findViewById<Button>(R.id.invoiceBtn)
+
+            invoiceBtn.setOnClickListener {
+                val intent = Intent(this@CartOnprogressActivity, CompletePaymentActivity::class.java).apply {
+                    putExtra("orderId", orderId.toString())
+                }
+                startActivity(intent)
+            }
+
             orderItemView.findViewById<TextView>(R.id.orderDate).text = "#$orderId - $date"
 
             // Set UI data for product name, category, and price

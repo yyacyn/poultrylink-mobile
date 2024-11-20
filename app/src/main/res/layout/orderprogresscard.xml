@@ -138,19 +138,38 @@
                             android:textSize="14sp" />
                     </LinearLayout>
 
-                    <!-- Tombol Done -->
-                    <Button
-                        android:id="@+id/doneBtn"
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="Done"
-                        android:layout_weight="2"
-                        android:textStyle="bold"
-                        android:backgroundTint="#FF6600"
-                        app:cornerRadius="10dp"
-                        android:textColor="@android:color/white"
-                        android:paddingHorizontal="16dp"/>
                 </LinearLayout>
+            </LinearLayout>
+            <!-- Tombol Done -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="30dp">
+                <Button
+                    android:id="@+id/invoiceBtn"
+                    android:layout_width="100dp"
+                    android:layout_height="40dp"
+                    android:text="Invoice"
+                    android:layout_weight="2"
+                    android:textStyle="bold"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/orange"
+                    app:cornerRadius="10dp"
+                    android:backgroundTint="@android:color/transparent"
+                    android:textColor="@color/orange"
+                    android:paddingHorizontal="16dp"/>
+                <Button
+                    android:id="@+id/doneBtn"
+                    android:layout_width="100dp"
+                    android:layout_height="40dp"
+                    android:text="Done"
+                    android:layout_weight="2"
+                    android:textStyle="bold"
+                    android:backgroundTint="#FF6600"
+                    app:cornerRadius="10dp"
+                    android:textColor="@android:color/white"
+                    android:paddingHorizontal="16dp"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

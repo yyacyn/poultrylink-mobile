@@ -29,7 +29,6 @@ class SignInActivity : AppCompatActivity() {
         emailInput = findViewById(R.id.emailInput)
         passwordInput = findViewById(R.id.passwordInput)
 
-        val forgotPassword = findViewById<TextView>(R.id.forgotPassword)
         val buttonSignIn = findViewById<Button>(R.id.signin_toDashboard)
         val buttonBack = findViewById<ImageButton>(R.id.btn_back)
 
@@ -49,10 +48,10 @@ class SignInActivity : AppCompatActivity() {
             }
         }
 
-        forgotPassword.setOnClickListener {
-            val intent = Intent(this, ForgotPasswordActivity::class.java)
-            startActivity(intent)
-        }
+//        forgotPassword.setOnClickListener {
+//            val intent = Intent(this, ForgotPasswordActivity::class.java)
+//            startActivity(intent)
+//        }
     }
 
     // Validate input
