@@ -201,31 +201,26 @@ class CompletePaymentActivity : AppCompatActivity() {
         val orderContainer = findViewById<LinearLayout>(R.id.productContainer)
         orderContainer.removeAllViews()
 
-        // Initialize itemCount and subTotal
         var itemCount = 0
         var subTotal = 0
-        val shippingFee = 300000 // Fixed shipping fee
+        val shippingFee = 300000
 
         for (orderItem in orderItems.sortedByDescending { it.id }) {
             val orderItemView = layoutInflater.inflate(R.layout.invoice_product, orderContainer, false)
 
-            // Extract product details
             val productName = orderItem.produk
             val productKategori = orderItem.produk_kategori
             val quantity = orderItem.quantity
             val totalPrice = orderItem.total_price
             val supplierName = orderItem.supplier
 
-            // Update itemCount and subTotal
             itemCount += quantity.toInt()
             subTotal += totalPrice.toInt()
 
-            // Set UI data for product name, category, quantity, and price
             orderItemView.findViewById<TextView>(R.id.productQty).text = "$quantity"
             orderItemView.findViewById<TextView>(R.id.productAmount).text = "Rp. ${formatWithDots(totalPrice)}"
             orderItemView.findViewById<TextView>(R.id.productSupplier).text = supplierName
 
-            // Set product name and category
             val kategoriTextView = orderItemView.findViewById<TextView>(R.id.productName)
             kategoriTextView.text = when {
                 productKategori == "Ayam" || productKategori == "Bebek" -> "$productName - Poultry"
@@ -234,14 +229,11 @@ class CompletePaymentActivity : AppCompatActivity() {
                 else -> "$productName - Seed"
             }
 
-            // Add the view to the container
             orderContainer.addView(orderItemView)
         }
 
-        // Calculate totalGrandPrice
         val totalGrandPrice = subTotal + shippingFee
 
-        // Update UI
         val itemCountTextView = findViewById<TextView>(R.id.itemCount)
         itemCountTextView.text = "$itemCount Items"
 
@@ -256,10 +248,9 @@ class CompletePaymentActivity : AppCompatActivity() {
     }
 
 
-    // Retrieve the token from SharedPreferences
     private fun getStoredToken(): String? {
         val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
-        return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
+        return sharedPreferences.getString("TOKEN", null)
     }
 
     private fun getUser(token: String, callback: (Long?) -> Unit) {
@@ -271,16 +262,16 @@ class CompletePaymentActivity : AppCompatActivity() {
                         Log.d("getUser", "User ID: $userId")
                         if (userId != null) {
                             callback(userId.toLong())
-                        } // Return the user ID via callback
+                        }
                     } else {
                         Log.e("FetchCarts", "Error: ${response.code()}")
-                        callback(null) // Return null if there's an error
+                        callback(null)
                     }
                 }
 
                 override fun onFailure(call: Call<Users>, t: Throwable) {
                     Log.e("FetchCarts", "Network Error: ${t.message}")
-                    callback(null) // Return null if there's a failure
+                    callback(null)
                 }
             })
     }

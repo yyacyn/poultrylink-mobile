@@ -103,7 +103,6 @@ class EditProfilActivity : AppCompatActivity() {
         }
 
 
-        // Set the click listener for Save button here
         btnSave.setOnClickListener {
             handleSaveClick(token)
         }
@@ -116,24 +115,20 @@ class EditProfilActivity : AppCompatActivity() {
         getProfile(token)
     }
 
-    // Retrieve the token from SharedPreferences
     private fun getStoredToken(): String? {
         val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
         return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
     }
 
     private fun openImagePicker() {
-        // Create intent to show all available image sources
         val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
             type = "image/*"
             addCategory(Intent.CATEGORY_OPENABLE)
             putExtra(Intent.EXTRA_LOCAL_ONLY, true)
-            // This flag will show the device folders instead of recent files
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
 
         try {
-            // Create a chooser to show all available options
             val chooserIntent = Intent.createChooser(intent, "Select a photo")
             startActivityForResult(chooserIntent, REQUEST_CODE_PICK_IMAGE)
         } catch (e: Exception) {
@@ -145,18 +140,15 @@ class EditProfilActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val imageData = getDrawableAsByteArray(imageUri)
-                val filePath = "$buyerId/1.jpg"  // Use buyerId as folder name
+                val filePath = "$buyerId/1.jpg"
 
                 if (imageData != null) {
                     val storage = supabase.storage["avatar"]
 
-                    // Delete old image if it exists
                     storage.delete(filePath)
 
-                    // Upload new image
                     storage.upload(filePath, imageData)
 
-                    // Load the image with cache refresh
                     loadImageFromSupabase(filePath)
                 }
             } catch (e: Exception) {
@@ -178,7 +170,6 @@ class EditProfilActivity : AppCompatActivity() {
         }
     }
 
-    // Replace this function to accept Uri instead of drawableId
     private fun getDrawableAsByteArray(imageUri: Uri): ByteArray? {
         return try {
             val inputStream = contentResolver.openInputStream(imageUri)
@@ -206,21 +197,17 @@ class EditProfilActivity : AppCompatActivity() {
 
         updateProfile(token, userFirstName, userLastName, userPhoneNumber, userCountry, userProvinsi, userKota, userKodePos, userAlamat)
 
-        // Check if imageUri is not null, meaning a new image has been selected
         imageUri?.let {
-            uploadImageToSupabase(it, buyerId)  // Upload the image if a new one was selected
+            uploadImageToSupabase(it, buyerId)
         }
     }
 
 
-    // load user's avatar from supabase
     private fun loadImageFromSupabase(filePath: String) {
         lifecycleScope.launch {
             try {
-                // Construct the public URL to the object in the storage bucket
                 val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath?t=${System.currentTimeMillis()}"
 
-                // Use Glide to load the image into the ImageView
                 Glide.with(this@EditProfilActivity)
                     .load(imageUrl)
                     .override(200, 200)
@@ -270,12 +257,10 @@ class EditProfilActivity : AppCompatActivity() {
                         country.hint = usernegara
 
                     } else {
-                        // Handle error cases
                     }
                 }
 
                 override fun onFailure(call: Call<BuyerResponse>, t: Throwable) {
-                    // Handle network errors
                 }
             })
     }
@@ -286,17 +271,16 @@ class EditProfilActivity : AppCompatActivity() {
             try {
 
                 val request = UpdateProfileRequest(
-                    firstname = firstName,   // Replace with the actual value or null
-                    lastname = lastName,       // Null for no value
-                    alamat = phoneNumber,
-                    telepon = country,
+                    firstname = firstName,
+                    lastname = lastName,
+                    alamat = alamat,
+                    telepon = phoneNumber,
                     kota = provinsi,
-                    kodepos = kota,
-                    provinsi = kodePos,
-                    negara = alamat
+                    kodepos = kodePos,
+                    provinsi = provinsi,
+                    negara = country
                 )
 
-                // Make the update profile request with Retrofit
                 val response: Response<Any> = RetrofitClient.instance.updateProfile(
                     "$token", request)
 

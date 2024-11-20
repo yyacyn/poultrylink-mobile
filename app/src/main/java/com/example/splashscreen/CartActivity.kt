@@ -92,7 +92,6 @@ class CartActivity : AppCompatActivity() {
         }
     }
 
-    // Retrieve the token from SharedPreferences
     private fun getStoredToken(): String? {
         val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
         return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
@@ -110,13 +109,11 @@ class CartActivity : AppCompatActivity() {
                 val mergedTotalBarang = existingItem.total_barang.toInt() + cartItem.total_barang.toInt()
                 val mergedTotalHarga = existingItem.total_harga.toLong() + cartItem.total_harga.toLong()
 
-                // Update the existing item with new totals
                 mergedItemsMap[key] = existingItem.copy(
                     total_barang = mergedTotalBarang.toString(),
                     total_harga = mergedTotalHarga.toString()
                 )
             } else {
-                // Add the new item to the map
                 mergedItemsMap[key] = cartItem
             }
         }
@@ -133,7 +130,7 @@ class CartActivity : AppCompatActivity() {
                         Log.d("getUser", "User ID: $userId")
                         if (userId != null) {
                             callback(userId.toLong())
-                        } // Return the user ID via callback
+                        }
                     } else {
                         Log.e("FetchCarts", "Error: ${response.code()}")
                         callback(null) // Return null if there's an error
@@ -142,7 +139,7 @@ class CartActivity : AppCompatActivity() {
 
                 override fun onFailure(call: Call<Users>, t: Throwable) {
                     Log.e("FetchCarts", "Network Error: ${t.message}")
-                    callback(null) // Return null if there's a failure
+                    callback(null)
                 }
             })
     }
@@ -158,10 +155,8 @@ class CartActivity : AppCompatActivity() {
 
                         Log.d("filteredCarts", "$filteredCarts")
 
-                        // Merge cart items with the same user_id and produk_id
                         val mergedCarts = mergeCartItems(filteredCarts)
 
-                        // Display the merged cart items
                         val totalPrice = calculateTotalPrice(mergedCarts)
                         displayCartItems(mergedCarts, totalPrice)
 
@@ -178,7 +173,6 @@ class CartActivity : AppCompatActivity() {
     }
 
 
-    // Calculate the total price by summing the total_harga of all cart items
     private fun calculateTotalPrice(cartItems: List<CartData>): Long {
         var totalPrice: Long = 0
         for (cartItem in cartItems) {
@@ -190,7 +184,6 @@ class CartActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        // Retrieve the token and update profile
         val token = "Bearer ${getStoredToken().toString()}"
         getUser(token) { userId ->
             if (userId != null) {
@@ -204,7 +197,7 @@ class CartActivity : AppCompatActivity() {
 
 
     private fun displayCartItems(cartItems: List<CartData>, initialTotalPrice: Long) {
-        this.cartItems = cartItems  // Store the cart items for later use
+        this.cartItems = cartItems
         val cartContainer = findViewById<LinearLayout>(R.id.cart_container)
         val checkOut = findViewById<MaterialButton>(R.id.buttonPurchase)
         val noCartTextView = TextView(this).apply {
@@ -223,20 +216,15 @@ class CartActivity : AppCompatActivity() {
         cartContainer.removeAllViews()
 
         if (cartItems.isEmpty()) {
-            // Disable the checkout button and change its color when cart is empty
-            checkOut.isEnabled = false // Disable button
-            checkOut.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this@CartActivity, R.color.gray))) // Change to a gray color
+            checkOut.isEnabled = false
+            checkOut.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this@CartActivity, R.color.gray)))
         } else {
-            // Enable the checkout button and set a different color when cart is not empty
-            checkOut.isEnabled = true // Enable button
-            checkOut.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this@CartActivity, R.color.orange))) // Change to active color
+            checkOut.isEnabled = true
+            checkOut.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this@CartActivity, R.color.orange)))
         }
-
-        // Get the first cart ID
 
         Log.d("CartDisplay", "Displaying ${cartItems.size} items")
 
-        // If the cart is empty
         if (cartItems.isEmpty()) {
             cartContainer.addView(noCartTextView)
             return
@@ -295,42 +283,33 @@ class CartActivity : AppCompatActivity() {
             val deleteCartButton = cartItemView.findViewById<ImageButton>(R.id.deleteCart)
 
             deleteCartButton.setOnClickListener {
-                // Create an AlertDialog
                 val alertDialog = AlertDialog.Builder(this)
                     .setTitle("Confirm Delete")
                     .setMessage("Are you sure you want to delete this cart?")
-                    .setCancelable(false) // Set to false so user must choose either Yes or No
+                    .setCancelable(false)
                     .setPositiveButton("Yes") { dialog, which ->
-                        // Proceed with finishing the activity if user confirms
                         deleteCart(token, productId.toInt(), userId.toInt())
 
-                        // Remove the cart item view from the container
                         cartContainer.removeView(cartItemView)
 
-                        // Update the total price and cart items
                         currentTotalPrice -= singleItemPrice * currentQuantity
                         updateTotalPrice(currentTotalPrice)
 
-                        // Remove the item from the cartItems list
                         val updatedCartItems = this.cartItems.filterNot { it.produk_id == productId }
                         this.cartItems = updatedCartItems
 
-                        // Show "cart is empty" message if the list is now empty
                         if (updatedCartItems.isEmpty()) {
                             cartContainer.addView(noCartTextView)
                         }
                     }
                     .setNegativeButton("No") { dialog, which ->
-                        // Dismiss the dialog if user cancels
                         dialog.dismiss()
                     }
 
-                // Show the alert dialog
                 alertDialog.show()
 
             }
 
-            // Handle quantity changes
             cartItemView.findViewById<ImageButton>(R.id.plus).setOnClickListener {
                 currentQuantity++
                 updateCartItemQuantity(productId.toLong(), currentQuantity)
@@ -361,13 +340,11 @@ class CartActivity : AppCompatActivity() {
                 }
             }
 
-            // Set up the checkout button
             checkOut.setOnClickListener {
                 val intent = Intent(this@CartActivity, PaymentActivity::class.java)
                 startActivity(intent)
             }
 
-            // Add the view to the container
             cartContainer.addView(cartItemView)
         }
         updateTotalPrice(currentTotalPrice)
@@ -430,14 +407,11 @@ class CartActivity : AppCompatActivity() {
             })
     }
 
-
-    // Helper function to update the price of each item based on quantity
     private fun updateItemPrice(produkPriceTextView: TextView, itemPrice: Long, quantity: Int) {
-        val totalItemPrice = itemPrice * quantity // Calculate total price based on quantity
+        val totalItemPrice = itemPrice * quantity
         produkPriceTextView.text = "Rp. ${formatWithDots(totalItemPrice.toString())}"
     }
 
-    // Helper function to update the total price in the TextView
     private fun updateTotalPrice(totalPrice: Long) {
         val totalPriceTextView = findViewById<TextView>(R.id.totalPrice)
         val formattedTotalPrice = formatWithDots(totalPrice.toString())
@@ -445,19 +419,16 @@ class CartActivity : AppCompatActivity() {
     }
 
 
-    // Price formatting with dots (e.g., 1,000,000 -> 1.000.000)
     private fun formatWithDots(price: String): String {
         return try {
             val amount = price.toLong()
             val format = NumberFormat.getNumberInstance(Locale("in", "ID"))
-            format.format(amount) // This will automatically add dots without the "Rp" symbol
+            format.format(amount)
         } catch (e: Exception) {
-            // If the price is invalid or cannot be parsed, return the original price as is
             price
         }
     }
 
-    // Load product image from the URL
     private fun loadProductImage(filePath: String, imageView: ImageView, forceRefresh: Boolean = false) {
 
         try {

@@ -174,12 +174,11 @@ class SearchProdukActivity : AppCompatActivity() {
             override fun onResponse(call: Call<ReviewResponse>, response: Response<ReviewResponse>) {
                 if (response.isSuccessful) {
                     val reviews = response.body()?.data ?: emptyList()
-                    filterProducts(searchQuery.orEmpty(), reviews) // Initial display
+                    filterProducts(searchQuery.orEmpty(), reviews)
                 }
             }
 
             override fun onFailure(call: Call<ReviewResponse>, t: Throwable) {
-                // Handle network errors
             }
         })
     }

@@ -83,14 +83,6 @@ class ProdukActivity : AppCompatActivity() {
         val supplierRating = intent.getStringExtra("supplierRating")
         val productQty = intent.getStringExtra("productQty")
 
-//        findViewById<Button>(R.id.chat).setOnClickListener {
-//            val intent = Intent(this@ProdukActivity, Lifechat2Activity::class.java).apply {
-//                putExtra("receiverName", supplierToko)
-//                putExtra("receiverImage", supplierImageUrl.toString())
-//            }
-//            startActivity(intent)
-//        }
-
         //follow button
         findViewById<ImageButton>(R.id.follow_button).setOnClickListener {
             val followButton = findViewById<ImageButton>(R.id.follow_button)
@@ -168,28 +160,24 @@ class ProdukActivity : AppCompatActivity() {
             SlideModel("https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/products/$productImage/3.jpg", ScaleTypes.CENTER_CROP)
         )
 
-
-        // Track the number of completed loads (both success and failure)
         var processedCount = 0
         val validSlides = mutableListOf<SlideModel>()
 
-        // Check if all slides have been processed
         fun checkAllProcessed() {
             if (processedCount == slideModels.size) {
                 if (validSlides.isNotEmpty()) {
                     imageSlider.setImageList(validSlides, ScaleTypes.CENTER_CROP)
                 } else {
-                    imageSlider.visibility = View.GONE // Hide slider if no valid images
+                    imageSlider.visibility = View.GONE
                 }
             }
         }
 
-        // Attempt to load each image
         slideModels.forEach { slideModel ->
             Glide.with(this)
                 .load(slideModel.imageUrl)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .error(R.drawable.placeholder) // Optional placeholder for invalid images
+                .error(R.drawable.placeholder)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,
@@ -199,7 +187,7 @@ class ProdukActivity : AppCompatActivity() {
                     ): Boolean {
                         processedCount++
                         checkAllProcessed()
-                        return false // Allow Glide to handle its default behavior
+                        return false
                     }
 
                     override fun onResourceReady(
@@ -239,7 +227,7 @@ class ProdukActivity : AppCompatActivity() {
         val reviewContainer = findViewById<LinearLayout>(R.id.review_container)
         val lihatSemuaTextView = findViewById<TextView>(R.id.lihatsemua)
 
-        reviewContainer.removeAllViews() // Clear previous reviews
+        reviewContainer.removeAllViews()
 
         Log.d("reviews", "$reviews")
         Log.d("currentProductId", "Current ID: $currentProductId")
@@ -249,10 +237,8 @@ class ProdukActivity : AppCompatActivity() {
         }.sortedByDescending { it.id }
 
         if (filteredReviews.isEmpty()) {
-            // No reviews found, hide the 'lihatsemua' TextView
             lihatSemuaTextView.visibility = View.GONE
 
-            // Display a placeholder message
             val noReviewsTextView = TextView(this).apply {
                 text = "No reviews yet. Be the first to leave a review!"
                 textSize = 16f
@@ -268,15 +254,12 @@ class ProdukActivity : AppCompatActivity() {
             reviewContainer.addView(noReviewsTextView)
             return
         } else {
-            // If reviews exist, make the 'lihatsemua' TextView visible
             lihatSemuaTextView.visibility = View.VISIBLE
         }
 
-        // Display only the first 2 filtered reviews
         for (review in filteredReviews.take(2)) {
             val reviewView = layoutInflater.inflate(R.layout.review_card, reviewContainer, false)
 
-            // Extract fields from the review data
             val username = review.user.username
             val ulasan = review.ulasan
             val rating = review.rating
@@ -310,10 +293,9 @@ class ProdukActivity : AppCompatActivity() {
     }
 
 
-    // price formatting
     private fun formatWithDots(amount: Long): String {
         val format = NumberFormat.getNumberInstance(Locale("in", "ID"))
-        return format.format(amount) // This will automatically add dots without "Rp" symbol
+        return format.format(amount)
     }
 
 
@@ -337,7 +319,6 @@ class ProdukActivity : AppCompatActivity() {
 
             productName.text = product.nama_produk
 
-            // Filter reviews for the current product
             val productReviews = reviews.filter { it.produk_id == product.id.toString() }
             Log.d("productreviews", "$productReviews")
             val averageRating = if (productReviews.isNotEmpty()) {
@@ -389,19 +370,16 @@ class ProdukActivity : AppCompatActivity() {
     }
 
 
-    // load user's avatar from supabase
     private fun loadImageFromSupabase(filePath: String, imageView: CircleImageView) {
         lifecycleScope.launch {
             try {
-                // Construct the public URL to the object in the storage bucket
                 val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath/1.jpg?t=${System.currentTimeMillis()}"
 
-                // Use Glide to load the image into the ImageView
                 Glide.with(this@ProdukActivity)
                     .load(imageUrl)
                     .override(50, 50)
-                    .placeholder(R.drawable.fotoprofil) // Add a placeholder image
-                    .error(R.drawable.fotoprofil) // Add an error image
+                    .placeholder(R.drawable.fotoprofil)
+                    .error(R.drawable.fotoprofil)
                     .into(imageView)
                 Log.d("ImageLoad", "Image loaded successfully from $imageUrl")
             } catch (e: Exception) {
@@ -410,11 +388,9 @@ class ProdukActivity : AppCompatActivity() {
         }
     }
 
-
-    // Retrieve the token from SharedPreferences
     private fun getStoredToken(): String? {
         val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
-        return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
+        return sharedPreferences.getString("TOKEN", null)
     }
 
     private fun getRecommendedCategoryRange(categoryId: String): List<String> {
@@ -423,7 +399,7 @@ class ProdukActivity : AppCompatActivity() {
             "3", "4" -> listOf("3", "4")
             "5", "6" -> listOf("5", "6")
             "7" -> listOf("7")
-            else -> emptyList() // For unexpected categories
+            else -> emptyList()
         }
     }
 
@@ -442,12 +418,10 @@ class ProdukActivity : AppCompatActivity() {
 
                         getReviews(token, products, gridLayout, currentProductId.toString())
                     } else {
-                        // Handle error cases
                     }
                 }
 
                 override fun onFailure(call: Call<ProductResponse>, t: Throwable) {
-                    // Handle network errors
                 }
             })
     }
@@ -467,7 +441,6 @@ class ProdukActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<ReviewResponse>, t: Throwable) {
-                    // Handle network errors
                 }
             })
     }
@@ -481,7 +454,6 @@ class ProdukActivity : AppCompatActivity() {
 
         val request = RetrofitClient.instance.addToCart(token, cartRequest)
 
-        // Add Authorization header with the token
         request.enqueue(object : Callback<InsertCartResponse> {
             override fun onResponse(call: Call<InsertCartResponse>, response: Response<InsertCartResponse>) {
                 if (response.isSuccessful) {
@@ -513,7 +485,6 @@ class ProdukActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("cart", "Cart added successfully: ${response.body()}")
 
-                    // Get the cart ID from the response
                     val cartId = response.body()?.data?.id
 
                     if (cartId != null) {

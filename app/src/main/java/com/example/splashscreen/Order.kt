@@ -15,11 +15,11 @@ data class OrderData(
     @SerializedName("id")
     val id: Long,
     @SerializedName("user_id")
-    val userId: Long, // Changed type from String to Long
+    val userId: Long,
     @SerializedName("total")
-    val total: Int, // Changed type from String to Int
+    val total: Int,
     @SerializedName("harga")
-    val harga: Long, // Changed type from String to Long
+    val harga: Long,
     @SerializedName("confirmed")
     val confirmed: String,
     @SerializedName("metode_pembayaran")
@@ -51,6 +51,8 @@ data class OrderDetailData(
     val order_id: Long,
     @SerializedName("tanggal")
     val tanggal: String,
+    @SerializedName("produk_id")
+    val produk_id: Long,
     @SerializedName("produk")
     val produk: String,
     @SerializedName("produk_image")

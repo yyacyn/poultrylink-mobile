@@ -54,7 +54,6 @@ class SignInActivity : AppCompatActivity() {
 //        }
     }
 
-    // Validate input
     private fun validateInput(email: String, password: String): Boolean {
         if (email.isEmpty()) {
             emailInput.error = "Email is required"
@@ -88,7 +87,6 @@ class SignInActivity : AppCompatActivity() {
                 Log.d("tokenuser", "$token")
                 if (token != null) {
                     storeToken(token)
-                    // Store token and proceed to home
                     navigateToHome(token)
                 } else {
                     showError("Token missing in response.")
@@ -102,12 +100,10 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
-    // Show error message
     private fun showError(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    // Navigate to home activity after successful login
     private fun navigateToHome(token: String) {
         val intent = Intent(this, DashboardActivity::class.java)
         intent.putExtra("TOKEN", token)
@@ -115,7 +111,6 @@ class SignInActivity : AppCompatActivity() {
         finish()
     }
 
-    // Store the token in SharedPreferences
     private fun storeToken(token: String) {
         val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
         val editor = sharedPreferences.edit()

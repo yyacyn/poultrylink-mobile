@@ -71,12 +71,10 @@ class AllCommentActivity : AppCompatActivity() {
                         val reviews = response.body()?.data ?: emptyList()
                         displayReviews(reviews,currentProductId)
                     } else {
-                        // Handle error cases
                     }
                 }
 
                 override fun onFailure(call: Call<ReviewResponse>, t: Throwable) {
-                    // Handle network errors
                 }
             })
     }
@@ -84,14 +82,12 @@ class AllCommentActivity : AppCompatActivity() {
 
     private fun displayReviews(reviews: List<ReviewData>, currentProductId: String) {
         val reviewContainer = findViewById<LinearLayout>(R.id.review_container)
-        reviewContainer.removeAllViews() // Clear previous reviews
+        reviewContainer.removeAllViews()
 
         Log.d("reviews", "$reviews")
 
-        // Add logging to check the currentProductId
         Log.d("currentProductId", "Current ID: $currentProductId")
 
-        // Filter reviews to only include reviews for the current product based on product_id
         val filteredReviews = reviews.filter { review ->
             Log.d("comparison", "Comparing ${review.produk_id} with $currentProductId")
             review.produk_id == currentProductId
@@ -100,7 +96,6 @@ class AllCommentActivity : AppCompatActivity() {
         for (review in filteredReviews) {
             val reviewView = layoutInflater.inflate(R.layout.review_card, reviewContainer, false)
 
-            // Extract fields from the review data
             val username = review.user.username
             val ulasan = review.ulasan
             val rating = review.rating
@@ -133,19 +128,16 @@ class AllCommentActivity : AppCompatActivity() {
         }
     }
 
-    // load user's avatar from supabase
     private fun loadImageFromSupabase(filePath: String, imageView: CircleImageView) {
         lifecycleScope.launch {
             try {
-                // Construct the public URL to the object in the storage bucket
                 val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath/1.jpg?t=${System.currentTimeMillis()}"
 
-                // Use Glide to load the image into the ImageView
                 Glide.with(this@AllCommentActivity)
                     .load(imageUrl)
                     .override(50, 50)
-                    .placeholder(R.drawable.fotoprofil) // Add a placeholder image
-                    .error(R.drawable.fotoprofil) // Add an error image
+                    .placeholder(R.drawable.fotoprofil)
+                    .error(R.drawable.fotoprofil)
                     .into(imageView)
                 Log.d("ImageLoad", "Image loaded successfully from $imageUrl")
             } catch (e: Exception) {
@@ -163,12 +155,10 @@ class AllCommentActivity : AppCompatActivity() {
                         val products = response.body()?.data ?: emptyList()
                         getReviews(token, products, product_id)
                     } else {
-                        // Handle error cases
                     }
                 }
 
                 override fun onFailure(call: Call<ProductResponse>, t: Throwable) {
-                    // Handle network errors
                 }
             })
     }

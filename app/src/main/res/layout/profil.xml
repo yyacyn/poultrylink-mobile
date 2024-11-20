@@ -280,45 +280,6 @@
             </androidx.cardview.widget.CardView>
 
 
-            <!-- Lifechat  -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                app:cardElevation="2dp"
-                app:cardCornerRadius="8dp"
-                app:cardBackgroundColor="@android:color/white"
-                app:cardForegroundColor="@drawable/card_selector"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground">
-                <LinearLayout
-                    android:id="@+id/lifeChat"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:padding="15dp"
-                    >
-
-                    <ImageView
-                        android:layout_width="27dp"
-                        android:layout_height="27dp"
-                        android:src="@drawable/lifechat"
-                        android:contentDescription="lifechat" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Life Chat"
-                        android:textSize="18dp"
-                        android:layout_marginStart="25dp"
-                        android:textColor="@color/black" />
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
 
             <!-- About  -->
             <androidx.cardview.widget.CardView

@@ -91,7 +91,6 @@ class ProfilActivity : AppCompatActivity() {
 //        val btnNotif = findViewById<LinearLayout>(R.id.notif)
         val btnTransaction = findViewById<LinearLayout>(R.id.transactionHistory)
         val btnFaq = findViewById<LinearLayout>(R.id.faq)
-        val btnLifechat = findViewById<LinearLayout>(R.id.lifeChat)
         val btnLogout = findViewById<Button>(R.id.logout_button)
 //        val btnBack = findViewById<ImageButton>(R.id.btn_back)
 
@@ -116,11 +115,6 @@ class ProfilActivity : AppCompatActivity() {
         btnEditProfil.setOnClickListener {
             startActivity(Intent(this, MyProfilActivity::class.java))
         }
-
-        btnLifechat.setOnClickListener {
-            startActivity(Intent(this, Lifechat2Activity::class.java))
-        }
-
 //        btnNotif.setOnClickListener {
 //            startActivity(Intent(this, NotificationActivity::class.java))
 //        }
@@ -176,10 +170,9 @@ class ProfilActivity : AppCompatActivity() {
         }
     }
 
-    // Retrieve the token from SharedPreferences
     private fun getStoredToken(): String? {
         val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
-        return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
+        return sharedPreferences.getString("TOKEN", null)
     }
 
 
@@ -210,30 +203,24 @@ class ProfilActivity : AppCompatActivity() {
                             userLocation.text = "$userkota, $usernegara"
                         }
                     } else {
-                        // Handle error cases
                     }
                 }
-
                 override fun onFailure(call: Call<BuyerResponse>, t: Throwable) {
-                    // Handle network errors
                 }
             })
     }
 
-    // load user's avatar from supabase
     private fun loadImageFromSupabase(filePath: String) {
         lifecycleScope.launch {
             try {
-                // Construct the public URL to the object in the storage bucket
                 val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath?t=${System.currentTimeMillis()}"
 
-                // Use Glide to load the image into the ImageView
                 Glide.with(this@ProfilActivity)
                     .load(imageUrl)
                     .override(200, 200)
 //                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .placeholder(R.drawable.fotoprofil) // Add a placeholder image
-                    .error(R.drawable.fotoprofil) // Add an error image
+                    .placeholder(R.drawable.fotoprofil)
+                    .error(R.drawable.fotoprofil)
                     .into(findViewById<CircleImageView>(R.id.profile_image))
                 Log.d("ImageLoad", "Image loaded successfully from $imageUrl")
             } catch (e: Exception) {

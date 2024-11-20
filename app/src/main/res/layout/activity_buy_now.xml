@@ -250,6 +250,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:padding="15dp"
+                    android:layout_marginBottom="150dp"
                     >
 
                     <ImageView

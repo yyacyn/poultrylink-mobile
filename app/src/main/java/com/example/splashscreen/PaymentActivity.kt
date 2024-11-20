@@ -50,31 +50,28 @@ class PaymentActivity : AppCompatActivity() {
         val methodPayment = intent.getStringExtra("method")
         val imagePayment = intent.getStringExtra("image")
 
-        // Find the TextView by its ID
         val estDeliveryTextView = findViewById<TextView>(R.id.estDelivery)
 
-        // Get today's date
         val calendar = Calendar.getInstance()
 
-        // Add 7 days to the current date
         calendar.add(Calendar.DAY_OF_YEAR, 7)
 
-        // Format the date to a readable string
         val dateFormat = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
         val formattedDate = dateFormat.format(calendar.time)
 
+        estDeliveryTextView.text = "Estimated delivery: $formattedDate"
 
         if (methodPayment != null && imagePayment != null) {
             findViewById<TextView>(R.id.paymentMethod).text = methodPayment.replaceFirstChar {
                 if (it.isLowerCase()) it.titlecase() else it.toString()
             }
 
-            // Dynamically load the drawable resource by name
+
             val imageResourceId = resources.getIdentifier(imagePayment, "drawable", packageName)
-            if (imageResourceId != 0) { // Check if the resource exists
+            if (imageResourceId != 0) {
                 findViewById<ImageView>(R.id.paymentIcon).setImageResource(imageResourceId)
             } else {
-                // Handle the case where the drawable resource is not found
+
                 findViewById<ImageView>(R.id.paymentIcon).setImageResource(R.drawable.paymenticon)
             }
         }
@@ -103,7 +100,6 @@ class PaymentActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.shippingFee).text = "Rp. ${formatWithDots(shippingFee.toString())}"
     }
 
-    // Retrieve the token from SharedPreferences
     private fun getStoredToken(): String? {
         val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
         return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
@@ -118,16 +114,16 @@ class PaymentActivity : AppCompatActivity() {
                         Log.d("getUser", "User ID: $userId")
                         if (userId != null) {
                             callback(userId.toLong())
-                        } // Return the user ID via callback
+                        }
                     } else {
                         Log.e("FetchCarts", "Error: ${response.code()}")
-                        callback(null) // Return null if there's an error
+                        callback(null)
                     }
                 }
 
                 override fun onFailure(call: Call<Users>, t: Throwable) {
                     Log.e("FetchCarts", "Network Error: ${t.message}")
-                    callback(null) // Return null if there's a failure
+                    callback(null)
                 }
             })
     }
@@ -143,11 +139,8 @@ class PaymentActivity : AppCompatActivity() {
 
                         Log.d("filteredCarts", "$filteredCarts")
 
-                        // Merge cart items with the same user_id and produk_id
                         val mergedCarts = mergeCartItems(filteredCarts)
 
-
-                        // Display the merged cart items
                         val totalPrice = calculateTotalPrice(mergedCarts,shippingFee)
                         displayCartItems(mergedCarts, totalPrice)
 
@@ -174,13 +167,11 @@ class PaymentActivity : AppCompatActivity() {
                 val mergedTotalBarang = existingItem.total_barang.toInt() + cartItem.total_barang.toInt()
                 val mergedTotalHarga = existingItem.total_harga.toLong() + cartItem.total_harga.toLong()
 
-                // Update the existing item with new totals
                 mergedItemsMap[key] = existingItem.copy(
                     total_barang = mergedTotalBarang.toString(),
                     total_harga = mergedTotalHarga.toString()
                 )
             } else {
-                // Add the new item to the map
                 mergedItemsMap[key] = cartItem
             }
         }
@@ -191,15 +182,12 @@ class PaymentActivity : AppCompatActivity() {
     private fun calculateTotalPrice(cartItems: List<CartData>, shippingFee: Long = 300000): Long {
         var subTotal: Long = 0
 
-        // Calculate subtotal from the cart items
         for (cartItem in cartItems) {
             subTotal += (cartItem.total_harga as? String)?.toLongOrNull() ?: 0L
         }
 
-        // Format and display the subtotal in the TextView
         findViewById<TextView>(R.id.subTotal).text = "Rp. ${formatWithDots(subTotal.toString())}"
 
-        // Add the shipping fee to the total
         val totalPrice = subTotal + shippingFee
         return totalPrice
     }
@@ -208,13 +196,11 @@ class PaymentActivity : AppCompatActivity() {
         val cartContainer = findViewById<LinearLayout>(R.id.cart_container)
         cartContainer.removeAllViews()
         var subTotal = initialTotalPrice
-        cartIds.clear() // Clear previous IDs
+        cartIds.clear()
 
         for (cartItem in cartItems) {
             val cartItemView = layoutInflater.inflate(R.layout.payment_products, cartContainer, false)
 
-
-            // Extract product details
             val productName = cartItem.barang.nama_produk
             val productImage = cartItem.barang.image
             val productKategori = cartItem.barang.kategori_id
@@ -225,50 +211,43 @@ class PaymentActivity : AppCompatActivity() {
             val userId = cartItem.user_id
             val cartId = cartItem.id
 
-            // Add the current cart ID to the list
             cartIds.add(cartId)
 
-            // Set UI data for product name, category, and price
             cartItemView.findViewById<TextView>(R.id.product_name).text = productName
             val quantityTextView = cartItemView.findViewById<TextView>(R.id.product_quantity)
             quantityTextView.text = "Quantity: $totalBarang"
 
-            // Display the initial calculated price for the item
             val produkPriceTextView = cartItemView.findViewById<TextView>(R.id.product_price)
             produkPriceTextView.text = "Rp. ${formatWithDots((productPrice).toString())}"
 
-            // Load product image if available
             val productImageView = cartItemView.findViewById<ImageView>(R.id.product_image)
             if (productImage.isNotEmpty()) {
                 loadProductImage(productImage, productImageView)
             }
 
-            // Add the view to the container
             cartContainer.addView(cartItemView)
         }
 
-        // Update the total price (SubTotal + Shipping Fee) at the bottom
         val totalPrice = subTotal
         updateTotalPrice(totalPrice)
     }
 
     private fun addOrder(token: String, cartId: List<Long>, metodePembayaran: String) {
-        val gson = GsonBuilder().setLenient().create() // Create a lenient Gson instance
+        val gson = GsonBuilder().setLenient().create()
 
-        // Create a custom Retrofit instance for lenient parsing
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://poultrylink.ambatuwin.xyz/api/") // Replace with your API's base URL
-            .addConverterFactory(GsonConverterFactory.create(gson)) // Use lenient Gson
+            .baseUrl("http://poultrylink.ambatuwin.xyz/api/")
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
 
-        val apiService = retrofit.create(ApiService::class.java) // Define your Retrofit interface
+        val apiService = retrofit.create(ApiService::class.java)
 
         val orderRequest = InsertOrder(
             cartId,
             metodePembayaran
         )
 
-        val request = apiService.createOrder(token, orderRequest) // Replace with your API call
+        val request = apiService.createOrder(token, orderRequest)
         Log.d("InsertOrderRequest", Gson().toJson(orderRequest))
 
         request.enqueue(object : Callback<OrderResponse> {
@@ -305,7 +284,6 @@ class PaymentActivity : AppCompatActivity() {
         val methodPayment = intent.getStringExtra("method")
         buyButton.setOnClickListener {
 
-            // Call addOrder with the collected cart IDs
             if (cartIds.isNotEmpty() && methodPayment != null) {
                 addOrder(token, cartIds, methodPayment)
 
@@ -317,14 +295,12 @@ class PaymentActivity : AppCompatActivity() {
     }
 
 
-    // Update the total price displayed at the bottom of the cart
     private fun updateTotalPrice(totalPrice: Long) {
         val totalPriceTextView = findViewById<TextView>(R.id.totalPrice)
         totalPriceTextView.text = "Rp. ${formatWithDots(totalPrice.toString())}"
         findViewById<TextView>(R.id.total).text = "Rp. ${formatWithDots(totalPrice.toString())}"
     }
 
-    // Load product image from the URL
     private fun loadProductImage(filePath: String, imageView: ImageView, forceRefresh: Boolean = false) {
 
         try {
@@ -348,7 +324,6 @@ class PaymentActivity : AppCompatActivity() {
         }
     }
 
-    // Format the price with dots (e.g., 1000 => 1.000)
     private fun formatWithDots(price: String): String {
         return price.reversed().chunked(3).joinToString(".").reversed()
     }
@@ -368,12 +343,10 @@ class PaymentActivity : AppCompatActivity() {
                         findViewById<TextView>(R.id.address).text = "$useralamat, $userkota, $userprovinsi, $usernegara"
                         findViewById<TextView>(R.id.kodepos).text = userkodepos
                     } else {
-                        // Handle error cases
                     }
                 }
 
                 override fun onFailure(call: Call<BuyerResponse>, t: Throwable) {
-                    // Handle network errors
                 }
             })
     }

@@ -77,25 +77,22 @@ class SearchPemasokActivity : AppCompatActivity() {
 
     }
 
-    // Retrieve the token from SharedPreferences
     private fun getStoredToken(): String? {
         val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
         return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
     }
 
-    // load user's avatar from supabase
     private fun loadImageFromSupabase(filePath: String, imageView: CircleImageView) {
         lifecycleScope.launch {
             try {
                 val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath/1.jpg?t=${System.currentTimeMillis()}"
 
 
-                // Use Glide to load the image into the ImageView
                 Glide.with(this@SearchPemasokActivity)
                     .load(imageUrl)
                     .override(50, 50)
-                    .placeholder(R.drawable.fotoprofil) // Add a placeholder image
-                    .error(R.drawable.fotoprofil) // Add an error image
+                    .placeholder(R.drawable.fotoprofil)
+                    .error(R.drawable.fotoprofil)
                     .into(imageView)
                 Log.d("ImageLoadSuppplier", "Image loaded successfully from $imageUrl")
             } catch (e: Exception) {
@@ -133,7 +130,6 @@ class SearchPemasokActivity : AppCompatActivity() {
                     if (response.isSuccessful) {
                         val products = response.body()?.data ?: emptyList()
                         val filteredProducts = products.sortedByDescending { it.id }
-                        // Then get all reviews
                         getReviewsForAllProducts(token, filteredProducts, suppliers)
                     } else {
                         Log.e("ProductError", "Failed to fetch products")
@@ -156,17 +152,14 @@ class SearchPemasokActivity : AppCompatActivity() {
 
             loadProductImage(product.image, productImage)
 
-            // Calculate product rating
             val productReviews = reviews.filter { it.produk_id == product.id.toString() }
             val averageRating = productReviews.takeIf { it.isNotEmpty() }
                 ?.map { it.rating }
                 ?.average() ?: 0.0
 
-            // Format and set price
             val formattedPrice = formatWithDots(product.harga.toLong())
             productPrice.text = "Rp. $formattedPrice"
 
-            // Set click listener for product
             productView.setOnClickListener {
                 val intent = Intent(this@SearchPemasokActivity, ProdukActivity::class.java).apply {
                     putExtra("product_id", product.id)
@@ -191,7 +184,6 @@ class SearchPemasokActivity : AppCompatActivity() {
         }
     }
 
-    // price formatting
     private fun formatWithDots(amount: Long): String {
         val format = NumberFormat.getNumberInstance(Locale("in", "ID"))
         return format.format(amount)
@@ -225,7 +217,6 @@ class SearchPemasokActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<ReviewResponse>, response: Response<ReviewResponse>) {
                     if (response.isSuccessful) {
                         val reviews = response.body()?.data ?: emptyList()
-                        // Now we have all data, display suppliers with their products
                         displaySuppliersWithProducts(suppliers, products, reviews)
                     } else {
                         Log.e("ReviewError", "Failed to fetch reviews")
@@ -242,27 +233,22 @@ class SearchPemasokActivity : AppCompatActivity() {
         supplierContainer.removeAllViews()
 
         for (supplier in suppliers) {
-            // Inflate supplier card view
             val supplierView = layoutInflater.inflate(R.layout.supplier_card, supplierContainer, false)
 
-            // Set up supplier details
             val supplierImage = supplierView.findViewById<CircleImageView>(R.id.supplierImage)
             val supplierName = supplierView.findViewById<TextView>(R.id.supplierName)
             val supplierLocation = supplierView.findViewById<TextView>(R.id.supplierLocation)
             val productContainer = supplierView.findViewById<LinearLayout>(R.id.productContainer)
 
-            // Set supplier details
             supplierName.text = supplier.nama_toko
             supplierLocation.text = "${supplier.kota}, ${supplier.negara}"
             loadImageFromSupabase(supplier.buyer?.id.toString(), supplierImage)
 
             val lihatToko = supplierView.findViewById<Button>(R.id.lihatToko)
 
-            // Filter and display products for this supplier
             val supplierProducts = allProducts.filter { it.supplier_id == supplier.id.toString() }
             displaySupplierProducts(supplierProducts, allReviews, productContainer)
 
-            // Set click listener for supplier card
             lihatToko.setOnClickListener {
                 val intent = Intent(this@SearchPemasokActivity, TokoActivity::class.java).apply {
                     putExtra("supplierId", supplier.id.toString())

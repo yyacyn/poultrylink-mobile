@@ -67,7 +67,6 @@ class CartOnprogressActivity : AppCompatActivity() {
         }
     }
 
-    // Retrieve the token from SharedPreferences
     private fun getStoredToken(): String? {
         val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
         return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
@@ -82,16 +81,16 @@ class CartOnprogressActivity : AppCompatActivity() {
                         Log.d("getUser", "User ID: $userId")
                         if (userId != null) {
                             callback(userId.toLong())
-                        } // Return the user ID via callback
+                        }
                     } else {
                         Log.e("FetchCarts", "Error: ${response.code()}")
-                        callback(null) // Return null if there's an error
+                        callback(null)
                     }
                 }
 
                 override fun onFailure(call: Call<Users>, t: Throwable) {
                     Log.e("FetchCarts", "Network Error: ${t.message}")
-                    callback(null) // Return null if there's a failure
+                    callback(null)
                 }
             })
     }
@@ -118,7 +117,6 @@ class CartOnprogressActivity : AppCompatActivity() {
             })
     }
 
-    // Load product image from the URL
     private fun loadProductImage(filePath: String, imageView: ImageView, forceRefresh: Boolean = false) {
 
         try {
@@ -142,7 +140,6 @@ class CartOnprogressActivity : AppCompatActivity() {
         }
     }
 
-    // Format the price with dots (e.g., 1000 => 1.000)
     private fun formatWithDots(price: String): String {
         return price.reversed().chunked(3).joinToString(".").reversed()
     }
@@ -154,7 +151,6 @@ class CartOnprogressActivity : AppCompatActivity() {
         for (orderItem in orderItems.sortedByDescending { it.id }) {
             val orderItemView = layoutInflater.inflate(R.layout.orderprogresscard, orderContainer, false)
 
-            // Extract product details
             val productName = orderItem.produk
             val productImage = orderItem.produk_image
             val productKategori = orderItem.produk_kategori
@@ -171,12 +167,10 @@ class CartOnprogressActivity : AppCompatActivity() {
 
             orderItemView.findViewById<TextView>(R.id.orderDate).text = "#$orderId - $date"
 
-            // Set UI data for product name, category, and price
             orderItemView.findViewById<TextView>(R.id.productName).text = productName
             val quantityTextView = orderItemView.findViewById<TextView>(R.id.productQuantity)
             quantityTextView.text = "Quantity: $quantity"
 
-            // Display the initial calculated price for the item
             val produkPriceTextView = orderItemView.findViewById<TextView>(R.id.productTotalPrice)
             produkPriceTextView.text = "Rp. ${formatWithDots((totalPrice).toString())}"
 
@@ -207,21 +201,19 @@ class CartOnprogressActivity : AppCompatActivity() {
                             }
                         }
                         .setNegativeButton("No") { dialog, which ->
-                            // Dismiss the dialog if user cancels
                             dialog.dismiss()
                         }
-                    // Show the alert dialog
                     alertDialog.show()
                 }
             } else if (status == "yes") {
                 statusTextView.text = "Arrived"
-                doneBtn.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this@CartOnprogressActivity, R.color.orange))) // Change to a gray color
+                doneBtn.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this@CartOnprogressActivity, R.color.orange)))
                 doneBtn.text = "Done"
                 doneBtn.setOnClickListener {
                     val alertDialog = AlertDialog.Builder(this)
                         .setTitle("Confirm finish order")
                         .setMessage("Are you sure you want to finish and retrieve this order?")
-                        .setCancelable(false) // Set to false so user must choose either Yes or No
+                        .setCancelable(false)
                         .setPositiveButton("Yes") { dialog, which ->
                             retrieveOrder(token, orderId.toInt(), productImage.toInt())
                             getUser(token) { userId ->
@@ -234,10 +226,8 @@ class CartOnprogressActivity : AppCompatActivity() {
                             }
                         }
                         .setNegativeButton("No") { dialog, which ->
-                            // Dismiss the dialog if user cancels
                             dialog.dismiss()
                         }
-                    // Show the alert dialog
                     alertDialog.show()
                 }
 
@@ -250,13 +240,13 @@ class CartOnprogressActivity : AppCompatActivity() {
             }
             else {
                 statusTextView.text = "On progress"
-                doneBtn.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this@CartOnprogressActivity, R.color.red))) // Change to a gray color
+                doneBtn.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this@CartOnprogressActivity, R.color.red)))
                 doneBtn.text = "Cancel"
                 doneBtn.setOnClickListener {
                     val alertDialog = AlertDialog.Builder(this)
                         .setTitle("Confirm cancel order")
                         .setMessage("Are you sure you want to cancel this order? Cancelling this order will cancel the same product within the same order")
-                        .setCancelable(false) // Set to false so user must choose either Yes or No
+                        .setCancelable(false)
                         .setPositiveButton("Yes") { dialog, which ->
                             cancelOrder(token, orderId.toInt(), productImage.toInt())
                             getUser(token) { userId ->
@@ -269,10 +259,8 @@ class CartOnprogressActivity : AppCompatActivity() {
                             }
                         }
                         .setNegativeButton("No") { dialog, which ->
-                            // Dismiss the dialog if user cancels
                             dialog.dismiss()
                         }
-                    // Show the alert dialog
                     alertDialog.show()
                 }
             }
@@ -280,7 +268,7 @@ class CartOnprogressActivity : AppCompatActivity() {
             if (productKategori == "Ayam" || productKategori == "Bebek") {
                 val kategori = orderItemView.findViewById<TextView>(R.id.productCategory)
                 kategori.text = "Poultry"
-                setCategoryDrawable(kategori, R.drawable.kategori_chicken_transparent, 120, 120) // Width & Height in pixels
+                setCategoryDrawable(kategori, R.drawable.kategori_chicken_transparent, 120, 120)
             } else if (productKategori.contains("Telur", true)) {
                 val kategori = orderItemView.findViewById<TextView>(R.id.productCategory)
                 kategori.text = "Egg"
@@ -295,12 +283,10 @@ class CartOnprogressActivity : AppCompatActivity() {
                 setCategoryDrawable(kategori, R.drawable.kategori_egg_transparent, 120, 120)
             }
 
-            // Load product image if available
             val productImageView = orderItemView.findViewById<ImageView>(R.id.productImage)
             if (productImage.isNotEmpty()) {
                 loadProductImage(productImage, productImageView)
             }
-            // Add the view to the container
             orderContainer.addView(orderItemView)
         }
     }
@@ -314,10 +300,10 @@ class CartOnprogressActivity : AppCompatActivity() {
         val drawable = ContextCompat.getDrawable(kategori.context, drawableId)
         drawable?.setBounds(0, 0, drawableWidth, drawableHeight) // Set the size (width x height)
         kategori.setCompoundDrawables(
-            drawable,  // Left drawable
-            null,      // Top drawable
-            null,      // Right drawable
-            null       // Bottom drawable
+            drawable,
+            null,
+            null,
+            null
         )
     }
 
@@ -326,7 +312,6 @@ class CartOnprogressActivity : AppCompatActivity() {
 
         val request = CancelOrderRequest(orderId)
 
-        // Log JSON representation of the request
         val gson = Gson()
         val jsonRequest = gson.toJson(request)
         Log.d("cancelOrder", "Request JSON: $jsonRequest")

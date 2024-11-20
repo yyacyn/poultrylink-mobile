@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 import java.io.File
 
-// Data class representing a buyer record
 @Serializable
 data class Buyer(
     val id: Long,
@@ -22,7 +21,6 @@ data class Buyer(
     val lastname: String,
 )
 
-// Request data class for inserting a buyer
 @Serializable
 data class InsertBuyer(
     val p_user_id: Long,

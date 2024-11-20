@@ -15,10 +15,8 @@ object RetrofitClient {
     private const val BASE_URL = "http://poultrylink.ambatuwin.xyz/api/"
 //    private const val BASE_URL = "http://192.168.3.233:8000/api/"
 
-    // Replace with your method of getting the token (e.g., from SharedPreferences, or session)
     private var userToken: String? = null
 
-    // Function to set the token, you can call this when the user logs in
     fun setUserToken(token: String) {
         userToken = token
     }
@@ -27,7 +25,6 @@ object RetrofitClient {
 
     private val client = OkHttpClient.Builder()
         .addInterceptor { chain ->
-            // Check if the token is available
             val requestBuilder = chain.request().newBuilder()
 
 //            userToken?.let {
@@ -35,8 +32,6 @@ object RetrofitClient {
 //                requestBuilder.addHeader("Authorization", "Bearer $it")
 //            }
 
-            // If you need to add additional headers, you can do so here
-            // requestBuilder.addHeader("apikey", "YourAPIKeyHere") // If needed
 
             val request: Request = requestBuilder.build()
             chain.proceed(request)

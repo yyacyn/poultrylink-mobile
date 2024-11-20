@@ -38,7 +38,6 @@ import java.util.Locale
 
 class SeedCategoryActivity : AppCompatActivity() {
 
-    // Store the list of all products for filtering
     private var allProducts: List<ProductData> = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,9 +58,7 @@ class SeedCategoryActivity : AppCompatActivity() {
 
         val token = "Bearer ${getStoredToken()}"
 
-        // Initialize the search input
         val searchInput = findViewById<EditText>(R.id.searchInput)
-        // Set up TextWatcher for real-time filtering
         searchInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -71,7 +68,6 @@ class SeedCategoryActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // Set up OnEditorActionListener for Enter key
         searchInput.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH ||
                 (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {

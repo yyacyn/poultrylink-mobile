@@ -94,7 +94,6 @@ class TokoActivity : AppCompatActivity() {
         }
 
         val searchInput = findViewById<EditText>(R.id.searchInput)
-        // Set up TextWatcher for real-time filtering
         searchInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -103,7 +102,6 @@ class TokoActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // Set up OnEditorActionListener for Enter key
         searchInput.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH ||
                 (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
@@ -134,19 +132,16 @@ class TokoActivity : AppCompatActivity() {
         return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
     }
 
-    // load user's avatar from supabase
     private fun loadImageFromSupabase(filePath: String, imageView: CircleImageView) {
         lifecycleScope.launch {
             try {
-                // Construct the public URL to the object in the storage bucket
                 val imageUrl = "https://hbssyluucrwsbfzspyfp.supabase.co/storage/v1/object/public/avatar/$filePath/1.jpg?t=${System.currentTimeMillis()}"
 
-                // Use Glide to load the image into the ImageView
                 Glide.with(this@TokoActivity)
                     .load(imageUrl)
                     .override(100, 100)
-                    .placeholder(R.drawable.fotoprofil) // Add a placeholder image
-                    .error(R.drawable.fotoprofil) // Add an error image
+                    .placeholder(R.drawable.fotoprofil)
+                    .error(R.drawable.fotoprofil)
                     .into(imageView)
                 Log.d("ImageLoad", "Image loaded successfully from $imageUrl")
             } catch (e: Exception) {
@@ -249,7 +244,6 @@ class TokoActivity : AppCompatActivity() {
     {
         val container = findViewById<LinearLayout>(R.id.popularProductsContainer)
         container.removeAllViews()
-        // Sort the products by the number of reviews in descending order
         val sortedProducts = products.sortedByDescending { product ->
             val productReviews = reviews.filter { it.produk_id == product.id.toString() }
             productReviews.size
@@ -269,7 +263,6 @@ class TokoActivity : AppCompatActivity() {
 
             productLocation.text = "${product.supplier?.kota}, ${product.supplier?.negara}"
 
-            // Filter reviews for the current product
             val productReviews = reviews.filter { it.produk_id == product.id.toString() }
             val averageRating = if (productReviews.isNotEmpty()) {
                 productReviews.map { it.rating }.average()
@@ -319,7 +312,6 @@ class TokoActivity : AppCompatActivity() {
         }
     }
 
-    // price formatting
     private fun formatWithDots(amount: Long): String {
         val format = NumberFormat.getNumberInstance(Locale("in", "ID"))
         return format.format(amount)
@@ -335,12 +327,10 @@ class TokoActivity : AppCompatActivity() {
                         displayPopularProducts(products,reviews)
                         displayRecentProducts(products, reviews)
                     } else {
-                        // Handle error cases
                     }
                 }
 
                 override fun onFailure(call: Call<ReviewResponse>, t: Throwable) {
-                    // Handle network errors
                 }
             })
     }
@@ -357,27 +347,23 @@ class TokoActivity : AppCompatActivity() {
                         Log.d("getproducts", "$products")
                         getReviews(token, filteredProducts)
                     } else {
-                        // Handle different error cases based on the response code
                         when (response.code()) {
                             401 -> Log.e("getproducts", "Unauthorized access. Check token validity.")
                             403 -> Log.e("getproducts", "Access forbidden.")
                             404 -> Log.e("getproducts", "Products not found.")
                             else -> Log.e("getproducts", "Server error: ${response.code()} ${response.message()}")
                         }
-                        // Display an error message on the UI
                         displayErrorMessage(gridLayout, "Failed to load products. Please try again.")
                     }
                 }
 
                 override fun onFailure(call: Call<ProductResponse>, t: Throwable) {
                     Log.e("getproducts", "Network failure: ${t.localizedMessage}", t)
-                    // Display a network error message on the UI
                     displayErrorMessage(gridLayout, "Network error. Check your connection and try again.")
                 }
             })
     }
 
-    // Function to display an error message in the GridLayout
     private fun displayErrorMessage(gridLayout: GridLayout, message: String) {
         gridLayout.removeAllViews()
         val errorTextView = TextView(gridLayout.context).apply {

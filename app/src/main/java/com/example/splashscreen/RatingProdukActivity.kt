@@ -68,10 +68,9 @@ class RatingProdukActivity : AppCompatActivity() {
         }
     }
 
-    // Retrieve the token from SharedPreferences
     private fun getStoredToken(): String? {
         val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
-        return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
+        return sharedPreferences.getString("TOKEN", null)
     }
 
     private fun loadImageFromSupabase(imagePath: String, imageView: ImageView, forceRefresh: Boolean = false) {
@@ -104,7 +103,6 @@ class RatingProdukActivity : AppCompatActivity() {
 
         val request = RetrofitClient.instance.postReview(token, reviewRequest)
 
-        // Add Authorization header with the token
         request.enqueue(object : Callback<PostReviewResponse> {
             override fun onResponse(call: Call<PostReviewResponse>, response: Response<PostReviewResponse>) {
                 if (response.isSuccessful) {

@@ -81,12 +81,10 @@ class BuyNowActivity : AppCompatActivity() {
                 if (it.isLowerCase()) it.titlecase() else it.toString()
             }
 
-            // Dynamically load the drawable resource by name
             val imageResourceId = resources.getIdentifier(imagePayment, "drawable", packageName)
             if (imageResourceId != 0) { // Check if the resource exists
                 findViewById<ImageView>(R.id.paymentIcon).setImageResource(imageResourceId)
             } else {
-                // Handle the case where the drawable resource is not found
                 findViewById<ImageView>(R.id.paymentIcon).setImageResource(R.drawable.paymenticon)
             }
         }
@@ -100,17 +98,13 @@ class BuyNowActivity : AppCompatActivity() {
                     val alertDialog = AlertDialog.Builder(this)
                         .setTitle("Confirm checkout")
                         .setMessage("Are you sure you want to cancel checkout? All progress will be discarded")
-                        .setCancelable(false) // Set to false so user must choose either Yes or No
+                        .setCancelable(false)
                         .setPositiveButton("Yes") { dialog, which ->
-                            // Proceed with finishing the activity if user confirms
                             deleteCart(token, productId.toInt(), userId.toInt())
                         }
                         .setNegativeButton("No") { dialog, which ->
-                            // Dismiss the dialog if user cancels
                             dialog.dismiss()
                         }
-
-                    // Show the alert dialog
                     alertDialog.show()
                 }
             } else {
@@ -162,7 +156,6 @@ class BuyNowActivity : AppCompatActivity() {
             })
     }
 
-    // Retrieve the token from SharedPreferences
     private fun getStoredToken(): String? {
         val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
         return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
@@ -171,15 +164,12 @@ class BuyNowActivity : AppCompatActivity() {
 
     private fun calculateTotalPrice(subTotal: Long): Long {
 
-        // Format and display the subtotal in the TextView
         findViewById<TextView>(R.id.subTotal).text = "Rp. ${formatWithDots(subTotal.toString())}"
 
-        // Add the shipping fee to the total
         val totalPrice = subTotal + shippingFee
         return totalPrice
     }
 
-    // Load product image from the URL
     private fun loadProductImage(filePath: String, imageView: ImageView, forceRefresh: Boolean = false) {
 
         try {
@@ -202,7 +192,6 @@ class BuyNowActivity : AppCompatActivity() {
             Log.e("ImageLoadError", "Failed to load product image: ${e.message}")
         }
     }
-    // Format the price with dots (e.g., 1000 => 1.000)
     private fun formatWithDots(price: String): String {
         return price.reversed().chunked(3).joinToString(".").reversed()
     }
@@ -222,12 +211,10 @@ class BuyNowActivity : AppCompatActivity() {
                         findViewById<TextView>(R.id.address).text = "$useralamat, $userkota, $userprovinsi, $usernegara"
                         findViewById<TextView>(R.id.kodepos).text = userkodepos
                     } else {
-                        // Handle error cases
                     }
                 }
 
                 override fun onFailure(call: Call<BuyerResponse>, t: Throwable) {
-                    // Handle network errors
                 }
             })
     }
@@ -237,7 +224,7 @@ class BuyNowActivity : AppCompatActivity() {
         checkoutContainer.removeAllViews()
 
         val checkoutItemView = layoutInflater.inflate(R.layout.payment_products, checkoutContainer, false)
-        checkoutContainer.addView(checkoutItemView) // Ensure the view is added to the container
+        checkoutContainer.addView(checkoutItemView)
 
         val productName = intent.getStringExtra("productName")
         val productImage = intent.getStringExtra("productImage")
@@ -251,20 +238,15 @@ class BuyNowActivity : AppCompatActivity() {
             findViewById<LinearLayout>(R.id.plusminus).visibility = View.VISIBLE
         }
 
-        // Find the TextView by its ID
         val estDeliveryTextView = findViewById<TextView>(R.id.estDelivery)
 
-        // Get today's date
         val calendar = Calendar.getInstance()
 
-        // Add 7 days to the current date
         calendar.add(Calendar.DAY_OF_YEAR, 7)
 
-        // Format the date to a readable string
         val dateFormat = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
         val formattedDate = dateFormat.format(calendar.time)
 
-        // Set the formatted date to the TextView
         estDeliveryTextView.text = "Estimated delivery: $formattedDate"
 
         var currentTotalPrice = productPrice
@@ -336,7 +318,6 @@ class BuyNowActivity : AppCompatActivity() {
             override fun onResponse(call: Call<OrderResponse>, response: Response<OrderResponse>) {
                 if (response.isSuccessful) {
                     response.body()?.order?.let { order ->
-                        // Navigate to ConfirmPaymentActivity with order details
                         val intent = Intent(this@BuyNowActivity, ConfirmPaymentActivity::class.java).apply {
                             putExtra("orderId", order.id.toString())
                             putExtra("orderInvoice", order.invoice)
@@ -380,7 +361,6 @@ class BuyNowActivity : AppCompatActivity() {
             })
     }
 
-    // Update the total price displayed at the bottom of the cart
     private fun updateTotalPrice(totalPrice: Long) {
         val grandTotalPrice = calculateTotalPrice(totalPrice)
         val totalPriceTextView = findViewById<TextView>(R.id.totalPrice)
@@ -388,9 +368,8 @@ class BuyNowActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.total).text = "Rp. ${formatWithDots(grandTotalPrice.toString())}"
     }
 
-    // Helper function to update the price of each item based on quantity
     private fun updateItemPrice(produkPriceTextView: TextView, itemPrice: Long, quantity: Int) {
-        val totalItemPrice = itemPrice * quantity // Calculate total price based on quantity
+        val totalItemPrice = itemPrice * quantity
         produkPriceTextView.text = "Rp. ${formatWithDots(totalItemPrice.toString())}"
     }
 
@@ -403,16 +382,16 @@ class BuyNowActivity : AppCompatActivity() {
                         Log.d("getUser", "User ID: $userId")
                         if (userId != null) {
                             callback(userId.toLong())
-                        } // Return the user ID via callback
+                        }
                     } else {
                         Log.e("FetchCarts", "Error: ${response.code()}")
-                        callback(null) // Return null if there's an error
+                        callback(null)
                     }
                 }
 
                 override fun onFailure(call: Call<Users>, t: Throwable) {
                     Log.e("FetchCarts", "Network Error: ${t.message}")
-                    callback(null) // Return null if there's a failure
+                    callback(null)
                 }
             })
     }

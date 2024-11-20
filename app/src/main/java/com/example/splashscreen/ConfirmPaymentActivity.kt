@@ -28,24 +28,20 @@ class ConfirmPaymentActivity : AppCompatActivity() {
 
         val backButton = findViewById<ImageButton>(R.id.backBtn)
 
-        // Start a countdown timer
         val countDownTimer = object : CountDownTimer(7 * 60 * 1000, 1000) { // 7 minutes
             override fun onTick(millisUntilFinished: Long) {
                 val minutes = (millisUntilFinished / 1000) / 60
                 val seconds = (millisUntilFinished / 1000) % 60
 
-                // Update the timer text every second
                 timerTextView.text = String.format("%02d:%02d", minutes, seconds)
 
-                // Check if the timer reaches 6:55
                 if (minutes == 6L && seconds == 55L) {
-                    cancel() // Stop the timer
+                    cancel()
 
                     if (orderId != null) {
                         confirmOrder(token, orderId.toInt())
                     }
 
-                    // Navigate to CompletePaymentActivity
                     val intent = Intent(this@ConfirmPaymentActivity, CompletePaymentActivity::class.java).apply {
                         putExtra("orderId", orderId)
                         putExtra("orderInvoice", orderInvoice)
@@ -56,17 +52,13 @@ class ConfirmPaymentActivity : AppCompatActivity() {
             }
 
             override fun onFinish() {
-                // Handle if timer finishes naturally
                 timerTextView.text = "00:00"
             }
         }
 
-        // Start the timer
         countDownTimer.start()
 
-        // Handle back button click
         backButton.setOnClickListener {
-            // Stop the timer and navigate back to DashboardActivity
             countDownTimer.cancel()
             val intent = Intent(this@ConfirmPaymentActivity, DashboardActivity::class.java)
             startActivity(intent)
@@ -74,7 +66,6 @@ class ConfirmPaymentActivity : AppCompatActivity() {
         }
     }
 
-    // Retrieve the token from SharedPreferences
     private fun getStoredToken(): String? {
         val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
         return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
@@ -87,7 +78,6 @@ class ConfirmPaymentActivity : AppCompatActivity() {
             override fun onResponse(call: Call<CancelOrderResponse>, response: Response<CancelOrderResponse>) {
                 if (response.isSuccessful) {
                     response.body()?.order?.let { order ->
-                        // Navigate to ConfirmPaymentActivity with order details
                     } ?: run {
                         Log.e("OrderError", "Null order in response.")
                     }

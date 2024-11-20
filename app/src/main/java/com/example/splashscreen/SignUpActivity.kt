@@ -115,7 +115,6 @@ class SignUpActivity : AppCompatActivity() {
                     response.body()?.let { registerResponse ->
                         Log.d("registerresponse", "Response: $registerResponse")
                         if (registerResponse.success) {
-                            // Retrieve user ID from the registration response
                             val userId = registerResponse.data?.user_id
                             val token = registerResponse.data?.token
                             if (userId != null) {
@@ -145,12 +144,9 @@ class SignUpActivity : AppCompatActivity() {
         })
     }
 
-
-
-
     private fun createBuyerProfile(userId: String) {
         val token = "Bearer ${getStoredToken()}"
-        Log.d("tokenforbuyer", token)// Retrieve the token from SharedPreferences
+        Log.d("tokenforbuyer", token)
         if (token != null) {
             val buyerProfileRequest = BuyerProfileRequest(
 //                user_id = userId.toLong(),
@@ -159,7 +155,6 @@ class SignUpActivity : AppCompatActivity() {
 
             val request = RetrofitClient.instance.createBuyerProfile(token, buyerProfileRequest)
 
-            // Add Authorization header with the token
             request.enqueue(object : Callback<BuyerResponse> {
                 override fun onResponse(call: Call<BuyerResponse>, response: Response<BuyerResponse>) {
                     if (response.isSuccessful) {
@@ -181,13 +176,11 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
-    // Retrieve the token from SharedPreferences
     private fun getStoredToken(): String? {
         val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
         return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
     }
 
-    // Navigate to home activity after successful login
     private fun navigateToHome(token: String) {
         val intent = Intent(this, DashboardActivity::class.java)
         intent.putExtra("TOKEN", token)
@@ -195,17 +188,11 @@ class SignUpActivity : AppCompatActivity() {
         finish()
     }
 
-    // Store the token in SharedPreferences
     private fun storeToken(token: String) {
         val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putString("TOKEN", token)
         editor.apply()
-    }
-
-    private fun navigateToHome() {
-        startActivity(Intent(this, HomeActivity::class.java))
-        finish()
     }
 
 
@@ -229,7 +216,6 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
-    // converts image into bytearray to store it into supabase storage
     private fun getDrawableAsByteArray(drawableId: Int): ByteArray {
         val drawable = resources.getDrawable(drawableId, null) as android.graphics.drawable.BitmapDrawable
         val bitmap = drawable.bitmap

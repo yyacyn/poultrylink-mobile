@@ -9,6 +9,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -42,7 +43,7 @@ class CartCompleteActivity : AppCompatActivity() {
 
         val token = "Bearer ${getStoredToken()}"
 
-//        Navigation()
+        Navigation()
 
         getUser(token) { userId ->
             if (userId != null) {
@@ -96,7 +97,6 @@ class CartCompleteActivity : AppCompatActivity() {
         }
     }
 
-    // Retrieve the token from SharedPreferences
     private fun getStoredToken(): String? {
         val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
         return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
@@ -111,16 +111,16 @@ class CartCompleteActivity : AppCompatActivity() {
                         Log.d("getUser", "User ID: $userId")
                         if (userId != null) {
                             callback(userId.toLong())
-                        } // Return the user ID via callback
+                        }
                     } else {
                         Log.e("FetchCarts", "Error: ${response.code()}")
-                        callback(null) // Return null if there's an error
+                        callback(null)
                     }
                 }
 
                 override fun onFailure(call: Call<Users>, t: Throwable) {
                     Log.e("FetchCarts", "Network Error: ${t.message}")
-                    callback(null) // Return null if there's a failure
+                    callback(null)
                 }
             })
     }
@@ -147,7 +147,6 @@ class CartCompleteActivity : AppCompatActivity() {
             })
     }
 
-    // Load product image from the URL
     private fun loadProductImage(filePath: String, imageView: ImageView, forceRefresh: Boolean = false) {
 
         try {
@@ -171,7 +170,6 @@ class CartCompleteActivity : AppCompatActivity() {
         }
     }
 
-    // Format the price with dots (e.g., 1000 => 1.000)
     private fun formatWithDots(price: String): String {
         return price.reversed().chunked(3).joinToString(".").reversed()
     }
@@ -183,12 +181,12 @@ class CartCompleteActivity : AppCompatActivity() {
         drawableHeight: Int
     ) {
         val drawable = ContextCompat.getDrawable(kategori.context, drawableId)
-        drawable?.setBounds(0, 0, drawableWidth, drawableHeight) // Set the size (width x height)
+        drawable?.setBounds(0, 0, drawableWidth, drawableHeight)
         kategori.setCompoundDrawables(
-            drawable,  // Left drawable
-            null,      // Top drawable
-            null,      // Right drawable
-            null       // Bottom drawable
+            drawable,
+            null,
+            null,
+            null
         )
     }
 
@@ -199,7 +197,6 @@ class CartCompleteActivity : AppCompatActivity() {
         for (orderItem in orderItems.sortedByDescending { it.id }) {
             val orderItemView = layoutInflater.inflate(R.layout.orderprogresscard, historyContainer, false)
 
-            // Extract product details
             val productName = orderItem.produk
             val productImage = orderItem.produk_image
             val productKategori = orderItem.produk_kategori
@@ -223,52 +220,47 @@ class CartCompleteActivity : AppCompatActivity() {
 
             orderItemView.findViewById<TextView>(R.id.orderDate).text = "#$orderId - $date"
 
-            // Set UI data for product name, category, and price
             orderItemView.findViewById<TextView>(R.id.productName).text = productName
             val quantityTextView = orderItemView.findViewById<TextView>(R.id.productQuantity)
             quantityTextView.text = "Quantity: $quantity"
 
-            // Display the initial calculated price for the item
             val produkPriceTextView = orderItemView.findViewById<TextView>(R.id.productTotalPrice)
             produkPriceTextView.text = "Rp. ${formatWithDots((totalPrice).toString())}"
 
             if (status == "retrieved") {
                 statusTextView.text = "Retrieved"
 
-                // Change stroke color, width, and text color
                 val orangeColor = ContextCompat.getColor(this@CartCompleteActivity, R.color.orange)
                 (statusTextView as MaterialButton).apply {
                     strokeColor = ColorStateList.valueOf(orangeColor)
-                    strokeWidth = 4 // Set stroke width in pixels
-                    setTextColor(orangeColor) // Change text color to orange
+                    strokeWidth = 4
+                    setTextColor(orangeColor)
                 }
 
                 doneBtn.text = "Review"
                 doneBtn.setOnClickListener {
                     val intent = Intent(this@CartCompleteActivity, RatingProdukActivity::class.java).apply {
                         putExtra("productCategory", orderItem.produk_kategori)
-                        putExtra("productId", orderItem.produk_image.toLong())
+                        putExtra("productId", orderItem.produk_id)
                         putExtra("productName", orderItem.produk)
                         putExtra("productImage", orderItem.produk_image)
                         putExtra("orderId", orderId)
                     }
                     startActivity(intent)
-                    // Action for review
                 }
             } else {
                 statusTextView.text = "Cancelled"
 
-                // Change stroke color, width, and text color
                 val redColor = ContextCompat.getColor(this@CartCompleteActivity, R.color.red)
                 (statusTextView as MaterialButton).apply {
                     strokeColor = ColorStateList.valueOf(redColor)
-                    strokeWidth = 4 // Set stroke width in pixels
-                    setTextColor(redColor) // Change text color to red
+                    strokeWidth = 4
+                    setTextColor(redColor)
                 }
 
                 doneBtn.text = "Buy again"
                 doneBtn.setOnClickListener {
-                    // Action for buy again
+                    addToCartBuyNow(token, orderItem.produk_id.toString(), 1)
                 }
             }
 
@@ -301,5 +293,53 @@ class CartCompleteActivity : AppCompatActivity() {
             historyContainer.addView(orderItemView)
         }
 
+    }
+
+    private fun addToCartBuyNow(token: String, productId: String, totalBarang: Int = 1) {
+        val cartRequest = InsertCartData(
+            produk_id = productId,
+            total_barang = totalBarang.toString()
+        )
+
+        val request = RetrofitClient.instance.addToCart(token, cartRequest)
+
+        request.enqueue(object : Callback<InsertCartResponse> {
+            override fun onResponse(call: Call<InsertCartResponse>, response: Response<InsertCartResponse>) {
+                if (response.isSuccessful) {
+                    Log.d("cart", "Cart added successfully: ${response.body()}")
+
+                    val cartId = response.body()?.data?.id
+
+                    if (cartId != null) {
+                        val productName = intent.getStringExtra("productName")
+                        val productImage = intent.getStringExtra("productImage")
+                        val productPrice = intent.getLongExtra("productPrice", 0)
+                        val product_id = intent.getLongExtra("product_id", 0)
+
+                        val intent = Intent(this@CartCompleteActivity, BuyNowActivity::class.java).apply {
+                            putExtra("productName", productName)
+                            putExtra("productImage", productImage)
+                            putExtra("productPrice", productPrice)
+                            putExtra("productQty", 1)
+                            putExtra("productId", product_id)
+                            putExtra("cartId", cartId)
+                        }
+                        Log.d("cartIdreal", "$cartId")
+                        startActivity(intent)
+                    } else {
+                        Toast.makeText(this@CartCompleteActivity, "Failed to get cart ID", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Toast.makeText(this@CartCompleteActivity, "Failed to add to cart: ${response.message()}", Toast.LENGTH_SHORT).show()
+                    Log.e("cart", "Failed to add cart: ${response.message()}, Error: $errorBody")
+                }
+            }
+
+            override fun onFailure(call: Call<InsertCartResponse>, t: Throwable) {
+                Log.e("cart", "Failed to add cart: ${t.message}")
+                Toast.makeText(this@CartCompleteActivity, "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }

@@ -59,9 +59,7 @@ class PoultryCategoryActivity : AppCompatActivity() {
 
         val token = "Bearer ${getStoredToken()}"
 
-        // Initialize the search input
         val searchInput = findViewById<EditText>(R.id.searchInput)
-        // Set up TextWatcher for real-time filtering
         searchInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -71,7 +69,6 @@ class PoultryCategoryActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // Set up OnEditorActionListener for Enter key
         searchInput.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH ||
                 (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
@@ -91,7 +88,6 @@ class PoultryCategoryActivity : AppCompatActivity() {
         getProducts(token, findViewById(R.id.gridLayout))
     }
 
-    // Price formatting
     private fun formatWithDots(amount: Long): String {
         val format = NumberFormat.getNumberInstance(Locale("in", "ID"))
         return format.format(amount)
@@ -102,17 +98,14 @@ class PoultryCategoryActivity : AppCompatActivity() {
             .enqueue(object : Callback<ProductResponse> {
                 override fun onResponse(call: Call<ProductResponse>, response: Response<ProductResponse>) {
                     if (response.isSuccessful) {
-                        // Filter products with kategori_id of 1 or 2
                         val filteredProducts = response.body()?.data?.filter {
                             it.kategori_id == "1" || it.kategori_id == "2"
                         } ?: emptyList()
 
-                        // Store the filtered products in allProducts for search filtering
                         allProducts = filteredProducts
 
                         getReviews(token, filteredProducts, gridLayout)
                     } else {
-                        // Handle error cases
                     }
                 }
 
@@ -146,7 +139,6 @@ class PoultryCategoryActivity : AppCompatActivity() {
     }
 
     private fun displayProducts(products: List<ProductData>, reviews: List<ReviewData>, gridLayout: GridLayout) {
-        // Sort products by created_at in descending order to show the newest products first
         val sortedProducts = products.sortedByDescending { it.created_at }
 
         gridLayout.removeAllViews()
@@ -164,7 +156,6 @@ class PoultryCategoryActivity : AppCompatActivity() {
             productName.text = product.nama_produk
             productLocation.text = "${product.supplier?.kota}, ${product.supplier?.negara}"
 
-            // Filter reviews for the current product
             val productReviews = reviews.filter { it.produk_id == product.id.toString() }
             val averageRating = if (productReviews.isNotEmpty()) {
                 productReviews.map { it.rating }.average()
@@ -212,7 +203,6 @@ class PoultryCategoryActivity : AppCompatActivity() {
         }
     }
 
-
     private fun getReviews(token: String, products: List<ProductData>, gridLayout: GridLayout) {
         RetrofitClient.instance.getReviews(token)
             .enqueue(object : Callback<ReviewResponse> {
@@ -221,23 +211,19 @@ class PoultryCategoryActivity : AppCompatActivity() {
                         val reviews = response.body()?.data ?: emptyList()
                         displayProducts(products, reviews, gridLayout)
                     } else {
-                        // Handle error cases
                     }
                 }
 
                 override fun onFailure(call: Call<ReviewResponse>, t: Throwable) {
-                    // Handle network errors
                 }
             })
     }
 
-    // Retrieve the token from SharedPreferences
     private fun getStoredToken(): String? {
         val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
         return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
     }
 
-    // Filter products by search input
     private fun filterProducts(query: String) {
         val filteredProducts = if (query.isEmpty()) {
             allProducts
