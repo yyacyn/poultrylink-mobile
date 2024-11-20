@@ -58,6 +58,17 @@ class BuyNowActivity : AppCompatActivity() {
         val productId = intent.getLongExtra("productId", 0)
         val cartId = intent.getLongExtra("cartId", 0)
 
+        val estDeliveryTextView = findViewById<TextView>(R.id.estDelivery)
+
+        val calendar = Calendar.getInstance()
+
+        calendar.add(Calendar.DAY_OF_YEAR, 7)
+
+        val dateFormat = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
+        val formattedDate = dateFormat.format(calendar.time)
+
+        estDeliveryTextView.text = "Estimated delivery: $formattedDate"
+
 
         findViewById<TextView>(R.id.quantity).text = currentQuantity.toString()
 
