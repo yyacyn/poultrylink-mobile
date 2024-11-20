@@ -37,8 +37,8 @@
                 android:paddingVertical="16dp">
 
                 <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
                     android:src="@drawable/logo" />
 
                 <LinearLayout
@@ -67,9 +67,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="14sp" />
+
                     <!-- Payment Method -->
                     <TextView
                         android:id="@+id/paymentMethod"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp" />
+
+                    <!-- Payment Method -->
+                    <TextView
+                        android:id="@+id/deliveryAddress"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="14sp" />

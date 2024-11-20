@@ -359,19 +359,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <Button
-            android:id="@+id/chat"
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
-            android:padding="15dp"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:paddingHorizontal="10dp"
-            android:text="Chat"
-            android:backgroundTint="@android:color/transparent"
-            app:strokeWidth="1dp"
-            app:strokeColor="@color/white"
-            app:cornerRadius="10dp"/>
+<!--        <Button-->
+<!--            android:id="@+id/chat"-->
+<!--            android:layout_width="130dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:padding="15dp"-->
+<!--            android:textAlignment="center"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:paddingHorizontal="10dp"-->
+<!--            android:text="Chat"-->
+<!--            android:backgroundTint="@android:color/transparent"-->
+<!--            app:strokeWidth="1dp"-->
+<!--            app:strokeColor="@color/white"-->
+<!--            app:cornerRadius="10dp"/>-->
 
         <ImageButton
             android:id="@+id/cart"
@@ -383,6 +383,7 @@
             android:scaleType="centerCrop" />
 
         <Button
+            android:layout_weight="1"
             android:id="@+id/buyNow"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
@@ -392,6 +393,7 @@
             android:textColor="@color/white"
             android:paddingHorizontal="10dp"
             android:text="Buy Now"
+            android:layout_marginRight="20dp"
             android:backgroundTint="@android:color/transparent"
             app:strokeWidth="1dp"
             app:strokeColor="@color/white"

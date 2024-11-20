@@ -169,13 +169,6 @@ class CartOnprogressActivity : AppCompatActivity() {
 
             val invoiceBtn = orderItemView.findViewById<Button>(R.id.invoiceBtn)
 
-            invoiceBtn.setOnClickListener {
-                val intent = Intent(this@CartOnprogressActivity, CompletePaymentActivity::class.java).apply {
-                    putExtra("orderId", orderId.toString())
-                }
-                startActivity(intent)
-            }
-
             orderItemView.findViewById<TextView>(R.id.orderDate).text = "#$orderId - $date"
 
             // Set UI data for product name, category, and price
@@ -187,9 +180,15 @@ class CartOnprogressActivity : AppCompatActivity() {
             val produkPriceTextView = orderItemView.findViewById<TextView>(R.id.productTotalPrice)
             produkPriceTextView.text = "Rp. ${formatWithDots((totalPrice).toString())}"
 
+            val invoiceButton = orderItemView.findViewById<Button>(R.id.invoiceBtn)
+
             if (status == "no" ){
                 statusTextView.text = "Unpaid"
                 doneBtn.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this@CartOnprogressActivity, R.color.red)))
+                invoiceBtn.text = "Pay"
+                invoiceBtn.setOnClickListener {
+                    confirmOrder(token, orderId.toInt())
+                }
                 doneBtn.text = "Cancel"
                 doneBtn.setOnClickListener {
                     val alertDialog = AlertDialog.Builder(this)
@@ -240,6 +239,13 @@ class CartOnprogressActivity : AppCompatActivity() {
                         }
                     // Show the alert dialog
                     alertDialog.show()
+                }
+
+                invoiceBtn.setOnClickListener {
+                    val intent = Intent(this@CartOnprogressActivity, CompletePaymentActivity::class.java).apply {
+                        putExtra("orderId", orderId.toString())
+                    }
+                    startActivity(intent)
                 }
             }
             else {
@@ -297,7 +303,6 @@ class CartOnprogressActivity : AppCompatActivity() {
             // Add the view to the container
             orderContainer.addView(orderItemView)
         }
-
     }
 
     fun setCategoryDrawable(
@@ -341,6 +346,33 @@ class CartOnprogressActivity : AppCompatActivity() {
                     Log.e("CancelOrder", "Network Error: ${t.message}")
                 }
             })
+    }
+
+    private fun confirmOrder(token: String, orderId: Int) {
+        val orderRequest = RetrieveOrderRequest(orderId)
+        RetrofitClient.instance.confirmOrder(token, orderRequest).enqueue(object :
+            Callback<CancelOrderResponse> {
+            override fun onResponse(call: Call<CancelOrderResponse>, response: Response<CancelOrderResponse>) {
+                if (response.isSuccessful) {
+                    val orderResponse = response.body()
+                    val intent = Intent(this@CartOnprogressActivity, ConfirmPaymentActivity::class.java).apply {
+                        if (orderResponse != null) {
+                            putExtra("orderId", orderResponse.order
+                                ?.id.toString())
+                            putExtra("orderInvoice", orderResponse.order?.invoice.toString())
+                        }
+                    }
+                    startActivity(intent)
+                    finish()
+                } else {
+                    Log.e("OrderError", "Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<CancelOrderResponse>, t: Throwable) {
+                Log.e("OrderError", "Failed to create order: ${t.message}")
+            }
+        })
     }
 
 

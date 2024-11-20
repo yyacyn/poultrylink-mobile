@@ -32,6 +32,7 @@ class LocationStoreActivity : AppCompatActivity() {
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
 
     private val cityCoordinates = mapOf(
+        // Java Island
         "Bogor" to GeoPoint(-6.5971, 106.8060),
         "Jakarta" to GeoPoint(-6.2088, 106.8456),
         "Surabaya" to GeoPoint(-7.2575, 112.7521),
@@ -41,8 +42,51 @@ class LocationStoreActivity : AppCompatActivity() {
         "Malang" to GeoPoint(-7.9666, 112.6326),
         "Cirebon" to GeoPoint(-6.7063, 108.5570),
         "Tangerang" to GeoPoint(-6.1783, 106.6319),
-        "Bekasi" to GeoPoint(-6.2383, 106.9756)
+        "Bekasi" to GeoPoint(-6.2383, 106.9756),
+        "Surakarta" to GeoPoint(-7.5666, 110.8166),
+
+        // Sumatra Island
+        "Medan" to GeoPoint(3.5952, 98.6722),
+        "Palembang" to GeoPoint(-2.9909, 104.7566),
+        "Pekanbaru" to GeoPoint(0.5333, 101.4500),
+        "Lampung (Bandar Lampung)" to GeoPoint(-5.4500, 105.2667),
+        "Padang" to GeoPoint(-0.9492, 100.3543),
+        "Jambi" to GeoPoint(-1.6100, 103.6131),
+        "Banda Aceh" to GeoPoint(5.5483, 95.3238),
+        "Bengkulu" to GeoPoint(-3.8004, 102.2655),
+        "Tanjung Pinang" to GeoPoint(0.9167, 104.4500),
+
+        // Kalimantan (Borneo) Island
+        "Banjarmasin" to GeoPoint(-3.3186, 114.5925),
+        "Balikpapan" to GeoPoint(-1.2675, 116.8310),
+        "Pontianak" to GeoPoint(-0.0263, 109.3425),
+        "Samarinda" to GeoPoint(-0.5022, 117.1536),
+        "Tarakan" to GeoPoint(3.3135, 117.5917),
+
+        // Sulawesi Island
+        "Makassar" to GeoPoint(-5.1477, 119.4327),
+        "Manado" to GeoPoint(1.4822, 124.8489),
+        "Palu" to GeoPoint(-0.8971, 119.8707),
+        "Gorontalo" to GeoPoint(0.5477, 123.0595),
+        "Kendari" to GeoPoint(-3.9778, 122.5149),
+
+        // Bali and Nusa Tenggara
+        "Denpasar" to GeoPoint(-8.6500, 115.2167),
+        "Mataram" to GeoPoint(-8.5833, 116.1167),
+        "Kupang" to GeoPoint(-10.1788, 123.5970),
+
+        // Papua Island
+        "Jayapura" to GeoPoint(-2.5337, 140.7181),
+        "Sorong" to GeoPoint(-0.8615, 131.2556),
+
+        // Maluku Islands
+        "Ambon" to GeoPoint(-3.6550, 128.1900),
+        "Ternate" to GeoPoint(0.7906, 127.3631),
+
+        // Riau Islands
+        "Batam" to GeoPoint(1.0456, 104.0305)
     )
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,7 +132,7 @@ class LocationStoreActivity : AppCompatActivity() {
     }
 
     private fun Navigation() {
-        val buttonProduk = findViewById<CardView>(R.id.home)
+        val buttonProduk = findViewById<ImageButton>(R.id.home)
         val buttonProfile = findViewById<ImageButton>(R.id.profile)
         val buttonHistory = findViewById<ImageButton>(R.id.history)
 

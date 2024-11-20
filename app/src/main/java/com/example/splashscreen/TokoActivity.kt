@@ -120,13 +120,13 @@ class TokoActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<Button>(R.id.chatSupplier).setOnClickListener {
-            val intent = Intent(this@TokoActivity, Lifechat2Activity::class.java).apply {
-                putExtra("receiverName", supplierName)
-                putExtra("receiverImage", supplierImage)
-            }
-            startActivity(intent)
-        }
+//        findViewById<Button>(R.id.chatSupplier).setOnClickListener {
+//            val intent = Intent(this@TokoActivity, Lifechat2Activity::class.java).apply {
+//                putExtra("receiverName", supplierName)
+//                putExtra("receiverImage", supplierImage)
+//            }
+//            startActivity(intent)
+//        }
     }
 
     private fun getStoredToken(): String? {
@@ -205,7 +205,6 @@ class TokoActivity : AppCompatActivity() {
             }
             val totalReviews = productReviews.size
 
-
             productRating.text = "%.1f".format(averageRating)
             productAmountRating.text = "($totalReviews Reviews)"
 
@@ -224,7 +223,7 @@ class TokoActivity : AppCompatActivity() {
                 val intent = Intent(this@TokoActivity, ProdukActivity::class.java).apply {
                     putExtra("product_id", product.id)
                     putExtra("productName", product.nama_produk)
-                    putExtra("productImage", product.image)
+                    putExtra("productImage", product.id.toString())
                     putExtra("productRating", "%.1f".format(averageRating).toFloat())
                     putExtra("productTotalReviews", totalReviews)
                     putExtra("productPrice", product.harga.toLong())

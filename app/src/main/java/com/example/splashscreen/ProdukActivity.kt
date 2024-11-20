@@ -83,13 +83,13 @@ class ProdukActivity : AppCompatActivity() {
         val supplierRating = intent.getStringExtra("supplierRating")
         val productQty = intent.getStringExtra("productQty")
 
-        findViewById<Button>(R.id.chat).setOnClickListener {
-            val intent = Intent(this@ProdukActivity, Lifechat2Activity::class.java).apply {
-                putExtra("receiverName", supplierToko)
-                putExtra("receiverImage", supplierImageUrl.toString())
-            }
-            startActivity(intent)
-        }
+//        findViewById<Button>(R.id.chat).setOnClickListener {
+//            val intent = Intent(this@ProdukActivity, Lifechat2Activity::class.java).apply {
+//                putExtra("receiverName", supplierToko)
+//                putExtra("receiverImage", supplierImageUrl.toString())
+//            }
+//            startActivity(intent)
+//        }
 
         //follow button
         findViewById<ImageButton>(R.id.follow_button).setOnClickListener {

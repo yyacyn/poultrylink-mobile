@@ -86,7 +86,7 @@ class ProfilActivity : AppCompatActivity() {
         val btnProfil = findViewById<ImageButton>(R.id.btnprofil)
         val btnEditProfil = findViewById<LinearLayout>(R.id.editProfile)
 //        val btnOpenStore = findViewById<Button>(R.id.open_store_button)
-        val btnNotif = findViewById<LinearLayout>(R.id.notif)
+//        val btnNotif = findViewById<LinearLayout>(R.id.notif)
         val btnTransaction = findViewById<LinearLayout>(R.id.transactionHistory)
         val btnFaq = findViewById<LinearLayout>(R.id.faq)
         val btnLifechat = findViewById<LinearLayout>(R.id.lifeChat)
@@ -95,6 +95,10 @@ class ProfilActivity : AppCompatActivity() {
 
         btnHome.setOnClickListener {
             startActivity(Intent(this, DashboardActivity::class.java))
+        }
+
+        btnMarket.setOnClickListener {
+            startActivity(Intent(this, LocationStoreActivity::class.java))
         }
 
         window.navigationBarColor = resources.getColor(R.color.orange)
@@ -115,9 +119,9 @@ class ProfilActivity : AppCompatActivity() {
             startActivity(Intent(this, Lifechat2Activity::class.java))
         }
 
-        btnNotif.setOnClickListener {
-            startActivity(Intent(this, NotificationActivity::class.java))
-        }
+//        btnNotif.setOnClickListener {
+//            startActivity(Intent(this, NotificationActivity::class.java))
+//        }
 
 //        btnOpenStore.setOnClickListener {
 //            startActivity(Intent(this, TokoActivity::class.java))

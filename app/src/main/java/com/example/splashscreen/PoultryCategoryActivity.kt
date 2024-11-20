@@ -190,7 +190,7 @@ class PoultryCategoryActivity : AppCompatActivity() {
                 val intent = Intent(this@PoultryCategoryActivity, ProdukActivity::class.java).apply {
                     putExtra("product_id", product.id)
                     putExtra("productName", product.nama_produk)
-                    putExtra("productImage", product.image)
+                    putExtra("productImage", product.id.toString())
                     putExtra("productRating", "%.1f".format(averageRating).toFloat())
                     putExtra("productTotalReviews", totalReviews)
                     putExtra("productPrice", product.harga.toLong())

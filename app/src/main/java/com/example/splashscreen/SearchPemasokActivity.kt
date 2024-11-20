@@ -171,7 +171,7 @@ class SearchPemasokActivity : AppCompatActivity() {
                 val intent = Intent(this@SearchPemasokActivity, ProdukActivity::class.java).apply {
                     putExtra("product_id", product.id)
                     putExtra("productName", product.nama_produk)
-                    putExtra("productImage", product.image)
+                    putExtra("productImage", product.id.toString())
                     putExtra("productRating", "%.1f".format(averageRating).toFloat())
                     putExtra("productTotalReviews", productReviews.size)
                     putExtra("productPrice", product.harga.toLong())

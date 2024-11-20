@@ -183,7 +183,12 @@ class CompletePaymentActivity : AppCompatActivity() {
             val orderId = orderItem.order_id
             val userName = orderItem.buyer.user.username
             val paymentMethod = orderItem.method?: "Bluetooth"
+            val deliveryAddress = orderItem.buyer.alamat
+            val deliveryCity = orderItem.buyer.kota
+            val deliveryProvince = orderItem.buyer.provinsi
+            val deliveryPostalCode = orderItem.buyer.kodepos
 
+            findViewById<TextView>(R.id.deliveryAddress).text = "Delivered to: $deliveryAddress, $deliveryCity, $deliveryProvince, $deliveryPostalCode"
             findViewById<TextView>(R.id.orderDate).text = date
             findViewById<TextView>(R.id.orderFor).text = "#$orderId for $userName"
             findViewById<TextView>(R.id.paymentMethod).text = "Payment method: ${paymentMethod.replaceFirstChar {

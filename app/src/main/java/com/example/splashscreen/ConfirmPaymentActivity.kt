@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.yourapp.network.RetrofitClient
@@ -25,9 +26,10 @@ class ConfirmPaymentActivity : AppCompatActivity() {
 
         val token = "Bearer ${getStoredToken()}"
 
+        val backButton = findViewById<ImageButton>(R.id.backBtn)
+
         // Start a countdown timer
         val countDownTimer = object : CountDownTimer(7 * 60 * 1000, 1000) { // 7 minutes
-
             override fun onTick(millisUntilFinished: Long) {
                 val minutes = (millisUntilFinished / 1000) / 60
                 val seconds = (millisUntilFinished / 1000) % 60
@@ -37,8 +39,7 @@ class ConfirmPaymentActivity : AppCompatActivity() {
 
                 // Check if the timer reaches 6:55
                 if (minutes == 6L && seconds == 55L) {
-                    // Cancel the timer to stop it
-                    cancel()
+                    cancel() // Stop the timer
 
                     if (orderId != null) {
                         confirmOrder(token, orderId.toInt())
@@ -62,6 +63,15 @@ class ConfirmPaymentActivity : AppCompatActivity() {
 
         // Start the timer
         countDownTimer.start()
+
+        // Handle back button click
+        backButton.setOnClickListener {
+            // Stop the timer and navigate back to DashboardActivity
+            countDownTimer.cancel()
+            val intent = Intent(this@ConfirmPaymentActivity, DashboardActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 
     // Retrieve the token from SharedPreferences
@@ -69,7 +79,6 @@ class ConfirmPaymentActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
         return sharedPreferences.getString("TOKEN", null)  // Returns null if no token is stored
     }
-
 
     private fun confirmOrder(token: String, orderId: Int) {
         val orderRequest = RetrieveOrderRequest(orderId)

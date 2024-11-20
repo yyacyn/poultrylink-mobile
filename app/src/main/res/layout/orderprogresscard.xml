@@ -86,13 +86,16 @@
                 <!-- Nama Produk -->
                 <TextView
                     android:id="@+id/productName"
-                    android:text="Loading product..."
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="Loading product..."
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:textColor="@android:color/black" />
-
+                    android:textColor="@android:color/black"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:lines="1" />
+                
                 <TextView
                     android:id="@+id/orderDate"
                     android:layout_width="wrap_content"
@@ -113,7 +116,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="4dp"
                     android:layout_weight="1">
 
                     <!-- Harga -->
