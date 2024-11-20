@@ -1,7 +1,6 @@
 package com.example.splashscreen
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
 data class Cart(
@@ -14,17 +13,6 @@ data class InsertCart(
     val p_produk_id: Long,
     val p_user_id: Long
 )
-
-@Parcelize
-data class CartItem(
-    val productId: Long,
-    val productName: String,
-    val productImage: String,
-    val productKategori: String,
-    val quantity: Int,
-    val itemPrice: Long,
-    val totalPrice: Long
-) : Parcelable
 
 @Serializable
 data class CartUpdateRequest(
